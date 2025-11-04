@@ -223,7 +223,7 @@
 <style>
 .lh-sidebar {
     width: 280px;
-    background: #C49A6C;
+    background: #50200C;
     position: fixed;
     top: 0;
     left: 0;
