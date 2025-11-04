@@ -2,12 +2,9 @@
     <div class="sidebar-content">
         <!-- Brand Header -->
         <div class="sidebar-brand">
-            <div class="brand-logo">
-                <i class="fas fa-hotel"></i>
-            </div>
-            <div class="brand-text">
-                <h4 class="mb-0">Laravel Hotel</h4>
-            </div>
+            <a href="{{ route('dashboard.index') }}">
+                <img src="{{ asset('img/logo-anda.png') }}" alt="Hotel Logo" class="brand-logo-img-only">
+            </a>
         </div>
 
         <!-- User Profile Section -->
@@ -226,7 +223,7 @@
 <style>
 .lh-sidebar {
     width: 280px;
-    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    background: #C49A6C;
     position: fixed;
     top: 0;
     left: 0;
@@ -234,6 +231,12 @@
     z-index: 1000;
     overflow: hidden;
     transition: all 0.3s ease;
+}
+
+.brand-logo-img-only {
+    max-height: 88px;  
+    width: auto;       
+    display: block;
 }
 
 .sidebar-content {
