@@ -1,11 +1,11 @@
 <div id="sidebar-wrapper" class="lh-sidebar">
     <div class="sidebar-content">
         <!-- Brand Header -->
-        <div class="sidebar-brand">
+        <!-- <div class="sidebar-brand">
             <a href="{{ route('dashboard.index') }}">
                 <img src="{{ asset('img/logo-anda.png') }}" alt="Hotel Logo" class="brand-logo-img-only">
             </a>
-        </div>
+        </div> -->
 
         <!-- User Profile Section -->
         <div class="sidebar-user">
@@ -231,6 +231,7 @@
     z-index: 1000;
     overflow: hidden;
     transition: all 0.3s ease;
+    margin-top: 114px; 
 }
 
 .brand-logo-img-only {

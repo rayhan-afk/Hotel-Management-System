@@ -39,6 +39,8 @@
         <!-- Mobile Header -->
         @include('template.include._mobile-header')
 
+        @include('template.include._navbar-desktop')
+
         <div class="d-flex vh-100" id="wrapper">
             <!-- Desktop Sidebar -->
             @include('template.include._sidebar')
