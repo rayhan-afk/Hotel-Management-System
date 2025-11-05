@@ -6,12 +6,7 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h1 class="h3 text-gradient mb-1">Welcome back, {{ auth()->user()->name }}!</h1>
-                        <p class="text-muted mb-0">Here's what's happening at your hotel today</p>
-                    </div>
-                    <div class="text-end">
-                        <div class="text-muted small">{{ now()->format('l, F j, Y') }}</div>
-                        <div class="fw-bold">{{ now()->format('g:i A') }}</div>
+                        <h1 class="h3 text-gradient mb-1">Selamat Datang Jihad Fachrul, {{ auth()->user()->name }}!</h1>
                     </div>
                 </div>
             </div>
@@ -24,7 +19,7 @@
                         <div class="stats-number">{{ count($transactions) }}</div>
                         <div class="stats-label">
                             <i class="fas fa-users me-2"></i>
-                            Guests Today
+                            Jumlah Kamar Tersedia
                         </div>
                     </div>
                 </div>
@@ -37,7 +32,7 @@
                         </div>
                         <div class="stats-label">
                             <i class="fas fa-check-circle me-2"></i>
-                            Completed Bookings
+                            Jumlah Kamar Terpakai
                         </div>
                     </div>
                 </div>
@@ -50,7 +45,7 @@
                         </div>
                         <div class="stats-label">
                             <i class="fas fa-clock me-2"></i>
-                            Pending Payments
+                            Jumlah Reservasi
                         </div>
                     </div>
                 </div>
@@ -66,7 +61,7 @@
                         </div>
                         <div class="stats-label">
                             <i class="fas fa-exclamation-triangle me-2"></i>
-                            Urgent Payments
+                            Kamar Sedang Dibersihkan
                         </div>
                     </div>
                 </div>
@@ -74,16 +69,15 @@
         </div>
 
         <div class="row">
-            <!-- Today's Guests Table -->
             <div class="col-lg-8 mb-4">
                 <div class="card card-lh h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-0 fw-bold">
                                 <i class="fas fa-calendar-day text-primary me-2"></i>
-                                Today's Guests
+                                Tamu Hari ini 
                             </h5>
-                            <small class="text-muted">Current hotel occupancy - {{ now()->format('l, F j, Y') }}</small>
+                            <small class="text-muted">{{ now()->format('l, F j, Y') }}</small>
                         </div>
                         <div class="d-flex gap-2">
                             <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" title="Export">
@@ -99,11 +93,10 @@
                             <table class="table table-lh mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Guest</th>
-                                        <th>Room</th>
+                                        <th>Tamu</th>
+                                        <th>Kamar</th>
                                         <th>Check-in/Out</th>
-                                        <th>Days Left</th>
-                                        <th>Balance</th>
+                                        <th>Harga</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -177,8 +170,7 @@
                                             <td colspan="6" class="text-center py-5">
                                                 <div class="text-muted">
                                                     <i class="fas fa-bed mb-3" style="font-size: 3rem; opacity: 0.3;"></i>
-                                                    <p class="mb-0">No guests checked in today</p>
-                                                    <small>Your hotel is ready for new bookings!</small>
+                                                    <p class="mb-0">Tidak ada tamu yang check-in hari ini</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -196,16 +188,16 @@
                     <div class="card-header">
                         <h5 class="mb-0 fw-bold">
                             <i class="fas fa-chart-line text-primary me-2"></i>
-                            Monthly Guests
+                            Tamu Bulanan
                         </h5>
-                        <small class="text-muted">Guest statistics for {{ Helper::thisMonth() }}/{{ Helper::thisYear() }}</small>
+                        <small class="text-muted">Tamu Bulanan untuk {{ Helper::thisMonth() }}/{{ Helper::thisYear() }}</small>
                     </div>
                     <div class="card-body">
                         <div class="text-center mb-4">
                             <div class="d-flex justify-content-center align-items-center">
                                 <div class="text-center">
                                     <div class="h2 text-primary mb-0">{{ count($transactions) }}</div>
-                                    <small class="text-muted">Total Guests This Month</small>
+                                    <small class="text-muted">Jumlah Tamu Bulan ini</small>
                                 </div>
                             </div>
                         </div>
@@ -219,13 +211,13 @@
                             <div class="flex-fill">
                                 <div class="d-flex align-items-center justify-content-center mb-1">
                                     <div class="bg-primary rounded me-2" style="width: 12px; height: 12px;"></div>
-                                    <small class="text-muted">This Month</small>
+                                    <small class="text-muted">Bulan ini</small>
                                 </div>
                             </div>
                             <div class="flex-fill">
                                 <div class="d-flex align-items-center justify-content-center mb-1">
                                     <div class="bg-secondary rounded me-2" style="width: 12px; height: 12px;"></div>
-                                    <small class="text-muted">Last Month</small>
+                                    <small class="text-muted">Bulan Lalu</small>
                                 </div>
                             </div>
                         </div>

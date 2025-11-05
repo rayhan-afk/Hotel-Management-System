@@ -14,11 +14,24 @@
 */
 
 /* ===================================
-   Base Styles (Mobile First)
-   =================================== */
+   Font
+=================================== */
+
+@font-face {
+    font-family: 'humnst777';
+    src: url('/fonts/humnst777.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ===================================
+   Body
+=================================== */
+
 body {
-    background-color: #f8fafc;
-    font-family: "Inter", "Nunito", sans-serif;
+    background-color: #F7F3E4;
+    font-family: "Inter", "Nunito",'humnst777', sans-serif;
     font-size: 0.875rem;
     line-height: 1.6;
     color: #334155;
@@ -48,6 +61,8 @@ body.sidebar-layout {
     padding-left: 0; // Mobile: no sidebar
     min-width: 0;
     width: 100%;
+    padding-top: 112px;
+    background-color: #F7F3E4;
 }
 
 /* ===================================
@@ -159,11 +174,11 @@ body.sidebar-layout {
 }
 
 .text-gradient {
-    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    background: #50200C;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    font-weight: 700;
+    font-weight: 1500;
 }
 
 /* ===================================
@@ -226,7 +241,7 @@ body.sidebar-layout {
     border: none;
     border-radius: 8px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    background: rgba(255, 255, 255, 0.95);
+    background: #F7F3E4;
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
 
@@ -236,7 +251,7 @@ body.sidebar-layout {
     }
 
     .card-header {
-        background: transparent;
+        background: #C49A6C;
         border-bottom: 1px solid #e2e8f0;
         padding: 1rem;
         border-radius: 8px 8px 0 0;
@@ -255,6 +270,7 @@ body.sidebar-layout {
 
     .card-body {
         padding: 1rem;
+        background: #F7F3E4;
     }
 }
 
@@ -262,7 +278,7 @@ body.sidebar-layout {
    Stats Cards (Mobile First)
    =================================== */
 .card-stats {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    background: #A8D5BA;
     color: white;
     border: none;
     border-radius: 8px;
@@ -288,9 +304,11 @@ body.sidebar-layout {
         font-weight: 700;
         margin-bottom: 0.5rem;
         line-height: 1;
+        color: #50200C;
     }
 
     .stats-label {
+        color: #50200C;
         font-size: 0.75rem; // Mobile: smaller
         font-weight: 500;
         opacity: 0.95;
@@ -303,7 +321,7 @@ body.sidebar-layout {
 }
 
 .card-stats-success {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: #C49A6C;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
 
     &:hover {
@@ -312,7 +330,7 @@ body.sidebar-layout {
 }
 
 .card-stats-warning {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    background: #8FB8E1;
     box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
 
     &:hover {
@@ -321,7 +339,7 @@ body.sidebar-layout {
 }
 
 .card-stats-danger {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    background: #F2C2B8;
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 
     &:hover {
@@ -403,7 +421,7 @@ body.sidebar-layout {
     }
 
     th {
-        background: linear-gradient(135deg, #fafbfc 0%, #f1f5f9 100%);
+        background: #F7F3E4;
         border-bottom: 2px solid #e2e8f0;
         color: #374151;
         font-weight: 700;
@@ -436,6 +454,7 @@ body.sidebar-layout {
     }
 
     td {
+        background: #F7F3E4;
         padding: 1rem 0.75rem; // Mobile: comfortable
         border-bottom: 1px solid #f1f5f9;
         vertical-align: middle;
