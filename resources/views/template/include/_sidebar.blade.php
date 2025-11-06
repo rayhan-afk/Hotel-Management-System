@@ -1,13 +1,5 @@
 <div id="sidebar-wrapper" class="lh-sidebar">
     <div class="sidebar-content">
-        <!-- Brand Header -->
-        <!-- <div class="sidebar-brand">
-            <a href="{{ route('dashboard.index') }}">
-                <img src="{{ asset('img/logo-anda.png') }}" alt="Hotel Logo" class="brand-logo-img-only">
-            </a>
-        </div> -->
-
-        <!-- User Profile Section -->
         <div class="sidebar-user">
             <div class="user-avatar">
                 <img src="{{ auth()->user()->getAvatar() }}" alt="User Avatar" class="rounded-circle">
@@ -39,7 +31,6 @@
             </div>
         </div>
 
-        <!-- Notifications Section -->
         <div class="sidebar-notifications">
             <div class="notifications-header">
                 <div class="notifications-title">
@@ -78,9 +69,7 @@
             </div>
         </div>
 
-        <!-- Navigation Menu -->
         <nav class="sidebar-nav">
-            <!-- Dashboard -->
             <div class="nav-section">
                 <div class="nav-section-title">Overview</div>
                 <a href="{{ route('dashboard.index') }}"
@@ -96,11 +85,9 @@
             </div>
 
             @if (auth()->user()->role == 'Super' || auth()->user()->role == 'Admin')
-                <!-- Operations -->
                 <div class="nav-section">
                     <div class="nav-section-title">Operations</div>
 
-                    <!-- Transactions -->
                     <a href="{{ route('transaction.index') }}"
                        class="nav-item {{ in_array(Route::currentRouteName(), ['payment.index', 'transaction.index', 'transaction.reservation.createIdentity', 'transaction.reservation.pickFromCustomer', 'transaction.reservation.usersearch', 'transaction.reservation.storeCustomer', 'transaction.reservation.viewCountPerson', 'transaction.reservation.chooseRoom', 'transaction.reservation.confirmation', 'transaction.reservation.payDownPayment']) ? 'active' : '' }}">
                         <div class="nav-icon">
@@ -112,7 +99,6 @@
                         </div>
                     </a>
 
-                    <!-- Room Management -->
                     <div class="nav-item dropdown-nav {{ in_array(Route::currentRouteName(), ['room.index', 'room.show', 'room.create', 'room.edit', 'type.index', 'type.create', 'type.edit', 'roomstatus.index', 'roomstatus.create', 'roomstatus.edit', 'facility.index', 'facility.create', 'facility.edit']) ? 'active' : '' }}">
                         <div class="nav-toggle" data-bs-toggle="collapse" data-bs-target="#roomSubmenu">
                             <div class="nav-icon">
@@ -144,7 +130,6 @@
                         </div>
                     </div>
 
-                    <!-- Customer & User Management -->
                     <div class="nav-item dropdown-nav {{ in_array(Route::currentRouteName(), ['customer.index', 'customer.create', 'customer.edit', 'user.index', 'user.create', 'user.edit']) ? 'active' : '' }}">
                         <div class="nav-toggle" data-bs-toggle="collapse" data-bs-target="#userSubmenu">
                             <div class="nav-icon">
@@ -171,10 +156,41 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Analytics -->
-                <div class="nav-section">
+                    <a href="#" class="nav-item {{ in_array(Route::currentRouteName(), ['ruangrapat.index']) ? 'active' : '' }} ">
+                        <div class="nav-icon">
+                            <i class="fas fa-briefcase"></i> </div>
+                        <div class="nav-content">
+                            <div class="nav-title">Ruang Rapat</div>
+                            <div class="nav-subtitle">Manajemen Ruang Rapat</div>
+                        </div>
+                    </a>
+
+                    <div class="nav-item dropdown-nav {{ in_array(Route::currentRouteName(), ['persediaan.bahan.index', 'persediaan.amenities.index']) ? 'active' : '' }} ">
+                        <div class="nav-toggle" data-bs-toggle="collapse" data-bs-target="#persediaanSubmenu">
+                            <div class="nav-icon">
+                                <i class="fas fa-boxes"></i> </div>
+                            <div class="nav-content">
+                                <div class="nav-title">Persediaan</div>
+                                <div class="nav-subtitle">Bahan Baku & Amenities</div>
+                            </div>
+                            <div class="nav-arrow">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="collapse {{ in_array(Route::currentRouteName(), ['persediaan.bahan.index', 'persediaan.amenities.index']) ? 'show' : '' }} w-100" id="persediaanSubmenu">
+                            <div class="nav-submenu">
+                                <a href="#" class="nav-subitem {{ in_array(Route::currentRouteName(), ['persediaan.bahan.index']) ? 'active' : '' }} ">
+                                    <i class="fas fa-cube me-2"></i>Persediaan Bahan Baku
+                                </a>
+                                <a href="#" class="nav-subitem {{ in_array(Route::currentRouteName(), ['persediaan.amenities.index']) ? 'active' : '' }} ">
+                                    <i class="fas fa-soap me-2"></i>Persediaan Amenities
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    </div> <div class="nav-section">
                     <div class="nav-section-title">Analytics</div>
 
                     <a href="#" class="nav-item">
@@ -188,7 +204,6 @@
                     </a>
                 </div>
 
-                <!-- Administration -->
                 <div class="nav-section">
                     <div class="nav-section-title">Administration</div>
 
@@ -205,7 +220,6 @@
             @endif
         </nav>
 
-        <!-- Quick Actions -->
         <div class="sidebar-footer">
             <a href="{{ route('transaction.reservation.createIdentity') }}" class="btn btn-primary w-100 quick-action-btn">
                 <i class="fas fa-plus me-2"></i>
@@ -214,13 +228,13 @@
         </div>
     </div>
 
-    <!-- Mobile Toggle Button -->
     <button class="sidebar-toggle d-lg-none" id="sidebar-toggle">
         <i class="fas fa-bars"></i>
     </button>
 </div>
 
 <style>
+/* ... [STYLE ANDA SAMA SEPERTI ASLINYA, SAYA TIDAK MENGUBAHNYA] ... */
 .lh-sidebar {
     width: 280px;
     background: #50200C;
