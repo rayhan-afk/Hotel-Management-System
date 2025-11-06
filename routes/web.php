@@ -18,6 +18,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\Inventory\IngredientController;
 use App\Http\Controllers\Inventory\IngredientTransactionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RuangRapatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +57,8 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     Route::resource('facility', FacilityController::class);
     // Ingredient routes
     Route::resource('ingredient', IngredientController::class);
+    // Ruang Rapat Paket routes
+    Route::resource('ruangrapat', RuangRapatController::class);
     
 
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');

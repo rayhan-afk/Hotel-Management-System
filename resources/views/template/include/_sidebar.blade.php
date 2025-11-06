@@ -157,14 +157,16 @@
                         </div>
                     </div>
 
-                    <a href="#" class="nav-item {{ in_array(Route::currentRouteName(), ['ruangrapat.index']) ? 'active' : '' }} ">
-                        <div class="nav-icon">
-                            <i class="fas fa-briefcase"></i> </div>
-                        <div class="nav-content">
-                            <div class="nav-title">Ruang Rapat</div>
-                            <div class="nav-subtitle">Manajemen Ruang Rapat</div>
-                        </div>
-                    </a>
+                    <a href="{{ route('ruangrapat.index') }}" 
+   class="nav-item {{ in_array(Route::currentRouteName(), ['ruangrapat.index', 'ruangrapat.create', 'ruangrapat.edit', 'ruangrapat.show']) ? 'active' : '' }}">
+    <div class="nav-icon">
+        <i class="fas fa-briefcase"></i>
+    </div>
+    <div class="nav-content">
+        <div class="nav-title">Ruang Rapat</div>
+        <div class="nav-subtitle">Manajemen Paket</div>
+    </div>
+</a>
 
                     <div class="nav-item dropdown-nav {{ in_array(Route::currentRouteName(), ['persediaan.bahan.index', 'persediaan.amenities.index']) ? 'active' : '' }} ">
                         <div class="nav-toggle" data-bs-toggle="collapse" data-bs-target="#persediaanSubmenu">
@@ -234,18 +236,17 @@
 </div>
 
 <style>
-/* ... [STYLE ANDA SAMA SEPERTI ASLINYA, SAYA TIDAK MENGUBAHNYA] ... */
+
 .lh-sidebar {
     width: 280px;
     background: #50200C;
     position: fixed;
-    top: 0;
+    top: 114px;
     left: 0;
-    height: 100vh;
+    height: calc(100vh - 114px);
     z-index: 1000;
     overflow: hidden;
     transition: all 0.3s ease;
-    margin-top: 114px; 
 }
 
 .brand-logo-img-only {
