@@ -19,7 +19,7 @@
 
 @font-face {
     font-family: 'humnst777';
-    src: url('/fonts/humnst777.ttf') format('truetype');
+    src: url('/public/Fonts/Humnst777-Cn-BT.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -31,7 +31,7 @@
 
 body {
     background-color: #F7F3E4;
-    font-family: "Inter", "Nunito",'humnst777', sans-serif;
+    font-family: 'humnst777',"Inter", "Nunito", sans-serif;
     font-size: 0.875rem;
     line-height: 1.6;
     color: #334155;
