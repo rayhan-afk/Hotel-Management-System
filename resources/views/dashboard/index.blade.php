@@ -233,9 +233,7 @@
                     <div class="card-header">
                         <h5 class="mb-0 fw-bold">
                             <i class="fas fa-bolt text-warning me-2"></i>
-                            Quick Actions
-                        </h5>
-                        <small class="text-muted">Common tasks and shortcuts</small>
+                            Akses Cepat
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -244,7 +242,7 @@
                                    class="btn btn-hotel-primary btn-lh w-100 h-100 d-flex flex-column align-items-center justify-content-center"
                                    style="min-height: 80px;">
                                     <i class="fas fa-plus-circle mb-2" style="font-size: 1.5rem;"></i>
-                                    <span>New Reservation</span>
+                                    <span>Tambah Reservasi Kamar</span>
                                 </a>
                             </div>
                             <div class="col-lg-3 col-md-6 mb-3">
