@@ -1,5 +1,3 @@
-{{-- resources/views/ruangrapat/index.blade.php --}}
-
 @extends('template.master')
 
 @section('title', 'Manajemen Paket Ruang Rapat')
@@ -24,8 +22,11 @@
                         {{ session('success') }}
                     </div>
                 @endif
-                <table id="example1" class="table table-bordered table-striped">
-                    <thead>
+                
+                <p style="font-size: 1.05rem;" class="mb-3">
+                    Pilih harga dan paket untuk reservasi ruang rapat.
+                </p>
+                <table id="example1" class="table table-bordered"> <thead>
                         <tr>
                             <th>No</th>
                             <th>Nama Paket</th>
@@ -40,8 +41,14 @@
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>{{ $paket->name }}</td>
-                                <td>{!! nl2br(e($paket->isi_paket)) !!}</td> <td>{!! nl2br(e($paket->fasilitas)) !!}</td> <td>{{ number_format($paket->harga, 0, ',', '.') }}</td>
-                                <td>
+                                <td>{!! nl2br(e($paket->isi_paket)) !!}</td>
+                                <td>{!! nl2br(e($paket->fasilitas)) !!}</td>
+                                <td>{{ number_format($paket->harga, 0, ',', '.') }}</td>
+                                
+                                <td class="text-center">
+                                    <a href="{{ route('ruangrapat.edit', $paket->id) }}" class="btn btn-warning btn-sm me-2">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
                                     <form action="{{ route('ruangrapat.destroy', $paket->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -49,9 +56,6 @@
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
-                                    <a href="{{ route('ruangrapat.edit', $paket->id) }}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
                                 </td>
                             </tr>
                         @empty
@@ -65,15 +69,26 @@
         </div>
     </div>
 </div>
-@endsection
 
-@push('scripts')
-<script>
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    });
-</script>
-@endpush
+<style>
+    /* Style header coklat soft */
+    #example1 thead th {
+        background-color: #C49A6C !important;
+        color: #50200C !important;
+        border-color: #DED4C8 !important;
+    }
+
+    /* Spasi (padding) di header dan body tabel */
+    #example1 tbody td,
+    #example1 thead th {
+        padding: 12px 10px !important;
+        vertical-align: middle;
+    }
+
+    /* Atur lebar kolom Aksi */
+    #example1 td:last-child {
+        width: 120px;
+    }
+</style>
+
+@endsection
