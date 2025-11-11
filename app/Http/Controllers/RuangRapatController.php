@@ -2,119 +2,84 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRuangRapatPaketRequest;
 use App\Models\RuangRapatPaket;
+use App\Repositories\Interface\RuangRapatPaketRepositoryInterface;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
 
 class RuangRapatController extends Controller
 {
-    /**
-     * Menampilkan halaman index ATAU merespon AJAX DataTable.
-     */
+    private $ruangRapatPaketRepository;
+
+    public function __construct(RuangRapatPaketRepositoryInterface $ruangRapatPaketRepository)
+    {
+        $this->ruangRapatPaketRepository = $ruangRapatPaketRepository;
+    }
+
     public function index(Request $request)
     {
-        // Jika ini adalah request AJAX (dari DataTable)
         if ($request->ajax()) {
-            $model = RuangRapatPaket::query(); // Ambil model 'RuangRapatPaket'
-
-            // Yajra akan otomatis mengambil kolom 'name', 'isi_paket', 'fasilitas', 'harga'
-            return DataTables::of($model)
-                ->addIndexColumn() // Menambah kolom 'DT_RowIndex' (untuk 'No')
-                ->toJson();
+            return $this->ruangRapatPaketRepository->getPaketsDatatable($request);
         }
 
-        // Jika ini request biasa (bukan AJAX), tampilkan view
         return view('ruangrapat.index');
     }
 
-    /**
-     * Menampilkan form create (untuk di-load di modal).
-     */
+    // --- PERBAIKAN METHOD CREATE ---
     public function create()
     {
+        // render() mengubah view menjadi string HTML
         $view = view('ruangrapat.create')->render();
 
+        // Kirim sebagai JSON agar bisa ditangkap oleh JavaScript
         return response()->json([
             'view' => $view,
         ]);
     }
 
-    /**
-     * Menyimpan paket baru.
-     */
-    public function store(Request $request)
+    public function store(StoreRuangRapatPaketRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255', // Diubah dari 'nama_paket'
-            'isi_paket' => 'nullable|string',
-            'fasilitas' => 'nullable|string',
-            // 'kapasitas' dihapus
-            'harga' => 'required|numeric',
-        ]);
-
-        $paket = RuangRapatPaket::create($request->all());
+        RuangRapatPaket::create($request->validated());
 
         return response()->json([
-            'message' => 'Paket ' . $paket->name . ' berhasil dibuat', // Menggunakan $paket->name
+            'message' => 'Paket berhasil ditambahkan!',
         ]);
     }
 
-    /**
-     * Menampilkan detail (halaman penuh, bukan modal).
-     */
     public function show(RuangRapatPaket $ruangrapat)
     {
         return view('ruangrapat.show', compact('ruangrapat'));
     }
 
-    /**
-     * Menampilkan form edit (untuk di-load di modal).
-     */
+    // --- PERBAIKAN METHOD EDIT ---
     public function edit(RuangRapatPaket $ruangrapat)
     {
-        $view = view('ruangrapat.edit', compact('ruangrapat'))->render();
+        // render() mengubah view menjadi string HTML
+        $view = view('ruangrapat.edit', [
+            'ruangrapat' => $ruangrapat
+        ])->render();
 
         return response()->json([
             'view' => $view,
         ]);
     }
 
-    /**
-     * Meng-update paket.
-     */
-    public function update(Request $request, RuangRapatPaket $ruangrapat)
+    public function update(StoreRuangRapatPaketRequest $request, RuangRapatPaket $ruangrapat)
     {
-        $request->validate([
-            'name' => 'required|string|max:255', // Diubah dari 'nama_paket'
-            'isi_paket' => 'nullable|string',
-            'fasilitas' => 'nullable|string',
-            // 'kapasitas' dihapus
-            'harga' => 'required|numeric',
-        ]);
-
-        $ruangrapat->update($request->all());
+        $ruangrapat->update($request->validated());
 
         return response()->json([
-            'message' => 'Paket ' . $ruangrapat->name . ' berhasil di-update', // Menggunakan $ruangrapat->name
+            'message' => 'Paket berhasil diperbarui!',
         ]);
     }
 
-    /**
-     * Menghapus paket.
-     */
     public function destroy(RuangRapatPaket $ruangrapat)
     {
         try {
-            $nama_paket = $ruangrapat->name; // Menggunakan $ruangrapat->name
             $ruangrapat->delete();
-
-            return response()->json([
-                'message' => 'Paket ' . $nama_paket . ' berhasil dihapus!',
-            ]);
+            return response()->json(['message' => 'Paket berhasil dihapus!']);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Paket ' . $ruangrapat->name . ' tidak bisa dihapus! Error Code:' . $e->errorInfo[1],
-            ], 500);
+            return response()->json(['message' => 'Gagal menghapus paket!'], 500);
         }
     }
 }

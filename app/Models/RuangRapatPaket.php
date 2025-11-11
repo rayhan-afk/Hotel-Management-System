@@ -1,5 +1,4 @@
 <?php
-// app/Models/RuangRapatPaket.php
 
 namespace App\Models;
 
@@ -10,7 +9,8 @@ class RuangRapatPaket extends Model
 {
     use HasFactory;
 
-    // Tentukan kolom mana yang boleh diisi
+    protected $table = 'ruang_rapat_pakets'; // Pastikan nama tabel sesuai
+
     protected $fillable = [
         'name',
         'isi_paket',

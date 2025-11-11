@@ -13,6 +13,7 @@
     @vite('resources/sass/app.scss')
     <title>@yield('title') - Hotel Admin</title>
     @yield('head')
+    
 </head>
 
 <body class="sidebar-layout">

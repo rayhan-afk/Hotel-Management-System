@@ -82,5 +82,6 @@ import axios from "axios";
         import("./pages/dashboard"),
         import("./pages/login"),
         import("./pages/global"),
+        import("./pages/ruangrapat"),
     ]);
 })();
