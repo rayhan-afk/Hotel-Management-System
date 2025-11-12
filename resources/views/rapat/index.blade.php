@@ -1,16 +1,28 @@
 @extends('template.master')
-@section('title', 'Ruang Rapat Management')
+@section('title', 'Reservasi Ruang Rapat')
 
 @section('content')
-<div class="container-fluid">
-
     <div class="row mt-2 mb-2">
         <div class="col-lg-6 mb-2">
+            <div class="d-grid gap-2 d-md-block">
+                
+                <span data-bs-toggle="tooltip" data-bs-placement="right" title="Tambah Reservasi Rapat">
+                    <a href="{{ route('rapat.reservation.showStep1') }}" class="btn btn-sm shadow-sm myBtn border rounded">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                </span>
+                
+                <span data-bs-toggle="tooltip" data-bs-placement="right" title="Riwayat Pembayaran Rapat">
+                    <a href="{{ route('rapat.payment.index') }}" class="btn btn-sm shadow-sm myBtn border rounded">
+                        <i class="fas fa-history"></i>
+                    </a>
+                </span>
             </div>
+        </div>
         <div class="col-lg-6 mb-2">
-            <form class="d-flex" method="GET" action="{{ route('ruangrapat.index') }}">
-                <input class="form-control me-2" type="search" placeholder="Cari ID Reservasi / Nama Pemesan" aria-label="Search"
-                    name="search" value="{{ request()->input('search') }}">
+            <form class="d-flex" method="GET" action="{{ route('rapat.transaction.index') }}">
+                <input class="form-control me-2" type="search" placeholder="Search by ID or Nama" aria-label="Search"
+                    id="search-user" name="search" value="{{ request()->input('search') }}">
                 <button class="btn btn-outline-dark" type="submit">Search</button>
             </form>
         </div>
@@ -18,7 +30,7 @@
 
     <div class="row my-2 mt-4 ms-1">
         <div class="col-lg-12">
-            <h5><i class="fas fa-calendar-check me-2"></i>Reservasi Aktif & Mendatang: </h5>
+            <h5>Reservasi Aktif & Mendatang: </h5>
         </div>
     </div>
     <div class="row">
@@ -31,12 +43,12 @@
                                 <tr>
                                     <th>#</th>
                                     <th>ID</th>
-                                    <!-- <th>Pemesan</th> -->
-                                    <th>Instansi/Perusahaan</th>
-                                    <th>Tanggal</th>
-                                    <th>Waktu</th>
-                                    <th>Paket</th>
-                                    <th>Status</th>
+                                    <th>Pemesan</th>
+                                    <th>Instansi/Perusahaan</th> 
+                                    <th>Tanggal</th>             
+                                    <th>Waktu</th>               
+                                    <th>Paket</th>               
+                                    <th>Status</th>              
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -46,8 +58,7 @@
                                         <th>{{ ($rapatTransactions->currentpage() - 1) * $rapatTransactions->perpage() + $loop->index + 1 }}</th>
                                         <td>{{ $transaction->id }}</td>
                                         <td>{{ $transaction->rapatCustomer->nama }}</td>
-                                        <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td>
-                                        <td>{{ Helper::dateFormat($transaction->tanggal_pemakaian) }}</td>
+                                        <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td> <td>{{ Helper::dateFormat($transaction->tanggal_pemakaian) }}</td>
                                         <td>{{ $transaction->waktu_mulai }} - {{ $transaction->waktu_selesai }}</td>
                                         <td>{{ $transaction->ruangRapatPaket->name }}</td>
                                         <td>
@@ -60,7 +71,7 @@
                                         </td>
                                         <td>
                                             <a class="btn btn-light btn-sm rounded shadow-sm border p-1 m-0 {{ $transaction->status_pembayaran == 'Paid' ? 'disabled' : '' }}"
-                                                href="#" {{-- Nanti arahkan ke route pembayaran --}}
+                                                href="#" {{-- href="{{ route('rapat.transaction.payment.create', ['rapatTransaction' => $transaction->id]) }}" --}}
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Pay">
                                                 <i class="fas fa-money-bill-wave-alt"></i>
                                             </a>
@@ -84,7 +95,7 @@
 
     <div class="row my-2 mt-4 ms-1">
         <div class="col-lg-12">
-            <h5><i class="fas fa-history me-2"></i>Reservasi Selesai: </h5>
+            <h5>Reservasi Selesai: </h5>
         </div>
     </div>
     <div class="row">
@@ -98,12 +109,7 @@
                                     <th>#</th>
                                     <th>ID</th>
                                     <th>Pemesan</th>
-                                    <th>Instansi/Perusahaan</th>
-                                    <th>Tanggal</th>
-                                    <th>Waktu</th>
-                                    <th>Paket</th>
-                                    <th>Status</th>
-                                </tr>
+                                    <th>Instansi/Perusahaan</th> <th>Tanggal</th>             <th>Waktu</th>               <th>Paket</th>               <th>Status</th>              </tr>
                             </thead>
                             <tbody>
                                 @forelse ($rapatTransactionsExpired as $transaction)
@@ -111,8 +117,7 @@
                                     <th>{{ ($rapatTransactionsExpired->currentpage() - 1) * $rapatTransactionsExpired->perpage() + $loop->index + 1 }}</th>
                                     <td>{{ $transaction->id }}</td>
                                     <td>{{ $transaction->rapatCustomer->nama }}</td>
-                                    <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td>
-                                    <td>{{ Helper::dateFormat($transaction->tanggal_pemakaian) }}</td>
+                                    <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td> <td>{{ Helper::dateFormat($transaction->tanggal_pemakaian) }}</td>
                                     <td>{{ $transaction->waktu_mulai }} - {{ $transaction->waktu_selesai }}</td>
                                     <td>{{ $transaction->ruangRapatPaket->name }}</td>
                                     <td>
@@ -139,48 +144,4 @@
             </div>
         </div>
     </div>
-
-    <hr class="my-5"> 
-
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex flex-wrap gap-2"> 
-                <button id="add-button" type="button" class="add-room-btn">
-                    <i class="fas fa-plus"></i>
-                    Tambah Paket Ruang Rapat
-                </button>
-                <a href="{{ route('rapat.reservation.showStep1') }}" class="btn btn-hotel-primary add-room-btn" style="height: auto; line-height: 1.5;"> 
-                    <i class="fas fa-calendar-plus me-1"></i>
-                    Buat Reservasi Ruang Rapat
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="professional-table-container">
-        <div class="table-header">
-            <h4><i class="fas fa-handshake me-2"></i>Manajemen Paket Ruang Rapat</h4>
-            <p>Kelola daftar paket ruang rapat yang tersedia di hotel</p>
-        </div>
-        <div class="table-responsive">
-            <table id="ruangrapat-table" class="professional-table table" style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">Nama Paket</th>
-                        <th scope="col">Isi Paket</th>
-                        <th scope="col">Fasilitas</th>
-                        <th scope="col">Harga</th>
-                        <th scope="col"><i class="fas fa-cog me-1"></i>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    </tbody>
-            </table>
-        </div>
-        <div class="table-footer">
-            <h3><i class="fas fa-handshake me-2"></i>Daftar Ruang Rapat</h3>
-        </div>
-    </div>
-</div>
 @endsection

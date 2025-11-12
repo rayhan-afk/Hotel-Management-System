@@ -6,6 +6,8 @@ use App\Http\Requests\StoreRuangRapatPaketRequest;
 use App\Models\RuangRapatPaket;
 use App\Repositories\Interface\RuangRapatPaketRepositoryInterface;
 use Illuminate\Http\Request;
+use App\Models\RapatTransaction;
+use Carbon\Carbon;
 
 class RuangRapatController extends Controller
 {
@@ -18,11 +20,41 @@ class RuangRapatController extends Controller
 
     public function index(Request $request)
     {
+        // Bagian 1: Logika DataTable (Dari kode lama Anda)
+        // Jika ini adalah request AJAX dari DataTable, layani data paket
         if ($request->ajax()) {
             return $this->ruangRapatPaketRepository->getPaketsDatatable($request);
         }
 
-        return view('ruangrapat.index');
+        // Bagian 2: Logika Daftar Reservasi (Logika baru)
+        // Jika ini adalah kunjungan halaman biasa, ambil data reservasi
+        
+        $query = RapatTransaction::with('rapatCustomer', 'ruangRapatPaket')
+                    ->orderBy('tanggal_pemakaian', 'DESC');
+
+        // Handle Search (untuk tabel reservasi)
+        if ($request->filled('search')) {
+            $query->where('id', $request->input('search'))
+                  ->orWhereHas('rapatCustomer', function ($q) use ($request) {
+                      $q->where('nama', 'like', '%' . $request->input('search') . '%');
+                  });
+        }
+
+        // Filter untuk "Reservasi Aktif & Mendatang"
+        $rapatTransactions = $query->clone()
+            ->where('tanggal_pemakaian', '>=', Carbon::today())
+            ->paginate(10, ['*'], 'active_page'); // Paginator terpisah
+
+        // Filter untuk "Reservasi Selesai"
+        $rapatTransactionsExpired = $query->clone()
+            ->where('tanggal_pemakaian', '<', Carbon::today())
+            ->paginate(10, ['*'], 'expired_page'); // Paginator terpisah
+
+        // Kirim data reservasi ke view
+        return view('ruangrapat.index', compact(
+            'rapatTransactions', 
+            'rapatTransactionsExpired'
+        ));
     }
 
     // --- PERBAIKAN METHOD CREATE ---

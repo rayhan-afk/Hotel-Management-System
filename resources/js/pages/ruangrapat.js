@@ -46,15 +46,21 @@ $(function () {
                 data: "fasilitas",
             },
             {
-                name: "harga",
-                data: "harga",
-                render: function (harga) {
-                    // Format mata uang Rupiah di sisi client
-                    // Ubah format 'harga' mentah (dari repo) ke format Rupiah
-                    const rawHarga = parseFloat(harga.toString().replace(/[^0-9.-]+/g,""));
-                    return `<div>Rp ${new Intl.NumberFormat('id-ID').format(rawHarga)}</div>`;
-                },
-            },
+    name: "harga",
+    data: "harga",
+    render: function (harga) {
+        if (!harga) return "Rp 0";
+
+        // Pastikan harga hanya berisi angka
+        const numericValue = harga.toString().replace(/[^0-9]/g, "");
+
+        // Ubah ke integer
+        const formatted = parseInt(numericValue, 10) || 0;
+
+        // Format ke rupiah
+        return `Rp ${new Intl.NumberFormat("id-ID").format(formatted)}`;
+    },
+},
             {
                 // Kolom Aksi
                 name: "id",
