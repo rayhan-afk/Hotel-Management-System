@@ -8,139 +8,8 @@
         <div class="col-lg-6 mb-2">
             </div>
         <div class="col-lg-6 mb-2">
-            <form class="d-flex" method="GET" action="{{ route('ruangrapat.index') }}">
-                <input class="form-control me-2" type="search" placeholder="Cari ID Reservasi / Nama Pemesan" aria-label="Search"
-                    name="search" value="{{ request()->input('search') }}">
-                <button class="btn btn-outline-dark" type="submit">Search</button>
-            </form>
         </div>
     </div>
-
-    <div class="row my-2 mt-4 ms-1">
-        <div class="col-lg-12">
-            <h5><i class="fas fa-calendar-check me-2"></i>Reservasi Aktif & Mendatang: </h5>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card p-0">
-                <div class="card-body">
-                    <div class="table-responsive" style="max-width: calc(100vw - 50px)">
-                        <table class="table table-sm table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>ID</th>
-                                    <!-- <th>Pemesan</th> -->
-                                    <th>Instansi/Perusahaan</th>
-                                    <th>Tanggal</th>
-                                    <th>Waktu</th>
-                                    <th>Paket</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($rapatTransactions as $transaction)
-                                    <tr>
-                                        <th>{{ ($rapatTransactions->currentpage() - 1) * $rapatTransactions->perpage() + $loop->index + 1 }}</th>
-                                        <td>{{ $transaction->id }}</td>
-                                        <td>{{ $transaction->rapatCustomer->nama }}</td>
-                                        <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td>
-                                        <td>{{ Helper::dateFormat($transaction->tanggal_pemakaian) }}</td>
-                                        <td>{{ $transaction->waktu_mulai }} - {{ $transaction->waktu_selesai }}</td>
-                                        <td>{{ $transaction->ruangRapatPaket->name }}</td>
-                                        <td>
-                                            <span class="badge {{ $transaction->status_reservasi == 'Confirmed' ? 'bg-success' : 'bg-warning' }}">
-                                                {{ $transaction->status_reservasi }}
-                                            </span>
-                                            <span class="badge {{ $transaction->status_pembayaran == 'Paid' ? 'bg-success' : 'bg-danger' }}">
-                                                {{ $transaction->status_pembayaran }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-light btn-sm rounded shadow-sm border p-1 m-0 {{ $transaction->status_pembayaran == 'Paid' ? 'disabled' : '' }}"
-                                                href="#" {{-- Nanti arahkan ke route pembayaran --}}
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Pay">
-                                                <i class="fas fa-money-bill-wave-alt"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="9" class="text-center">
-                                            There's no data in this table
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                        {{ $rapatTransactions->appends(['expired_page' => $rapatTransactionsExpired->currentPage(), 'search' => request('search')])->links('template.paginationlinks') }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row my-2 mt-4 ms-1">
-        <div class="col-lg-12">
-            <h5><i class="fas fa-history me-2"></i>Reservasi Selesai: </h5>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card p-0">
-                <div class="card-body">
-                    <div class="table-responsive" style="max-width: calc(100vw - 50px)">
-                        <table class="table table-sm table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>ID</th>
-                                    <th>Pemesan</th>
-                                    <th>Instansi/Perusahaan</th>
-                                    <th>Tanggal</th>
-                                    <th>Waktu</th>
-                                    <th>Paket</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($rapatTransactionsExpired as $transaction)
-                                <tr>
-                                    <th>{{ ($rapatTransactionsExpired->currentpage() - 1) * $rapatTransactionsExpired->perpage() + $loop->index + 1 }}</th>
-                                    <td>{{ $transaction->id }}</td>
-                                    <td>{{ $transaction->rapatCustomer->nama }}</td>
-                                    <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td>
-                                    <td>{{ Helper::dateFormat($transaction->tanggal_pemakaian) }}</td>
-                                    <td>{{ $transaction->waktu_mulai }} - {{ $transaction->waktu_selesai }}</td>
-                                    <td>{{ $transaction->ruangRapatPaket->name }}</td>
-                                    <td>
-                                        <span class="badge {{ $transaction->status_reservasi == 'Confirmed' ? 'bg-success' : 'bg-warning' }}">
-                                            {{ $transaction->status_reservasi }}
-                                        </span>
-                                        <span class="badge {{ $transaction->status_pembayaran == 'Paid' ? 'bg-success' : 'bg-danger' }}">
-                                            {{ $transaction->status_pembayaran }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8" class="text-center">
-                                            There's no data in this table
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                        {{ $rapatTransactionsExpired->appends(['active_page' => $rapatTransactions->currentPage(), 'search' => request('search')])->links('template.paginationlinks') }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <hr class="my-5"> 
 
     <div class="row mb-4">
         <div class="col-12">
@@ -157,6 +26,119 @@
         </div>
     </div>
 
+    <div class="row">
+        
+        <div class="col-lg-6">
+            <div class="row my-2 mt-4 ms-1">
+                <div class="col-lg-12">
+                    <h5><i class="fas fa-calendar-check me-2"></i>Jadwal Reservasi</h5>
+                </div>
+            </div>
+            <div class="card p-0">
+                <div class="card-body">
+                    <div class="table-responsive" style="max-width: calc(100vw - 50px)">
+                        <table class="table table-sm table-hover">
+                            <thead style="background-color: #f7f3e8;">
+                                <tr>
+                                    <th>Instansi/Perusahaan</th>
+                                    <th>Tanggal</th>
+                                    <th>Waktu</th>
+                                    <th>Paket</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($rapatTransactionsJadwal as $transaction)
+                                    <tr>
+                                        <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td>
+                                        <td>{{ Helper::dateFormat($transaction->tanggal_pemakaian) }}</td>
+                                        <td>{{ $transaction->waktu_mulai }} - {{ $transaction->waktu_selesai }}</td>
+                                        <td>{{ $transaction->ruangRapatPaket->name }}</td>
+                                        <td>
+                                            <span class="badge {{ $transaction->status_pembayaran == 'Paid' ? 'bg-success' : 'bg-danger' }}">
+                                                {{ $transaction->status_pembayaran == 'Paid' ? 'Lunas' : $transaction->status_pembayaran }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <form action="{{ route('rapat.transaction.cancel', $transaction->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin membatalkan reservasi ini?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm rounded shadow-sm border m-0"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Cancel Reservasi">
+                                                    Batal
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center"> Tidak ada jadwal reservasi.
+                                        </td>
+                                    </tr>
+                                @endforelse </tbody>
+                        </table>
+                        {{ $rapatTransactionsJadwal->appends([
+                            'berlangsung_page' => $rapatTransactionsBerlangsung->currentPage(),
+                            'expired_page' => $rapatTransactionsExpired->currentPage(), 
+                            'search' => request('search')
+                        ])->links('template.paginationlinks') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="row my-2 mt-4 ms-1">
+                <div class="col-lg-12">
+                    <h5 class="text-danger"><i class="fas fa-play-circle me-2"></i>Reservasi Berlangsung</h5>
+                </div>
+            </div>
+            <div class="card p-0 border-danger">
+                <div class="card-body">
+                    <div class="table-responsive" style="max-width: calc(100vw - 50px)">
+                        <table class="table table-sm table-hover">
+                            <thead class="bg-danger text-white">
+                                <tr>
+                                    <th>Instansi/Perusahaan</th>
+                                    <th>Waktu Selesai</th>
+                                    <th>Paket</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($rapatTransactionsBerlangsung as $transaction)
+                                <tr>
+                                    <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td>
+                                    <td>{{ $transaction->waktu_selesai }}</td>
+                                    <td>{{ $transaction->ruangRapatPaket->name }}</td>
+                                    <td>
+                                        <span class="badge {{ $transaction->status_pembayaran == 'Paid' ? 'bg-success' : 'bg-danger' }}">
+                                            {{ $transaction->status_pembayaran == 'Paid' ? 'Lunas' : $transaction->status_pembayaran }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center"> Tidak ada reservasi berlangsung.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                        {{ $rapatTransactionsBerlangsung->appends([
+                            'jadwal_page' => $rapatTransactionsJadwal->currentPage(),
+                            'expired_page' => $rapatTransactionsExpired->currentPage(), 
+                            'search' => request('search')
+                        ])->links('template.paginationlinks') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <hr class="my-2"> 
+
+    <div class="row">
+        <div class="col-12">
     <div class="professional-table-container">
         <div class="table-header">
             <h4><i class="fas fa-handshake me-2"></i>Manajemen Paket Ruang Rapat</h4>

@@ -20,17 +20,11 @@ use App\Http\Controllers\Inventory\IngredientTransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RuangRapatController;
 use App\Http\Controllers\RuangRapatReservationController; 
-use App\Http\Controllers\RapatTransactionController;// <-- 1. TAMBAHKAN INI
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
 Route::group(['middleware' => ['auth', 'checkRole:Super']], function () {
@@ -57,50 +51,47 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     Route::resource('roomstatus', RoomStatusController::class);
     Route::resource('transaction', TransactionController::class);
     Route::resource('facility', FacilityController::class);
-    // Ingredient routes
     Route::resource('ingredient', IngredientController::class);
     
-    // Ruang Rapat Paket (CRUD) - Ini tetap ada untuk mengelola paket
+    // ==========================================================
+    // == PENGATURAN RUANG RAPAT ==
+    // ==========================================================
+    
+    // 1. Rute utama untuk Manajemen Paket (AJAX DataTable) & List Reservasi
     Route::resource('ruangrapat', RuangRapatController::class);
 
-    // GRUP RUTE UNTUK RESERVASI RUANG RAPAT (ALUR 4 LANGKAH)
-Route::group(['middleware' => ['auth', 'checkRole:Super,Admin'], 'prefix' => 'rapat/reservasi', 'as' => 'rapat.reservation.'], function () {
+    // 2. Rute untuk CANCEL reservasi
+    Route::delete('/rapat/reservasi/{rapatTransaction}/cancel', [RuangRapatController::class, 'cancelReservation'])
+          ->name('rapat.transaction.cancel');
+
+    // 3. Rute untuk RIWAYAT PEMBAYARAN Rapat
+    Route::get('/rapat/payments', [RuangRapatController::class, 'paymentHistory'])->name('rapat.payment.index');
+
+    // 4. GRUP RUTE UNTUK ALUR 4-LANGKAH
+    Route::group(['prefix' => 'rapat/reservasi', 'as' => 'rapat.reservation.'], function () {
+        Route::get('/step-1', [RuangRapatReservationController::class, 'showStep1_CustomerInfo'])->name('showStep1');
+        Route::post('/step-1', [RuangRapatReservationController::class, 'storeStep1_CustomerInfo'])->name('storeStep1');
+        Route::get('/step-2', [RuangRapatReservationController::class, 'showStep2_TimeInfo'])->name('showStep2');
+        Route::post('/step-2', [RuangRapatReservationController::class, 'storeStep2_TimeInfo'])->name('storeStep2');
+        Route::get('/step-3', [RuangRapatReservationController::class, 'showStep3_PaketInfo'])->name('showStep3');
+        Route::post('/step-3', [RuangRapatReservationController::class, 'storeStep3_PaketInfo'])->name('storeStep3');
+        Route::get('/step-4', [RuangRapatReservationController::class, 'showStep4_Confirmation'])->name('showStep4');
+        Route::post('/bayar', [RuangRapatReservationController::class, 'processPayment'])->name('processPayment');
+        Route::get('/cancel', [RuangRapatReservationController::class, 'cancelReservation'])->name('cancel');
+    });
     
-    // Step 1: Customer Info
-    Route::get('/step-1', [RuangRapatReservationController::class, 'showStep1_CustomerInfo'])->name('showStep1');
-    Route::post('/step-1', [RuangRapatReservationController::class, 'storeStep1_CustomerInfo'])->name('storeStep1');
-
-    // Step 2: Waktu
-    Route::get('/step-2', [RuangRapatReservationController::class, 'showStep2_TimeInfo'])->name('showStep2');
-    Route::post('/step-2', [RuangRapatReservationController::class, 'storeStep2_TimeInfo'])->name('storeStep2');
-
-    // Step 3: Paket
-    Route::get('/step-3', [RuangRapatReservationController::class, 'showStep3_PaketInfo'])->name('showStep3');
-    Route::post('/step-3', [RuangRapatReservationController::class, 'storeStep3_PaketInfo'])->name('storeStep3');
-
-    // Step 4: Konfirmasi & Pembayaran
-    Route::get('/step-4', [RuangRapatReservationController::class, 'showStep4_Confirmation'])->name('showStep4');
-    Route::post('/bayar', [RuangRapatReservationController::class, 'processPayment'])->name('processPayment');
-
-    // Fungsi untuk membatalkan/mengosongkan session
-    Route::get('/cancel', [RuangRapatReservationController::class, 'cancelReservation'])->name('cancel');
-});
-
-Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
-    Route::get('/rapat/transactions', [RapatTransactionController::class, 'index'])->name('rapat.transaction.index');
-    Route::get('/rapat/payments', [RapatTransactionController::class, 'paymentHistory'])->name('rapat.payment.index');
-    
-    // Rute untuk halaman pembayaran (jika nanti ada fitur hutang)
-    // Route::get('/rapat/transaction/{rapatTransaction}/pay', [RapatTransactionController::class, 'createPayment'])->name('rapat.transaction.payment.create');
-});
+    // ==========================================================
+    // == AKHIR PENGATURAN RUANG RAPAT ==
+    // ==========================================================
 
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
     Route::get('/payment/{payment}/invoice', [PaymentController::class, 'invoice'])->name('payment.invoice');
-
+    
+    // INI ADALAH BARIS YANG DIPERBAIKI (TYPO DIHILANGKAN)
     Route::get('/transaction/{transaction}/payment/create', [PaymentController::class, 'create'])->name('transaction.payment.create');
+    
     Route::post('/transaction/{transaction}/payment/store', [PaymentController::class, 'store'])->name('transaction.payment.store');
     
-
     Route::get('/get-dialy-guest-chart-data', [ChartController::class, 'dailyGuestPerMonth']);
     Route::get('/get-dialy-guest/{year}/{month}/{day}', [ChartController::class, 'dailyGuest'])->name('chart.dailyGuest');
 
