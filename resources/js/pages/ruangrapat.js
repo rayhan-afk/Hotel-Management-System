@@ -18,7 +18,7 @@ $(function () {
                 console.error("Error fetching data:", error);
             },
         },
-        columns: [
+       columns: [
             {
                 // Kolom Nomor Urut
                 name: "id",
@@ -34,26 +34,25 @@ $(function () {
                 data: "name",
             },
             {
+                // -- DIPERBAIKI --
+                // Fungsi render dihapus agar teks tampil penuh
                 name: "isi_paket",
                 data: "isi_paket",
-                render: function(data) {
-                    // Membatasi panjang teks jika terlalu panjang
-                    return data.length > 50 ? data.substr(0, 50) + '...' : data;
-                }
             },
             {
+                // -- DIPERBAIKI --
+                // Fungsi render dihapus agar teks tampil penuh
                 name: "fasilitas",
                 data: "fasilitas",
-                 render: function(data) {
-                    return data.length > 50 ? data.substr(0, 50) + '...' : data;
-                }
             },
             {
                 name: "harga",
                 data: "harga",
                 render: function (harga) {
                     // Format mata uang Rupiah di sisi client
-                    return `<div>Rp ${new Intl.NumberFormat('id-ID').format(harga)}</div>`;
+                    // Ubah format 'harga' mentah (dari repo) ke format Rupiah
+                    const rawHarga = parseFloat(harga.toString().replace(/[^0-9.-]+/g,""));
+                    return `<div>Rp ${new Intl.NumberFormat('id-ID').format(rawHarga)}</div>`;
                 },
             },
             {
@@ -69,11 +68,14 @@ $(function () {
                             data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Paket">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <form class="btn btn-sm delete-ruangrapat" method="POST"
+                        
+                        <form class="delete-ruangrapat" method="POST"
                             id="delete-ruangrapat-form-${id}"
-                            action="/ruangrapat/${id}" style="display: inline-block;">
+                            action="/ruangrapat/${id}" style="display: inline-block; vertical-align: top;">
+                            
                             <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
                             <input type="hidden" name="_method" value="DELETE">
+                            
                             <a class="btn btn-light btn-sm rounded shadow-sm border delete"
                                 href="#" data-id="${id}" data-bs-toggle="tooltip"
                                 data-bs-placement="top" title="Hapus Paket">

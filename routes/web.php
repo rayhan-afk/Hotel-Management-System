@@ -19,6 +19,7 @@ use App\Http\Controllers\Inventory\IngredientController;
 use App\Http\Controllers\Inventory\IngredientTransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RuangRapatController;
+use App\Http\Controllers\RuangRapatReservationController; // <-- 1. TAMBAHKAN INI
 
 /*
 |--------------------------------------------------------------------------
@@ -57,9 +58,9 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     Route::resource('facility', FacilityController::class);
     // Ingredient routes
     Route::resource('ingredient', IngredientController::class);
-    // Ruang Rapat Paket routes
-    Route::resource('ruangrapat', RuangRapatController::class);
     
+    // Ruang Rapat Paket (CRUD) - Ini tetap ada untuk mengelola paket
+    Route::resource('ruangrapat', RuangRapatController::class);
 
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
     Route::get('/payment/{payment}/invoice', [PaymentController::class, 'invoice'])->name('payment.invoice');
