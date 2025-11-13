@@ -198,14 +198,15 @@ class RuangRapatReservationController extends Controller
     {
         // Cek apakah semua data lengkap di session
         if (!Session::has($this->sessionKey . '.harga')) {
-            return redirect()->route('rapat.reservation.showStep1')->with('error', 'Sesi reservasi tidak lengkap.');
+            return redirect()->route('rapat.reservation.showStep1')->with('error', 'Sesi reservasi tidak lengkap. Silakan mulai dari awal.');
         }
 
         $data = Session::get($this->sessionKey);
 
         // --- LOGIKA SIMPAN KE DATABASE ---
 
-        // 1. Simpan Customer
+        // 1. Simpan Customer (Asumsi: Selalu buat customer baru jika email belum ada, atau cari/ambil ID)
+        // Kita simpan customer baru karena ini adalah flow form step-by-step
         $customer = RapatCustomer::create([
             'nama' => $data['customer']['nama'],
             'no_hp' => $data['customer']['no_hp'],
@@ -220,21 +221,21 @@ class RuangRapatReservationController extends Controller
             'tanggal_pemakaian' => $data['time']['tanggal_pemakaian'],
             'waktu_mulai' => $data['time']['waktu_mulai'],
             'waktu_selesai' => $data['time']['waktu_selesai'],
-            'status_reservasi' => 'Confirmed', // Anggap langsung confirmed setelah bayar
+            'status_reservasi' => 'Confirmed', // Langsung confirmed setelah bayar
             'jumlah_peserta' => $data['paket']['jumlah_peserta'],
             'harga' => $data['harga'],
-            'total_pembayaran' => $data['harga'], // Asumsi langsung lunas
-            'status_pembayaran' => 'Paid', // Asumsi langsung lunas
+            'total_pembayaran' => $data['harga'], 
+            'status_pembayaran' => 'Paid', // Asumsi langsung Lunas
         ]);
-
-        // 3. TODO: Proses pembayaran (jika pakai payment gateway)
-        // 4. TODO: Buat RapatPayment record jika Anda membuatnya
 
         // Hapus session setelah berhasil
         Session::forget($this->sessionKey);
 
-        // TODO: Redirect ke halaman sukses atau invoice
-        return "Reservasi Berhasil! ID Transaksi: " . $transaction->id;
+        // ====================================================================
+        // === PERUBAHAN UTAMA: REDIRECT KE HALAMAN MANAJEMEN RUANG RAPAT ===
+        // ====================================================================
+        return redirect()->route('ruangrapat.index')
+                         ->with('success', 'Reservasi Ruang Rapat berhasil dikonfirmasi! ID Reservasi: ' . $transaction->id);
     }
 
     /**

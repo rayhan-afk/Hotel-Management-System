@@ -15,7 +15,9 @@
 
 @section('content')
     <div class="container mt-3">
-        @include('rapat.reservation._progressbar') <div class="row justify-content-md-center mt-4">
+        @include('rapat.reservation._progressbar') 
+        
+        <div class="row justify-content-md-center mt-4">
             
             <div class="col-md-8 mt-2">
                 <div class="card shadow-sm border">
@@ -26,27 +28,6 @@
                             Tanggal: <strong>{{ Helper::dateFormat($timeInfo['tanggal_pemakaian']) }}</strong> | 
                             Waktu: <strong>{{ $timeInfo['waktu_mulai'] }} - {{ $timeInfo['waktu_selesai'] }}</strong>
                         </p>
-                        <hr>
-                        
-                        <form method="GET" action="{{ route('rapat.reservation.showStep3') }}">
-                            <div class="row mb-2">
-                                <div class="col-lg-6">
-                                    <select class="form-select" name="sort_name" aria-label="Sort by">
-                                        <option value="harga" @if ($sort_name == 'harga') selected @endif>Harga</option>
-                                        <option value="name" @if ($sort_name == 'name') selected @endif>Nama Paket</option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-4">
-                                    <select class="form-select" name="sort_type" aria-label="Sort type">
-                                        <option value="ASC" @if ($sort_type == 'ASC') selected @endif>Ascending</option>
-                                        <option value="DESC" @if ($sort_type == 'DESC') selected @endif>Descending</option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-2">
-                                    <button type="submit" class="btn btn-primary shadow-sm border w-100">Sort</button>
-                                </div>
-                            </div>
-                        </form>
                         <hr>
                         
                         <form action="{{ route('rapat.reservation.storeStep3') }}" method="POST">
@@ -80,7 +61,7 @@
                                                     <p class="card-text mb-auto demo-1"><strong>Isi Paket:</strong> {{ $paket->isi_paket }}</p>
                                                     <p class="card-text mb-auto demo-1"><strong>Fasilitas:</strong> {{ $paket->fasilitas }}</p>
                                                 </div>
-                                                </div>
+                                            </div>
                                             <div class="col-auto d-none d-lg-block">
                                                 <svg class="bd-placeholder-img" width="200" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em">Image</text></svg>
                                             </div>
@@ -103,11 +84,8 @@
                         </form>
                         <div class="row">
                             <div class="col-lg-12 mt-3">
-                                {{ $pakets->onEachSide(1)->appends([
-                                    'sort_name' => $sort_name,
-                                    'sort_type' => $sort_type,
-                                ])->links('template.paginationlinks') }}
-                            </div>
+                                {{ $pakets->onEachSide(1)->links('template.paginationlinks') }}
+                                </div>
                         </div>
 
                     </div>
@@ -141,6 +119,6 @@
                     </div>
                 </div>
             </div>
-        </div>
+            </div>
     </div>
 @endsection

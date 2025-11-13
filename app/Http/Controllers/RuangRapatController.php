@@ -20,18 +20,14 @@ class RuangRapatController extends Controller
 
     public function index(Request $request)
     {
-        // Bagian 1: Logika DataTable (Dari kode lama Anda)
-        // Jika ini adalah request AJAX dari DataTable, layani data paket
         if ($request->ajax()) {
             return $this->ruangRapatPaketRepository->getPaketsDatatable($request);
         }
 
-        // Bagian 2: Logika Daftar Reservasi (Logika baru)
-        // Jika ini adalah kunjungan halaman biasa, ambil data reservasi
-        
         $now = Carbon::now();
+        // Format Y-m-d H:i:s adalah kunci untuk perbandingan di MySQL
+        $nowFormatted = $now->format('Y-m-d H:i:s'); 
         
-        // Query dasar untuk search
         $baseQuery = RapatTransaction::with('rapatCustomer', 'ruangRapatPaket');
 
         if ($request->filled('search')) {
@@ -42,31 +38,38 @@ class RuangRapatController extends Controller
                   });
             });
         }
-
-        // --- KOLOM KIRI: JADWAL RESERVASI ---
-        // (Semua reservasi hari ini dan ke depan, diurutkan dari yang paling dekat)
-        $rapatTransactionsJadwal = $baseQuery->clone()
-            ->where('tanggal_pemakaian', '>=', $now->format('Y-m-d'))
+        
+        // =======================================================================
+        // 1. RESERVASI BERLANGSUNG (SEDANG TERJADI SEKARANG)
+        // Dimulai SEBELUM/SAAT INI ANDA LIHAT HALAMAN DAN Selesai SETELAH/SAAT INI
+        // =======================================================================
+        $rapatTransactionsBerlangsung = $baseQuery->clone()
+            ->whereRaw("CONCAT(tanggal_pemakaian, ' ', waktu_mulai) <= ?", [$nowFormatted])
+            ->whereRaw("CONCAT(tanggal_pemakaian, ' ', waktu_selesai) > ?", [$nowFormatted]) // > agar tidak tumpang tindih dengan Selesai
             ->orderBy('tanggal_pemakaian', 'ASC')
             ->orderBy('waktu_mulai', 'ASC')
-            ->paginate(10, ['*'], 'jadwal_page'); // Paginator: jadwal_page
+            ->paginate(10, ['*'], 'berlangsung_page');
 
-        // --- KOLOM KANAN: RESERVASI BERLANGSUNG ---
-        // (Reservasi hari ini DAN sedang berlangsung SAAT INI)
-        $rapatTransactionsBerlangsung = $baseQuery->clone()
-            ->where('tanggal_pemakaian', $now->format('Y-m-d')) // Hari ini
-            ->where('waktu_mulai', '<=', $now->format('H:i:s')) // Sudah mulai
-            ->where('waktu_selesai', '>=', $now->format('H:i:s')) // Belum selesai
+        // =======================================================================
+        // 2. JADWAL RESERVASI (BELUM DIMULAI)
+        // Dimulai STRICTLY SETELAH waktu saat ini
+        // =======================================================================
+        $rapatTransactionsJadwal = $baseQuery->clone()
+            ->whereRaw("CONCAT(tanggal_pemakaian, ' ', waktu_mulai) > ?", [$nowFormatted])
+            ->orderBy('tanggal_pemakaian', 'ASC')
             ->orderBy('waktu_mulai', 'ASC')
-            ->paginate(10, ['*'], 'berlangsung_page'); // Paginator: berlangsung_page
+            ->paginate(10, ['*'], 'jadwal_page');
 
-        // --- TABEL BAWAH: RESERVASI SELESAI ---
+        // =======================================================================
+        // 3. RESERVASI SELESAI (SUDAH BERAKHIR)
+        // Selesai STRICTLY SEBELUM waktu saat ini
+        // =======================================================================
         $rapatTransactionsExpired = $baseQuery->clone()
-            ->where('tanggal_pemakaian', '<', $now->format('Y-m-d'))
+            ->whereRaw("CONCAT(tanggal_pemakaian, ' ', waktu_selesai) <= ?", [$nowFormatted])
             ->orderBy('tanggal_pemakaian', 'DESC')
-            ->paginate(10, ['*'], 'expired_page'); // Paginator: expired_page
+            ->orderBy('waktu_selesai', 'DESC')
+            ->paginate(10, ['*'], 'expired_page');
 
-        // Kirim semua data reservasi ke view
         return view('ruangrapat.index', compact(
             'rapatTransactionsJadwal', 
             'rapatTransactionsBerlangsung',

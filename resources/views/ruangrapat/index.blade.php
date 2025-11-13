@@ -48,9 +48,12 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="reservasi-jadwal-body">
                                 @forelse ($rapatTransactionsJadwal as $transaction)
-                                    <tr>
+                                    @php
+                                        $fullStartTime = $transaction->tanggal_pemakaian . ' ' . $transaction->waktu_mulai;
+                                    @endphp
+                                    <tr data-start-time-str="{{ $fullStartTime }}">
                                         <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td>
                                         <td>{{ Helper::dateFormat($transaction->tanggal_pemakaian) }}</td>
                                         <td>{{ $transaction->waktu_mulai }} - {{ $transaction->waktu_selesai }}</td>
@@ -91,10 +94,13 @@
         <div class="col-lg-6">
             <div class="row my-2 mt-4 ms-1">
                 <div class="col-lg-12">
-                    <h5 class="text-danger"><i class="fas fa-play-circle me-2"></i>Reservasi Berlangsung</h5>
+                    <h5>
+                        <i class="fas fa-dot-circle me-2" style="color: #8B4513;"></i>
+                        <span class="text-dark">Reservasi Berlangsung</span>
+                    </h5>
                 </div>
             </div>
-            <div class="card p-0 border-danger">
+            <div class="card p-0 border-danger"> 
                 <div class="card-body">
                     <div class="table-responsive" style="max-width: calc(100vw - 50px)">
                         <table class="table table-sm table-hover">
@@ -106,9 +112,12 @@
                                     <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="reservasi-berlangsung-body">
                                 @forelse ($rapatTransactionsBerlangsung as $transaction)
-                                <tr>
+                                @php
+                                    $fullEndTime = $transaction->tanggal_pemakaian . ' ' . $transaction->waktu_selesai;
+                                @endphp
+                                <tr data-end-time-str="{{ $fullEndTime }}">
                                     <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td>
                                     <td>{{ $transaction->waktu_selesai }}</td>
                                     <td>{{ $transaction->ruangRapatPaket->name }}</td>
@@ -135,7 +144,60 @@
                 </div>
             </div>
         </div>
-    </div> <hr class="my-2"> 
+    </div> <div class="row my-2 mt-4 ms-1">
+        <div class="col-lg-12">
+            <h5><i class="fas fa-history me-2"></i>Reservasi Selesai: </h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card p-0">
+                <div class="card-body">
+                    <div class="table-responsive" style="max-width: calc(100vw - 50px)">
+                        <table class="table table-sm table-hover">
+                            <thead style="background-color: #f7f3e8;">
+                                <tr>
+                                    <th>Instansi/Perusahaan</th>
+                                    <th>Tanggal</th>
+                                    <th>Waktu</th>
+                                    <th>Paket</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($rapatTransactionsExpired as $transaction)
+                                <tr>
+                                    <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td>
+                                    <td>{{ Helper::dateFormat($transaction->tanggal_pemakaian) }}</td>
+                                    <td>{{ $transaction->waktu_mulai }} - {{ $transaction->waktu_selesai }}</td>
+                                    <td>{{ $transaction->ruangRapatPaket->name }}</td>
+                                    <td>
+                                        <span class="badge {{ $transaction->status_pembayaran == 'Paid' ? 'bg-success' : 'bg-danger' }}">
+                                            {{ $transaction->status_pembayaran == 'Paid' ? 'Lunas' : $transaction->status_pembayaran }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            There's no data in this table
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                        {{ $rapatTransactionsExpired->appends([
+                            'jadwal_page' => $rapatTransactionsJadwal->currentPage(),
+                            'berlangsung_page' => $rapatTransactionsBerlangsung->currentPage(), 
+                            'search' => request('search')
+                        ])->links('template.paginationlinks') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-5"> 
 
     <div class="row">
         <div class="col-12">
@@ -165,4 +227,52 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('footer')
+<script>
+    function checkReservationStatusChanges() {
+        const now = new Date();
+        let shouldReload = false;
+
+        // Helper function to check and mark for reload
+        const checkTimeAndHide = (bodyId, timeAttr) => {
+            const tableBody = document.getElementById(bodyId);
+            if (!tableBody) return;
+
+            tableBody.querySelectorAll(`tr[${timeAttr}-str]`).forEach(row => {
+                // HANYA proses baris yang saat ini terlihat (tidak disembunyikan)
+                if (row.style.display !== 'none') {
+                    const timeStr = row.getAttribute(`${timeAttr}-str`);
+                    // Ganti spasi dengan T untuk parsing ISO 8601 yang andal
+                    const dateTime = new Date(timeStr.replace(' ', 'T'));
+                    
+                    if (now >= dateTime) {
+                        row.style.display = 'none'; // Sembunyikan baris
+                        shouldReload = true; // Tandai untuk reload
+                    }
+                }
+            });
+        };
+
+        // --- 1. Cek Tabel JADWAL RESERVASI (Pindah ke Berlangsung) ---
+        // timeAttr: 'data-start-time'
+        checkTimeAndHide('reservasi-jadwal-body', 'data-start-time');
+
+        // --- 2. Cek Tabel RESERVASI BERLANGSUNG (Pindah ke Selesai) ---
+        // timeAttr: 'data-end-time'
+        checkTimeAndHide('reservasi-berlangsung-body', 'data-end-time');
+
+        // --- 3. Trigger Reload jika ada Perubahan (Item baru saja disembunyikan) ---
+        if (shouldReload) {
+            // Beri jeda 0.5 detik, lalu reload
+            setTimeout(() => {
+                window.location.reload();
+            }, 500); 
+        }
+    }
+
+    // Jalankan pengecekan setiap detik (1000ms)
+    setInterval(checkReservationStatusChanges, 1000);
+</script>
 @endsection

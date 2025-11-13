@@ -6,7 +6,9 @@
 
 @section('content')
     <div class="container mt-3">
-        @include('rapat.reservation._progressbar') <div class="row justify-content-md-center mt-4">
+        @include('rapat.reservation._progressbar') 
+        
+        <div class="row justify-content-md-center mt-4">
             
             <div class="col-md-8 mt-2">
                 <div class="card shadow-sm border">
@@ -74,8 +76,8 @@
                                         <label class="col-sm-3 col-form-label fs-5">Total Biaya</label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control fs-5 text-success" 
-                                                   value="{{ Helper::convertToRupiah($totalHarga) }} ({{ Helper::convertToRupiah($paket->harga) }} x {{ $durasiJam }} jam)" readonly 
-                                                   style="font-weight: bold;">
+                                                    value="{{ Helper::convertToRupiah($totalHarga) }} ({{ Helper::convertToRupiah($paket->harga) }} x {{ $durasiJam }} jam)" readonly 
+                                                    style="font-weight: bold;">
                                         </div>
                                     </div>
                                     
