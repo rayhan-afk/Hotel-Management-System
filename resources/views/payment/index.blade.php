@@ -8,12 +8,12 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Room</th>
-                        <th scope="col">Paid Off</th>
+                        <th scope="col">Ruangan</th>
+                        <th scope="col">Lunas</th>
                         <th scope="col">Status</th>
-                        <th scope="col">At</th>
-                        <th scope="col">Served By</th>
-                        <th scope="col">Action</th>
+                        <th scope="col">di</th>
+                        <th scope="col">Dilayani Oleh</th>
+                        <th scope="col">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,7 +30,7 @@
                         </tr>
                     @empty
                         <tr class="text-center">
-                            <td colspan="6">Theres no payment found on database</td>
+                            <td colspan="6">Data pembayaran tidak ditemukan</td>
                         </tr>
                     @endforelse
                 </tbody>

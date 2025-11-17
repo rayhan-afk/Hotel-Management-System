@@ -39,13 +39,13 @@
                         @if (auth()->user()->unreadNotifications->count() > 0)
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                 {{ auth()->user()->unreadNotifications->count() }}
-                                <span class="visually-hidden">unread messages</span>
+                                <span class="visually-hidden">pesan belum dibaca</span>
                             </span>
                         @endif
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="dropdownMenuButton2" style="width: 320px;">
                         <li class="dropdown-header d-flex justify-content-between align-items-center">
-                            <span class="fw-bold">Notifications</span>
+                            <span class="fw-bold">Notifikasi</span>
                             @if (auth()->user()->unreadNotifications->count() > 0)
                                 <span class="badge bg-primary">{{ auth()->user()->unreadNotifications->count() }} new</span>
                             @endif
@@ -75,7 +75,7 @@
                                 <li>
                                     <div class="dropdown-item-text text-center py-4">
                                         <i class="fas fa-bell-slash text-muted mb-2" style="font-size: 2rem;"></i>
-                                        <p class="text-muted mb-0">No new notifications</p>
+                                        <p class="text-muted mb-0">Tidak ada Notifikasi Baru</p>
                                     </div>
                                 </li>
                             @endforelse
@@ -85,10 +85,10 @@
                             <li><hr class="dropdown-divider"></li>
                             <li class="d-flex justify-content-between px-3 py-2">
                                 <a href="{{ route('notification.markAllAsRead') }}" class="btn btn-sm btn-outline-primary">
-                                    Mark all read
+                                    Tandai semua sebagai telah dibaca
                                 </a>
                                 <a href="{{ route('notification.index') }}" class="btn btn-sm btn-primary">
-                                    View All
+                                    Lihat Semua
                                 </a>
                             </li>
                         @endif
@@ -125,20 +125,20 @@
                             <a class="dropdown-item d-flex align-items-center"
                                href="{{ route('user.show', ['user' => auth()->user()->id]) }}">
                                 <i class="fas fa-user me-3 text-primary"></i>
-                                View Profile
+                                Lihat
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item d-flex align-items-center"
                                href="{{ route('activity-log.index') }}">
                                 <i class="fas fa-history me-3 text-info"></i>
-                                Activity Log
+                                Aktifitas Log
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <i class="fas fa-cog me-3 text-secondary"></i>
-                                Settings
+                                Pengaturan
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
@@ -147,7 +147,7 @@
                                 @csrf
                                 <button class="dropdown-item d-flex align-items-center text-danger" type="submit">
                                     <i class="fas fa-sign-out-alt me-3"></i>
-                                    Logout
+                                    Keluar
                                 </button>
                             </form>
                         </li>

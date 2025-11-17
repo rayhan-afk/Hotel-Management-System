@@ -21,13 +21,13 @@
             <form class="d-flex" method="GET" action="{{ route('transaction.index') }}">
                 <input class="form-control me-2" type="search" placeholder="Search by ID" aria-label="Search"
                     id="search-user" name="search" value="{{ request()->input('search') }}">
-                <button class="btn btn-outline-dark" type="submit">Search</button>
+                <button class="btn btn-outline-dark" type="submit">Cari</button>
             </form>
         </div>
     </div>
     <div class="row my-2 mt-4 ms-1">
         <div class="col-lg-12">
-            <h5>Active Guests: </h5>
+            <h5>User yang Aktif: </h5>
         </div>
     </div>
     <div class="row">
@@ -40,15 +40,15 @@
                                 <tr>
                                     <th>#</th>
                                     <th>ID</th>
-                                    <th>Customer</th>
-                                    <th>Room</th>
+                                    <th>Pelanggan</th>
+                                    <th>Kamar</th>
                                     <th>Check In</th>
                                     <th>Check Out</th>
-                                    <th>Days</th>
-                                    <th>Total Price</th>
-                                    <th>Paid Off</th>
-                                    <th>Debt</th>
-                                    <th>Action</th>
+                                    <th>Hari</th>
+                                    <th>Total Harga</th>
+                                    <th>Lunas</th>
+                                    <th>Debit</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,8 +57,8 @@
                                         <th>{{ ($transactions->currentpage() - 1) * $transactions->perpage() + $loop->index + 1 }}
                                         </th>
                                         <td>{{ $transaction->id }}</td>
-                                        <td>{{ $transaction->customer->name }}</td>
-                                        <td>{{ $transaction->room->number }}</td>
+                                        <td>{{ $transaction->pelanggan->nama }}</td>
+                                        <td>{{ $transaction->ruangan->nomor }}</td>
                                         <td>{{ Helper::dateFormat($transaction->check_in) }}</td>
                                         <td>{{ Helper::dateFormat($transaction->check_out) }}</td>
                                         <td>{{ $transaction->getDateDifferenceWithPlural($transaction->check_in, $transaction->check_out) }}
@@ -81,7 +81,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="15" class="text-center">
-                                            There's no data in this table
+                                            Tidak Ada Data di Table Ini
                                         </td>
                                     </tr>
                                 @endforelse
@@ -108,15 +108,15 @@
                                 <tr>
                                     <th>#</th>
                                     <th>ID</th>
-                                    <th>Customer</th>
-                                    <th>Room</th>
+                                    <th>Pelanggan</th>
+                                    <th>Kamar</th>
                                     <th>Check In</th>
                                     <th>Check Out</th>
-                                    <th>Days</th>
-                                    <th>Total Price</th>
-                                    <th>Paid Off</th>
-                                    <th>Debt</th>
-                                    <th>Action</th>
+                                    <th>Hari</th>
+                                    <th>Total Harga</th>
+                                    <th>Lunas</th>
+                                    <th>Debit</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -125,8 +125,8 @@
                                     <th>{{ ($transactions->currentpage() - 1) * $transactions->perpage() + $loop->index + 1 }}
                                     </th>
                                     <td>{{ $transaction->id }}</td>
-                                    <td>{{ $transaction->customer->name }}</td>
-                                    <td>{{ $transaction->room->number }}</td>
+                                    <td>{{ $transaction->pelanggan->nama }}</td>
+                                    <td>{{ $transaction->kamar->nomor }}</td>
                                     <td>{{ Helper::dateFormat($transaction->check_in) }}</td>
                                     <td>{{ Helper::dateFormat($transaction->check_out) }}</td>
                                     <td>{{ $transaction->getDateDifferenceWithPlural($transaction->check_in, $transaction->check_out) }}
@@ -139,7 +139,7 @@
                                     <td>{{ $transaction->getTotalPrice() - $transaction->getTotalPayment() <= 0 ? '-' : Helper::convertToRupiah($transaction->getTotalPrice($transaction->room->price, $transaction->check_in, $transaction->check_out) - $transaction->getTotalPayment()) }}
                                     </td>
                                     <td>
-                                        <a class="btn btn-light btn-sm rounded shadow-sm border p-1 m-0 {{$transaction->getTotalPrice($transaction->room->price, $transaction->check_in, $transaction->check_out) - $transaction->getTotalPayment() <= 0 ? 'disabled' : ''}}"
+                                        <a class="btn btn-light btn-sm rounded shadow-sm border p-1 m-0 {{$transaction->getTotalPrice($transaction->kamar->harga, $transaction->check_in, $transaction->check_out) - $transaction->getTotalPayment() <= 0 ? 'disabled' : ''}}"
                                             href="{{ route('transaction.payment.create', ['transaction' => $transaction->id]) }}"
                                             data-bs-toggle="tooltip" data-bs-placement="top" title="Pay">
                                             <i class="fas fa-money-bill-wave-alt"></i>
@@ -149,7 +149,7 @@
                             @empty
                                 <tr>
                                     <td colspan="15" class="text-center">
-                                        There's no data in this table
+                                        Tidak Ada Data di Table Ini
                                     </td>
                                 </tr>
                             @endforelse
@@ -170,21 +170,19 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Have any account?</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">Apakah Ada Akun Lain?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="d-flex justify-content-center">
                         <a class="btn btn-sm btn-primary m-1"
-                            href="{{ route('transaction.reservation.createIdentity') }}">No, create
-                            new account!</a>
+                            href="{{ route('transaction.reservation.createIdentity') }}">Tidak, Buat Akun Baru!!!</a>
                         <a class="btn btn-sm btn-success m-1"
-                            href="{{ route('transaction.reservation.pickFromCustomer') }}">Yes, use
-                            their account!</a>
+                            href="{{ route('transaction.reservation.pickFromCustomer') }}">Ya, Gunakan Akun Lain</a>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>

@@ -6,7 +6,7 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h1 class="h3 text-gradient mb-1">Selamat Datang Jihad Fachrul, {{ auth()->user()->name }}!</h1>
+                        <h1 class="h3 text-gradient mb-1">Selamat Datang Admin, {{ auth()->user()->name }}!</h1>
                     </div>
                 </div>
             </div>
@@ -250,7 +250,7 @@
                                    class="btn btn-hotel-success btn-lh w-100 h-100 d-flex flex-column align-items-center justify-content-center"
                                    style="min-height: 80px;">
                                     <i class="fas fa-users mb-2" style="font-size: 1.5rem;"></i>
-                                    <span>Manage Customers</span>
+                                    <span>Kelola Pelanggan</span>
                                 </a>
                             </div>
                             <div class="col-lg-3 col-md-6 mb-3">
@@ -258,7 +258,7 @@
                                    class="btn btn-outline-primary btn-lh w-100 h-100 d-flex flex-column align-items-center justify-content-center"
                                    style="min-height: 80px;">
                                     <i class="fas fa-bed mb-2" style="font-size: 1.5rem;"></i>
-                                    <span>Room Management</span>
+                                    <span>Kelola Ruangan</span>
                                 </a>
                             </div>
                             <div class="col-lg-3 col-md-6 mb-3">
@@ -266,7 +266,7 @@
                                    class="btn btn-outline-secondary btn-lh w-100 h-100 d-flex flex-column align-items-center justify-content-center"
                                    style="min-height: 80px;">
                                     <i class="fas fa-credit-card mb-2" style="font-size: 1.5rem;"></i>
-                                    <span>Payment History</span>
+                                    <span>Riwayat Pembayaran</span>
                                 </a>
                             </div>
                         </div>

@@ -23,7 +23,7 @@
             <form class="d-flex" method="GET" action="{{ route('rapat.transaction.index') }}">
                 <input class="form-control me-2" type="search" placeholder="Search by ID or Nama" aria-label="Search"
                     id="search-user" name="search" value="{{ request()->input('search') }}">
-                <button class="btn btn-outline-dark" type="submit">Search</button>
+                <button class="btn btn-outline-dark" type="submit">Cari</button>
             </form>
         </div>
     </div>
@@ -49,7 +49,7 @@
                                     <th>Waktu</th>               
                                     <th>Paket</th>               
                                     <th>Status</th>              
-                                    <th>Action</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>

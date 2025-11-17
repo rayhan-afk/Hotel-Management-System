@@ -18,13 +18,13 @@
                             </header>
                             <div class="card__content">
                                 <p>{{ $notification->data['message'] }}</p>
-                                <a class="btn btn-sm shadow-sm myBtn border rounded" href="{{ $notification->data['url'] }}"> See Detail</a>
+                                <a class="btn btn-sm shadow-sm myBtn border rounded" href="{{ $notification->data['url'] }}"> Lihat Detail</a>
                             </div>
                         </div>
                     @empty
                     <div class="timeline__card card">
                         <div class="card__content">
-                            <p>There's no new unread notification</p>
+                            <p>Tidak ada notifikasi baru</p>
                         </div>
                     </div>
                     @endforelse
@@ -42,13 +42,13 @@
                             </header>
                             <div class="card__content">
                                 <p>{{ $notification->data['message'] }}</p>
-                                <a class="btn btn-sm shadow-sm myBtn border rounded mt-2 float-end" href="{{ $notification->data['url'] }}"> See Detail</a>
+                                <a class="btn btn-sm shadow-sm myBtn border rounded mt-2 float-end" href="{{ $notification->data['url'] }}"> Lihat Detail</a>
                             </div>
                         </div>
                     @empty
                     <div class="timeline__card card">
                         <div class="card__content">
-                            <p>There's no notification</p>
+                            <p>Tidak ada notifikasi</p>
                         </div>
                     </div>
                     @endforelse

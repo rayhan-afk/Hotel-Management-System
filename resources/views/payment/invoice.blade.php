@@ -42,8 +42,8 @@
                         <table class="table table-borderless">
                             <tbody>
                                 <tr class="add">
-                                    <td>From</td>
-                                    <td>To</td>
+                                    <td>Dari</td>
+                                    <td>Untuk</td>
                                 </tr>
                                 <tr class="content">
                                     <td class="font-weight-bold"> {{Helper::dateDayFormat($payment->transaction->check_in)}}</td>
@@ -57,10 +57,10 @@
                         <table class="table table-borderless">
                             <tbody>
                                 <tr class="add">
-                                    <td>Description</td>
-                                    <td class="text-center">Days</td>
-                                    <td class="text-center">Room Price / Day</td>
-                                    <td class="text-center">Total Price</td>
+                                    <td>Deskripsi</td>
+                                    <td class="text-center">Hari</td>
+                                    <td class="text-center">Harga Kamar/Hari</td>
+                                    <td class="text-center">Total Harga</td>
                                 </tr>
                                 <tr class="content">
                                     <td>{{ $payment->transaction->room->type->name }} -
@@ -81,10 +81,10 @@
                             <tbody>
                                 <tr class="add">
                                     <td></td>
-                                    <td class="text-center">Minimum DownPayment</td>
-                                    <td class="text-center">Paid Off</td>
+                                    <td class="text-center">Minimal Pembayaran</td>
+                                    <td class="text-center">Lunas</td>
                                     <td class="text-center">
-                                        insufficient payment</td>
+                                        Pembayaran Tidak Cukup</td>
                                 </tr>
                                 <tr class="content">
                                     <td></td>
@@ -103,7 +103,7 @@
                         <table class="table table-borderless">
                             <tbody>
                                 <tr class="add">
-                                    <td>Customer Details</td>
+                                    <td>Detail Pelanggan</td>
                                 </tr>
                                 <tr class="content">
                                     <td>

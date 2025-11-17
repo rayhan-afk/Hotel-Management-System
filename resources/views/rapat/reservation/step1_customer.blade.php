@@ -39,7 +39,7 @@
                                 @enderror
                             </div>
                             <div class="col-md-6">
-                                <label for="instansi" class="form-label">Instansi (Opsional)</label>
+                                <label for="instansi" class="form-label">Instansi/Perusahaan</label>
                                 <input type="text" class="form-control @error('instansi') is-invalid @enderror" id="instansi"
                                     name="instansi" value="{{ old('instansi', $customer['instansi'] ?? '') }}">
                                 @error('instansi')

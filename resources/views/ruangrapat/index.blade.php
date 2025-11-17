@@ -45,7 +45,7 @@
                                     <th>Waktu</th>
                                     <th>Paket</th>
                                     <th>Status</th>
-                                    <th>Action</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="reservasi-jadwal-body">
@@ -180,7 +180,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="5" class="text-center">
-                                            There's no data in this table
+                                            Tidak ada data dalam tabel ini
                                         </td>
                                     </tr>
                                 @endforelse
@@ -215,7 +215,7 @@
                         <th scope="col">Isi Paket</th>
                         <th scope="col">Fasilitas</th>
                         <th scope="col">Harga</th>
-                        <th scope="col"><i class="fas fa-cog me-1"></i>Actions</th>
+                        <th scope="col"><i class="fas fa-cog me-1"></i>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
