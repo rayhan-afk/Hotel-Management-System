@@ -191,21 +191,46 @@
                             </div>
                         </div>
                     </div>
+                    </div> 
+                    <div class="nav-section">
+                        <div class="nav-section-title">Analytics</div>
 
-                    </div> <div class="nav-section">
-                    <div class="nav-section-title">Analytics</div>
-
-                    <a href="#" class="nav-item">
-                        <div class="nav-icon">
-                            <i class="fas fa-chart-bar"></i>
+                        {{-- =================================================================== --}}
+                        {{-- DROPDOWN BARU: LAPORAN (Meniru style Persediaan) --}}
+                        {{-- =================================================================== --}}
+                        @php
+                        // Definisikan rute yang termasuk dalam grup Laporan
+                        $laporanRoutes = ['laporan.kamar.index', 'laporan.rapat.index'];
+                        $isLaporanActive = in_array(Route::currentRouteName(), $laporanRoutes);
+                        @endphp
+                        
+                        <div class="nav-item dropdown-nav {{ $isLaporanActive ? 'active' : '' }}">
+                            <div class="nav-toggle" data-bs-toggle="collapse" data-bs-target="#laporanSubmenu">
+                                <div class="nav-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="nav-content">
+                                    <div class="nav-title">Laporan</div>
+                                    <div class="nav-subtitle">Keuangan & Analitik</div>
+                                </div>
+                                <div class="nav-arrow">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="collapse {{ $isLaporanActive ? 'show' : '' }} w-100" id="laporanSubmenu">
+                                <div class="nav-submenu">
+                                    <a href="#" class="nav-subitem {{ Route::currentRouteName() == 'laporan.kamar.index' ? 'active' : '' }} ">
+                                        <i class="fas fa-bed me-2"></i>Laporan Kamar Hotel
+                                    </a>
+                                    {{-- Pastikan route 'laporan.rapat.index' sudah ada di web.php --}}
+                                    <a href="{{ route('laporan.rapat.index') }}" class="nav-subitem {{ Route::currentRouteName() == 'laporan.rapat.index' ? 'active' : '' }} ">
+                                        <i class="fas fa-handshake me-2"></i>Laporan Ruang Rapat
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="nav-content">
-                            <div class="nav-title">Reports</div>
-                            <div class="nav-subtitle">Financial & Analytics</div>
-                        </div>
-                    </a>
-                </div>
-
+                    </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Administration</div>
 
