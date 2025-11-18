@@ -168,30 +168,36 @@
     </div>
 </a>
 
-                    <div class="nav-item dropdown-nav {{ in_array(Route::currentRouteName(), ['persediaan.bahan.index', 'persediaan.amenities.index']) ? 'active' : '' }} ">
-                        <div class="nav-toggle" data-bs-toggle="collapse" data-bs-target="#persediaanSubmenu">
-                            <div class="nav-icon">
-                                <i class="fas fa-boxes"></i> </div>
-                            <div class="nav-content">
-                                <div class="nav-title">Persediaan</div>
-                                <div class="nav-subtitle">Bahan Baku & Amenities</div>
-                            </div>
-                            <div class="nav-arrow">
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                        </div>
-                        <div class="collapse {{ in_array(Route::currentRouteName(), ['persediaan.bahan.index', 'persediaan.amenities.index']) ? 'show' : '' }} w-100" id="persediaanSubmenu">
-                            <div class="nav-submenu">
-                                <a href="#" class="nav-subitem {{ in_array(Route::currentRouteName(), ['persediaan.bahan.index']) ? 'active' : '' }} ">
-                                    <i class="fas fa-cube me-2"></i>Persediaan Bahan Baku
-                                </a>
-                                <a href="#" class="nav-subitem {{ in_array(Route::currentRouteName(), ['persediaan.amenities.index']) ? 'active' : '' }} ">
-                                    <i class="fas fa-soap me-2"></i>Persediaan Amenities
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    </div> 
+                    <div class="nav-item dropdown-nav {{ request()->routeIs(['ingredient.*', 'amenity.*']) ? 'active' : '' }} ">
+    <div class="nav-toggle" data-bs-toggle="collapse" data-bs-target="#persediaanSubmenu">
+        <div class="nav-icon">
+            <i class="fas fa-boxes"></i>
+        </div>
+        <div class="nav-content">
+            <div class="nav-title">Persediaan</div>
+            <div class="nav-subtitle">Bahan Baku & Amenities</div>
+        </div>
+        <div class="nav-arrow">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+    <div class="collapse {{ request()->routeIs(['ingredient.*', 'amenity.*']) ? 'show' : '' }} w-100" id="persediaanSubmenu">
+        <div class="nav-submenu">
+            
+            {{-- Tautan Bahan Baku (sudah benar) --}}
+            <a href="{{ route('ingredient.index') }}" class="nav-subitem {{ request()->routeIs('ingredient.*') ? 'active' : '' }} ">
+                <i class="fas fa-cube me-2"></i>Persediaan Bahan Baku
+            </a>
+            
+            {{-- Tautan Amenities (diperbarui) --}}
+            <a href="{{ route('amenity.index') }}" class="nav-subitem {{ request()->routeIs('amenity.*') ? 'active' : '' }} ">
+                <i class="fas fa-soap me-2"></i>Persediaan Amenities
+            </a>
+
+        </div>
+    </div>
+</div>
+
                     <div class="nav-section">
                         <div class="nav-section-title">Analytics</div>
 

@@ -42,8 +42,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransactionRepositoryInterface::class, TransactionRepository::class);
         $this->app->bind(TypeRepositoryInterface::class, TypeRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
-        $this->app->bind(RuangRapatPaketRepositoryInterface::class, RuangRapatPaketRepository::class
-    );
+        $this->app->bind(RuangRapatPaketRepositoryInterface::class, RuangRapatPaketRepository::class);
         
     }
 

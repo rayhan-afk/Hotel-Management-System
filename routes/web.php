@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RuangRapatController;
 use App\Http\Controllers\RuangRapatReservationController; 
 use App\Http\Controllers\LaporanController;
-
+use \App\Http\Controllers\AmenityController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -53,6 +53,10 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     Route::resource('transaction', TransactionController::class);
     Route::resource('facility', FacilityController::class);
     Route::resource('ingredient', IngredientController::class);
+    Route::resource('amenity', AmenityController::class);
+
+    Route::get('/amenity/datatable', [\App\Http\Controllers\AmenityController::class, 'datatable'])
+         ->name('amenity.datatable');
     
     // ==========================================================
     // == PENGATURAN RUANG RAPAT ==
@@ -85,19 +89,17 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     // == AKHIR PENGATURAN RUANG RAPAT ==
     // ==========================================================
 
-    
     // ==========================================================
-    // == RUTE LAPORAN BARU (SIMPAN DI SINI) ==
-    // ==========================================================
-    Route::name('laporan.')->group(function () {
-        // Laporan Ruang Rapat
-        Route::get('/laporan/rapat', [LaporanController::class, 'laporanRuangRapat'])->name('rapat.index');
+// == RUTE LAPORAN BARU (SIMPAN DI SINI) ==
+// ==========================================================
+Route::name('laporan.')->group(function () {
+    // Laporan Ruang Rapat
+    // Rute ini sudah benar. Controller (Langkah 4) akan menangani AJAX di rute ini.
+    Route::get('/laporan/rapat', [LaporanController::class, 'laporanRuangRapat'])->name('rapat.index');
         
-        // Laporan Kamar Hotel (Stub)
-        Route::get('/laporan/kamar', [LaporanController::class, 'laporanKamarHotel'])->name('kamar.index');
-    });
-    // ==========================================================
-
+    // Laporan Kamar Hotel (Stub)
+    Route::get('/laporan/kamar', [LaporanController::class, 'laporanKamarHotel'])->name('kamar.index');
+});
 
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
     Route::get('/payment/{payment}/invoice', [PaymentController::class, 'invoice'])->name('payment.invoice');
