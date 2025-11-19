@@ -2,7 +2,7 @@
 @section('title', 'User')
 @section('content')
     <div class="container">
-        <h1>User Activity Log</h1>
+        <h1>Log Aktivitas Pengguna</h1>
 
         <table class="table">
             <thead>

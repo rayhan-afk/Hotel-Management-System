@@ -41,25 +41,25 @@
                             @enderror
                         </div>
                         <div class=" col-md-12">
-                            <label for="Peran" class="form-label">Peran</label>
-                            <select id="Peran" name="Peran" class="form-select @error('password') is-invalid @enderror">
-                                <option selected disabled hidden>Pilih...</option>
-                                @if (in_array($user->Peran, ['Super', 'Admin']))
-                                    <option value="Super" @if ($user->Peran == 'Super') selected @endif>Super</option>
-                                    <option value="Admin" @if ($user->Peran == 'Admin') selected @endif>Admin</option>
+                            <label for="role" class="form-label">Peran</label>
+                            <select id="role" name="role" class="form-select @error('password') is-invalid @enderror">
+                                <option selected disabled hidden>Choose...</option>
+                                @if (in_array($user->role, ['Super', 'Admin']))
+                                    <option value="Super" @if ($user->role == 'Super') selected @endif>Super</option>
+                                    <option value="Admin" @if ($user->role == 'Admin') selected @endif>Admin</option>
                                 @endif
-                                @if ($user->Peran == 'Customer')
-                                    <option value="Customer" @if ($user->Peran == 'Customer') selected @endif>Pengguna</option>
+                                @if ($user->role == 'Customer')
+                                    <option value="Customer" @if ($user->role == 'Customer') selected @endif>Pengguna</option>
                                 @endif
                             </select>
-                            @error('Peran')
+                            @error('role')
                                 <div class="text-danger mt-1">
                                     {{ $message }}
                                 </div>
                             @enderror
                         </div>
                         <div class="col-12">
-                            <button type="submit" class="btn btn-light shadow-sm border float-end">Simpan</button>
+                            <button type="submit" class="btn btn-light shadow-sm border float-end">Save</button>
                         </div>
                     </form>
                 </div>

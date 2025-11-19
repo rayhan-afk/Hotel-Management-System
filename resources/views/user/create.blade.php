@@ -41,13 +41,13 @@
                             @enderror
                         </div>
                         <div class=" col-md-12">
-                            <label for="Peran" class="form-label">Peran</label>
-                            <select id="Peran" name="Peran" class="form-select @error('password') is-invalid @enderror">
+                            <label for="role" class="form-label">Peran</label>
+                            <select id="role" name="role" class="form-select @error('password') is-invalid @enderror">
                                 <option selected disabled hidden>Pilih...</option>
-                                <option value="Super" @if (old('Peran') == 'Super') selected @endif>Super</option>
-                                <option value="Admin" @if (old('Peran') == 'Admin') selected @endif>Admin</option>
+                                <option value="Super" @if (old('role') == 'Super') selected @endif>Super</option>
+                                <option value="Admin" @if (old('role') == 'Admin') selected @endif>Admin</option>
                             </select>
-                            @error('Peran')
+                            @error('role')
                                 <div class="text-danger mt-1">
                                     {{ $message }}
                                 </div>

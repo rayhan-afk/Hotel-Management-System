@@ -18,10 +18,10 @@
                 </div>
                 <div class="col-lg-6 mb-2">
                     <form class="d-flex" method="GET" Aksi="{{ route('user.index') }}">
-                        <input type="hidden" nama="qc" value="{{ request()->input('qc') }}">
-                        <input type="hidden" nama="customers" value="{{ request()->input('customers') }}">
-                        <input class="form-control me-2" type="search" placeholder="Search by nama" aria-label="Search"
-                            id="search-user" nama="qu" value="{{ request()->input('qu') }}">
+                        <input type="hidden" n="qc" value="{{ request()->input('qc') }}">
+                        <input type="hidden" n="customers" value="{{ request()->input('customers') }}">
+                        <input class="form-control me-2" type="search" placeholder="Search by n" aria-label="Search"
+                            id="search-user" n="qu" value="{{ request()->input('qu') }}">
                         <button class="btn btn-outline-dark" type="submit">Cari</button>
                     </form>
                 </div>
@@ -47,7 +47,7 @@
                                                 <td scope="row">
                                                     {{ ($users->currentpage() - 1) * $users->perpage() + $loop->index + 1 }}
                                                 </td>
-                                                <td>{{ $user->nama }}</td>
+                                                <td>{{ $user->n }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ $user->Peran }}</td>
                                                 <td>
@@ -67,7 +67,7 @@
                                                         @csrf
                                                         @method('DELETE')
                                                         <div class="btn btn-light btn-sm rounded shadow-sm border p-0 m-0 delete"
-                                                            user-id="{{ $user->id }}" user-nama="{{ $user->nama }}"
+                                                            user-id="{{ $user->id }}" user-n="{{ $user->n }}"
                                                             data-bs-toggle="tooltip" user-Peran="Admin" data-bs-placement="top"
                                                             title="Delete User">
                                                             <svg width="25" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
@@ -93,7 +93,7 @@
                                         @empty
                                             <tr>
                                                 <td colspan="10" class="text-center">
-                                                    Tidak Ada Data di Table ini
+                                                    Tidak ada data di tabel ini
                                                 </td>
                                             </tr>
                                         @endforelse
@@ -121,10 +121,10 @@
                 </div>
                 <div class="col-lg-6 mb-2">
                     <form class="d-flex" method="GET" Aksi="{{ route('user.index') }}">
-                        <input type="hidden" nama="qu" value="{{ request()->input('qu') }}">
-                        <input type="hidden" nama="users" value="{{ request()->input('users') }}">
-                        <input class="form-control me-2" type="search" placeholder="Search by nama" aria-label="Search"
-                            id="search-user" nama="qc" value="{{ request()->input('qc') }}">
+                        <input type="hidden" n="qu" value="{{ request()->input('qu') }}">
+                        <input type="hidden" n="users" value="{{ request()->input('users') }}">
+                        <input class="form-control me-2" type="search" placeholder="Search by n" aria-label="Search"
+                            id="search-user" n="qc" value="{{ request()->input('qc') }}">
                         <button class="btn btn-outline-dark" type="submit">Search</button>
                     </form>
                 </div>
@@ -150,7 +150,7 @@
                                                 <td scope="row">
                                                     {{ ($customers->currentpage() - 1) * $customers->perpage() + $loop->index + 1 }}
                                                 </td>
-                                                <td>{{ $user->nama }}</td>
+                                                <td>{{ $user->n }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ $user->Peran }}</td>
                                                 <td>
@@ -171,7 +171,7 @@
                                                         @method('DELETE')
                                                         <a class="btn btn-light btn-sm rounded shadow-sm border p-0 m-0 delete"
                                                             href="#" user-id="{{ $user->id }}" user-Peran="Customer"
-                                                            user-nama="{{ $user->nama }}" data-bs-toggle="tooltip"
+                                                            user-n="{{ $user->n }}" data-bs-toggle="tooltip"
                                                             data-bs-placement="top" title="Delete User">
                                                             <svg width="25" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
                                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -196,7 +196,7 @@
                                         @empty
                                             <tr>
                                                 <td colspan="10" class="text-center">
-                                                    Tidak Ada Data di Table ini
+                                                    Tidak ada data di tabel ini
                                                 </td>
                                             </tr>
                                         @endforelse
@@ -205,7 +205,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <h3>Customer</h3>
+                            <h3>Pengguna</h3>
                         </div>
                     </div>
                 </div>
@@ -224,7 +224,7 @@
     <script>
         $('.delete').click(function() {
             var user_id = $(this).attr('user-id');
-            var user_name = $(this).attr('user-nama');
+            var user_name = $(this).attr('user-n');
             var user_Peran = $(this).attr('user-Peran');
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
@@ -235,12 +235,12 @@
             })
 
             swalWithBootstrapButtons.fire({
-                title: 'Apakah Kamu Yakin?',
-                text: user_name + " akan dihapus, Anda tidak akan dapat mengembalikannya!!",
-                icon: 'perhatian',
+                title: 'Are you sure?',
+                text: user_name + " will be deleted, You won't be able to revert this!",
+                icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Ya, hapus itu!',
-                cancelButtonText: 'Tidak, cancel! ',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel! ',
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {

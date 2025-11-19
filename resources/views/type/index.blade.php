@@ -16,8 +16,8 @@
         <div class="professional-table-container">
             <!-- Table Header -->
             <div class="table-header">
-                <h4><i class="fas fa-home me-2"></i>Manajemen Kamar Baru</h4>
-                <p>Manajemen Tipe Kamar Berbeda dan Tampilkan Informasinya</p>
+                <h4><i class="fas fa-home me-2"></i>Manajemen Tipe Kamar</h4>
+                <p>Kelola berbagai jenis kamar dan informasinya</p>
             </div>
 
             <!-- Professional Table -->
@@ -47,7 +47,7 @@
 
             <!-- Table Footer -->
             <div class="table-footer">
-                <h3><i class="fas fa-home me-2"></i>Tipe Ruangan</h3>
+                <h3><i class="fas fa-home me-2"></i>Tipe Kamar</h3>
             </div>
         </div>
     </div>

@@ -18,9 +18,41 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RuangRapatController;
 use App\Http\Controllers\RuangRapatReservationController; 
-use App\Http\Controllers\LaporanController;
-use \App\Http\Controllers\AmenityController;
-use App\Http\Controllers\IngredientController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+
+// ==========================================================
+// == START: MANUAL CAPTCHA ROUTE (Ditempatkan di sini) ==
+// ==========================================================
+
+Route::get('/captcha/generate', function (Request $request) {
+    // Pastikan GD Library PHP aktif di server Anda.
+    
+    $captcha_code = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyz"), 0, 5);
+    Session::put('captcha_code', strtoupper($captcha_code));
+
+    $image = imagecreate(150, 40);
+    $background = imagecolorallocate($image, 255, 255, 255);
+    $text_color = imagecolorallocate($image, 0, 0, 0);
+
+    // Tambahkan sedikit gangguan
+    for ($i = 0; $i < 5; $i++) {
+        imageline($image, 0, rand() % 40, 150, rand() % 40, $text_color);
+    }
+
+    imagestring($image, 5, 40, 12, strtoupper($captcha_code), $text_color);
+
+    ob_start();
+    imagepng($image);
+    $contents = ob_get_clean();
+    imagedestroy($image);
+
+    return response($contents)->header('Content-type', 'image/png');
+})->name('captcha.generate');
+
+// ==========================================================
+// == END: MANUAL CAPTCHA ROUTE ==
+// ==========================================================
 /*
 |--------------------------------------------------------------------------
 | Web Routes

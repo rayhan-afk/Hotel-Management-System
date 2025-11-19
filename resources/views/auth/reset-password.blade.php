@@ -21,8 +21,8 @@
                     <div class="auth-logo">
                         <i class="fas fa-key text-primary"></i>
                     </div>
-                    <h1 class="auth-title">Set New Password</h1>
-                    <p class="auth-subtitle">Enter your new password below</p>
+                    <h1 class="auth-title">Atur Kata Sandi Baru</h1>
+                    <p class="auth-subtitle">Masukkan Kata Sandi Baru</p>
                 </div>
 
                 <!-- Reset Form -->
@@ -33,7 +33,7 @@
                     <!-- Email Field -->
                     <div class="form-group">
                         <label for="email" class="form-label">
-                            <i class="fas fa-envelope me-2"></i>Email Address
+                            <i class="fas fa-envelope me-2"></i>Alamat Email
                         </label>
                         <div class="input-wrapper">
                             <input
@@ -60,7 +60,7 @@
                     <!-- Password Field -->
                     <div class="form-group">
                         <label for="password" class="form-label">
-                            <i class="fas fa-lock me-2"></i>New Password
+                            <i class="fas fa-lock me-2"></i>Kata Sandi Baru
                         </label>
                         <div class="input-wrapper">
                             <input
@@ -88,14 +88,14 @@
                             <div class="strength-bar">
                                 <div class="strength-fill" id="strength-fill"></div>
                             </div>
-                            <div class="strength-text" id="strength-text">Password strength</div>
+                            <div class="strength-text" id="strength-text">Kata Sandi Kuat</div>
                         </div>
                     </div>
 
                     <!-- Confirm Password Field -->
                     <div class="form-group">
                         <label for="password-confirm" class="form-label">
-                            <i class="fas fa-shield-alt me-2"></i>Confirm Password
+                            <i class="fas fa-shield-alt me-2"></i>Konfirmasi Kata Sandi
                         </label>
                         <div class="input-wrapper">
                             <input
@@ -114,7 +114,7 @@
                         <!-- Password Match Indicator -->
                         <div class="password-match" id="password-match" style="display: none;">
                             <i class="fas fa-check-circle text-success me-1"></i>
-                            <span>Passwords match</span>
+                            <span>Kata Sandi Cocok</span>
                         </div>
                     </div>
 
@@ -122,11 +122,11 @@
                     <button type="submit" class="btn btn-primary auth-submit-btn" id="submitBtn">
                         <span class="btn-text">
                             <i class="fas fa-key me-2"></i>
-                            Reset Password
+                            Reset Kata Sandi
                         </span>
                         <span class="btn-loading d-none">
                             <i class="fas fa-spinner fa-spin me-2"></i>
-                            Resetting...
+                            Mereset...
                         </span>
                     </button>
 
@@ -134,7 +134,7 @@
                     <div class="auth-links">
                         <a href="{{ route('login') }}" class="auth-link">
                             <i class="fas fa-arrow-left me-2"></i>
-                            Back to Login
+                            Kembali ke Login
                         </a>
                     </div>
                 </form>
@@ -143,24 +143,24 @@
                 <div class="auth-help">
                     <h6 class="text-white mb-3">
                         <i class="fas fa-info-circle me-2"></i>
-                        Password Requirements
+                        Persyaratan Kata Sandi
                     </h6>
                     <div class="requirement-list">
                         <div class="requirement-item" id="req-length">
                             <i class="fas fa-circle requirement-icon"></i>
-                            <span>At least 8 characters</span>
+                            <span>Minimal 8 Karakter</span>
                         </div>
                         <div class="requirement-item" id="req-uppercase">
                             <i class="fas fa-circle requirement-icon"></i>
-                            <span>One uppercase letter</span>
+                            <span>Minimal 1 Huruf Besar</span>
                         </div>
                         <div class="requirement-item" id="req-lowercase">
                             <i class="fas fa-circle requirement-icon"></i>
-                            <span>One lowercase letter</span>
+                            <span>Satu Huruf Kecil</span>
                         </div>
                         <div class="requirement-item" id="req-number">
                             <i class="fas fa-circle requirement-icon"></i>
-                            <span>One number</span>
+                            <span>Satu Nomor</span>
                         </div>
                     </div>
                 </div>

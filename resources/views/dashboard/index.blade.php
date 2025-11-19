@@ -89,8 +89,8 @@
                         </div>
                     </div>
                     <div class="card-body p-0">
-                        <div class="table-responsive" style="max-width: calc(100vw - 100px)">
-                            <table class="table table-lh mb-0">
+                        <div class="table-responsive" >
+                            <table class="table table-lh mb-0" >
                                 <thead>
                                     <tr>
                                         <th>Tamu</th>
