@@ -55,9 +55,6 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     Route::resource('ingredient', IngredientController::class);
     Route::resource('amenity', AmenityController::class);
 
-    Route::get('/amenity/datatable', [\App\Http\Controllers\AmenityController::class, 'datatable'])
-         ->name('amenity.datatable');
-    
     // ==========================================================
     // == PENGATURAN RUANG RAPAT ==
     // ==========================================================

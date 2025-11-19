@@ -12,6 +12,7 @@ use App\Repositories\Implementation\TransactionRepository;
 use App\Repositories\Implementation\TypeRepository;
 use App\Repositories\Implementation\UserRepository;
 use App\Repositories\Implementation\RuangRapatPaketRepository;
+use App\Repositories\Implementation\AmenityRepository;
 use App\Repositories\Interface\CustomerRepositoryInterface;
 use App\Repositories\Interface\ImageRepositoryInterface;
 use App\Repositories\Interface\PaymentRepositoryInterface;
@@ -22,6 +23,7 @@ use App\Repositories\Interface\TransactionRepositoryInterface;
 use App\Repositories\Interface\TypeRepositoryInterface;
 use App\Repositories\Interface\UserRepositoryInterface;
 use App\Repositories\Interface\RuangRapatPaketRepositoryInterface;
+use App\Repositories\Interface\AmenityRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -43,6 +45,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TypeRepositoryInterface::class, TypeRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(RuangRapatPaketRepositoryInterface::class, RuangRapatPaketRepository::class);
+        $this->app->bind(AmenityRepositoryInterface::class, AmenityRepository::class);
         
     }
 
