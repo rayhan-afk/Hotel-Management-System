@@ -15,12 +15,12 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionRoomReservationController;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\Inventory\IngredientController;
-use App\Http\Controllers\Inventory\IngredientTransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RuangRapatController;
 use App\Http\Controllers\RuangRapatReservationController; 
-
+use App\Http\Controllers\LaporanController;
+use \App\Http\Controllers\AmenityController;
+use App\Http\Controllers\IngredientController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -51,8 +51,9 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     Route::resource('roomstatus', RoomStatusController::class);
     Route::resource('transaction', TransactionController::class);
     Route::resource('facility', FacilityController::class);
+    Route::resource('amenity', AmenityController::class);
     Route::resource('ingredient', IngredientController::class);
-    
+
     // ==========================================================
     // == PENGATURAN RUANG RAPAT ==
     // ==========================================================
@@ -84,10 +85,21 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     // == AKHIR PENGATURAN RUANG RAPAT ==
     // ==========================================================
 
+    // ==========================================================
+// == RUTE LAPORAN BARU (SIMPAN DI SINI) ==
+// ==========================================================
+Route::name('laporan.')->group(function () {
+    // Laporan Ruang Rapat
+    // Rute ini sudah benar. Controller (Langkah 4) akan menangani AJAX di rute ini.
+    Route::get('/laporan/rapat', [LaporanController::class, 'laporanRuangRapat'])->name('rapat.index');
+        
+    // Laporan Kamar Hotel (Stub)
+    Route::get('/laporan/kamar', [LaporanController::class, 'laporanKamarHotel'])->name('kamar.index');
+});
+
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
     Route::get('/payment/{payment}/invoice', [PaymentController::class, 'invoice'])->name('payment.invoice');
     
-    // INI ADALAH BARIS YANG DIPERBAIKI (TYPO DIHILANGKAN)
     Route::get('/transaction/{transaction}/payment/create', [PaymentController::class, 'create'])->name('transaction.payment.create');
     
     Route::post('/transaction/{transaction}/payment/store', [PaymentController::class, 'store'])->name('transaction.payment.store');
@@ -95,9 +107,6 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     Route::get('/get-dialy-guest-chart-data', [ChartController::class, 'dailyGuestPerMonth']);
     Route::get('/get-dialy-guest/{year}/{month}/{day}', [ChartController::class, 'dailyGuest'])->name('chart.dailyGuest');
 
-     // Ingredient transactions routes
-    Route::post('/ingredient/transaction', [IngredientTransactionController::class, 'store'])->name('ingredient.transaction.store');
-    Route::get('/ingredient/transaction', [IngredientTransactionController::class, 'index'])->name('ingredient.transaction.index');
 });
 
 Route::group(['middleware' => ['auth', 'checkRole:Super,Admin,Customer']], function () {

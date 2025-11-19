@@ -6,25 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Jalankan migrasi.
-     */
     public function up(): void
     {
         Schema::create('ingredients', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('unit');
-            $table->decimal('stock', 10, 2)->default(0);
-            $table->decimal('min_stock', 10, 2)->default(0);
-            $table->enum('status', ['available', 'low', 'out'])->default('available');
+            $table->string('name');                  // Nama Bahan
+            $table->string('category');              // Kategori (Sayuran, Daging, dll)
+            $table->decimal('stock', 10, 2)->default(0); // Stok (Decimal biar bisa koma, misal 1.5 kg)
+            $table->string('unit');                  // Satuan (Kg, Gram, Pcs)
+            $table->text('description')->nullable(); // Keterangan
             $table->timestamps();
         });
     }
 
-    /**
-     * Rollback migrasi.
-     */
     public function down(): void
     {
         Schema::dropIfExists('ingredients');
