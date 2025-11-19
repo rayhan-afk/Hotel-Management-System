@@ -15,13 +15,12 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionRoomReservationController;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\Inventory\IngredientController;
-use App\Http\Controllers\Inventory\IngredientTransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RuangRapatController;
 use App\Http\Controllers\RuangRapatReservationController; 
 use App\Http\Controllers\LaporanController;
 use \App\Http\Controllers\AmenityController;
+use App\Http\Controllers\IngredientController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -52,8 +51,8 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     Route::resource('roomstatus', RoomStatusController::class);
     Route::resource('transaction', TransactionController::class);
     Route::resource('facility', FacilityController::class);
-    Route::resource('ingredient', IngredientController::class);
     Route::resource('amenity', AmenityController::class);
+    Route::resource('ingredient', IngredientController::class);
 
     // ==========================================================
     // == PENGATURAN RUANG RAPAT ==
@@ -108,9 +107,6 @@ Route::name('laporan.')->group(function () {
     Route::get('/get-dialy-guest-chart-data', [ChartController::class, 'dailyGuestPerMonth']);
     Route::get('/get-dialy-guest/{year}/{month}/{day}', [ChartController::class, 'dailyGuest'])->name('chart.dailyGuest');
 
-     // Ingredient transactions routes
-    Route::post('/ingredient/transaction', [IngredientTransactionController::class, 'store'])->name('ingredient.transaction.store');
-    Route::get('/ingredient/transaction', [IngredientTransactionController::class, 'index'])->name('ingredient.transaction.index');
 });
 
 Route::group(['middleware' => ['auth', 'checkRole:Super,Admin,Customer']], function () {

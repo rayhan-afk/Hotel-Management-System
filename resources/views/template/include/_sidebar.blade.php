@@ -184,12 +184,10 @@
     <div class="collapse {{ request()->routeIs(['ingredient.*', 'amenity.*']) ? 'show' : '' }} w-100" id="persediaanSubmenu">
         <div class="nav-submenu">
             
-            {{-- Tautan Bahan Baku (sudah benar) --}}
             <a href="{{ route('ingredient.index') }}" class="nav-subitem {{ request()->routeIs('ingredient.*') ? 'active' : '' }} ">
                 <i class="fas fa-cube me-2"></i>Persediaan Bahan Baku
             </a>
             
-            {{-- Tautan Amenities (diperbarui) --}}
             <a href="{{ route('amenity.index') }}" class="nav-subitem {{ request()->routeIs('amenity.*') ? 'active' : '' }} ">
                 <i class="fas fa-soap me-2"></i>Persediaan Amenities
             </a>
