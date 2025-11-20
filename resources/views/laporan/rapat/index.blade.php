@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title', 'Laporan Ruang Rapat Selesai')
+@section('title', 'Laporan Ruang Rapat')
 
 @section('content')
 <div class="container-fluid">
@@ -7,36 +7,51 @@
     <div class="row my-2 mt-4 ms-1">
         <div class="col-lg-12">
             <h2><i class="fas fa-history me-2"></i>Laporan Ruang Rapat</h2>
-            </div>
+        </div>
     </div>
 
     <div class="row">
         <div class="col-lg-12">
-            
             <div class="professional-table-container">
                 
-                <div class="table-header">
-                    
-                    <form method="GET" action="{{ route('laporan.rapat.index') }}" style="position: relative; z-index: 2;">
-                        <div class="row">
-                            <div class="col-md-5">
-                                <label for="tanggal_mulai" class="form-label text-black fs-4">Periode Dari Tanggal</label>
-                                <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="form-control" value="{{ request('tanggal_mulai') }}">
+                {{-- FILTER SECTION --}}
+                <div class="table-header p-3">
+                    <form id="filter-form">
+                        <div class="row align-items-end">
+                            {{-- Input Tanggal Mulai --}}
+                            <div class="col-md-5 mb-3">
+                                <label for="tanggal_mulai" class="form-label text-dark fs-5 fw-bold">Periode Dari Tanggal</label>
+                                <input type="date" id="tanggal_mulai" class="form-control shadow-sm form-control-lg">
                             </div>
-                            <div class="col-md-5">
-                                <label for="tanggal_selesai" class="form-label text-black fs-4">Sampai Tanggal</label>
-                                <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="form-control" value="{{ request('tanggal_selesai') }}">
+
+                            {{-- Input Tanggal Selesai --}}
+                            <div class="col-md-5 mb-3">
+                                <label for="tanggal_selesai" class="form-label text-dark fs-5 fw-bold">Sampai Tanggal</label>
+                                <input type="date" id="tanggal_selesai" class="form-control shadow-sm form-control-lg">
                             </div>
-                            <div class="col-md-2 d-flex align-items-end">
-                                <button type="submit" class="btn w-100 fs-5" id="laporan-search-btn">Search</button>
+
+                            {{-- Tombol Search & Reset --}}
+                            <div class="col-md-2 mb-3">
+                                <div class="d-flex gap-2">
+                                    {{-- Tombol Search (Coklat) --}}
+                                    <button type="button" id="btn-filter" class="btn w-100 btn-lg text-white shadow-sm btn-search-custom">
+                                        Search
+                                    </button>
+                                    
+                                    {{-- Tombol Reset --}}
+                                    <button type="button" id="btn-reset" class="btn btn-secondary w-100 btn-lg shadow-sm" title="Reset Filter">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="professional-table table" style="width: 100%;">
-                        <thead>
+                {{-- TABEL DATATABLES --}}
+                <div class="table-responsive mt-3">
+                    <table id="laporan-rapat-table" class="professional-table table table-hover" style="width: 100%;">
+                        <thead style="background-color: #f7f3e8;">
                             <tr>
                                 <th>Instansi/Perusahaan</th>
                                 <th>Tanggal</th>
@@ -46,39 +61,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($rapatTransactionsExpired as $transaction)
-                            <tr>
-                                <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td>
-                                <td>{{ Helper::dateFormat($transaction->tanggal_pemakaian) }}</td>
-                                <td>{{ $transaction->waktu_mulai }} - {{ $transaction->waktu_selesai }}</td>
-                                <td>{{ $transaction->ruangRapatPaket->name }}</td>
-                                <td>
-                                    <span class="badge {{ $transaction->status_pembayaran == 'Paid' ? 'bg-success' : 'bg-danger' }}">
-                                        {{ $transaction->status_pembayaran == 'Paid' ? 'Lunas' : $transaction->status_pembayaran }}
-                                    </span>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="5" class="text-center">
-                                    Tidak ada data laporan untuk periode ini.
-                                </td>
-                            </tr>
-                            @endforelse
+                            {{-- Data diisi otomatis oleh DataTables via AJAX --}}
                         </tbody>
                     </table>
                 </div>
                 
                 <div class="table-footer">
                    <div class="d-flex justify-content-between align-items-center">
-                        
-                        <div></div>
-
                         <h3 class="mb-0"><i class="fas fa-history me-2"></i>Riwayat Reservasi</h3>
-                        
-                        <div>
-                            {{ $rapatTransactionsExpired->appends(request()->query())->links('template.paginationlinks') }}
-                        </div>
                     </div>
                 </div>
 
@@ -90,16 +80,26 @@
 
 @section('footer')
 <style>
-    #laporan-search-btn {
-        background-color: #50200C;
-        color: white;
-        border-color: #50200C;
+    /* PERBAIKAN UTAMA: Menghilangkan overlay yang menutupi form */
+    .professional-table-container .table-header::before {
+        display: none !important;
+        content: none !important;
     }
-    #laporan-search-btn:hover,
-    #laporan-search-btn:focus {
-        background-color: #3d1909; /* Warna coklat lebih gelap untuk hover/focus */
-        border-color: #3d1909;
-        color: white;
+
+    /* Memastikan form berada di atas segalanya */
+    .table-header form {
+        position: relative;
+        z-index: 10;
+    }
+
+    /* Style Khusus Tombol Search Coklat */
+    .btn-search-custom {
+        background-color: #50200C !important;
+        border-color: #50200C !important;
+    }
+    .btn-search-custom:hover {
+        background-color: #3d1909 !important;
+        border-color: #3d1909 !important;
     }
 </style>
 @endsection
