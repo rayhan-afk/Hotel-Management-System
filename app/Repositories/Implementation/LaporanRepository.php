@@ -10,39 +10,35 @@ class LaporanRepository implements LaporanRepositoryInterface
 {
     public function getLaporanRapatDatatable($request)
     {
-        // 1. Definisi Kolom untuk Sorting
         $columns = [
-            0 => 'rapat_customers.instansi', // Sort by nama instansi
+            0 => 'rapat_customers.instansi', 
             1 => 'tanggal_pemakaian',
             2 => 'waktu_mulai',
-            3 => 'ruang_rapat_pakets.name',  // Sort by nama paket
-            4 => 'status_pembayaran',
+            3 => 'ruang_rapat_pakets.name',  
+            4 => 'jumlah_peserta',
+            5 => 'total_pembayaran', 
+            6 => 'status_pembayaran', 
         ];
 
-        // 2. Parameter DataTables
         $limit = $request->input('length');
         $start = $request->input('start');
         $order = $columns[$request->input('order.0.column')] ?? 'tanggal_pemakaian';
-        $dir = $request->input('order.0.dir') ?? 'desc'; // Default DESC agar yang terbaru di atas
+        $dir = $request->input('order.0.dir') ?? 'desc'; 
         $search = $request->input('search.value');
-
-        // 3. Parameter Filter Tanggal
         $startDate = $request->input('tanggal_mulai');
         $endDate = $request->input('tanggal_selesai');
 
-        // 4. Waktu Sekarang (untuk filter "Selesai")
         $nowFormatted = Carbon::now()->format('Y-m-d H:i:s');
 
-        // 5. Query Dasar (Join agar bisa sort berdasarkan nama relasi)
         $query = RapatTransaction::select('rapat_transactions.*')
             ->join('rapat_customers', 'rapat_transactions.rapat_customer_id', '=', 'rapat_customers.id')
             ->join('ruang_rapat_pakets', 'rapat_transactions.ruang_rapat_paket_id', '=', 'ruang_rapat_pakets.id')
-            ->with(['rapatCustomer', 'ruangRapatPaket']); // Eager load untuk data view
+            ->with(['rapatCustomer', 'ruangRapatPaket']); 
 
-        // 6. Filter: Hanya Reservasi yang SUDAH SELESAI
+        // Filter Selesai
         $query->whereRaw("CONCAT(tanggal_pemakaian, ' ', waktu_selesai) <= ?", [$nowFormatted]);
 
-        // 7. Filter: Periode Tanggal (Jika user mengisi)
+        // Filter Tanggal
         if ($startDate) {
             $query->where('tanggal_pemakaian', '>=', $startDate);
         }
@@ -50,16 +46,14 @@ class LaporanRepository implements LaporanRepositoryInterface
             $query->where('tanggal_pemakaian', '<=', $endDate);
         }
 
-        // 8. Filter: Pencarian (Search Box)
+        // Filter Search
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('rapat_customers.instansi', 'LIKE', "%{$search}%")
-                  ->orWhere('ruang_rapat_pakets.name', 'LIKE', "%{$search}%")
-                  ->orWhere('status_pembayaran', 'LIKE', "%{$search}%");
+                  ->orWhere('ruang_rapat_pakets.name', 'LIKE', "%{$search}%");
             });
         }
 
-        // 9. Eksekusi DataTables (Count & Get)
         $totalData = RapatTransaction::whereRaw("CONCAT(tanggal_pemakaian, ' ', waktu_selesai) <= ?", [$nowFormatted])->count();
         $totalFiltered = $query->count();
 
@@ -68,18 +62,18 @@ class LaporanRepository implements LaporanRepositoryInterface
             ->orderBy($order, $dir)
             ->get();
 
-        // 10. Format Data JSON
         $data = [];
         foreach ($models as $model) {
-            // Format tanggal agar cantik
-            $tanggal = Carbon::parse($model->tanggal_pemakaian)->isoFormat('D MMMM Y');
+            $tanggal = \App\Helpers\Helper::dateFormat($model->tanggal_pemakaian);
             
             $data[] = [
                 'instansi' => $model->rapatCustomer->instansi ?? '-',
                 'tanggal' => $tanggal,
                 'waktu' => $model->waktu_mulai . ' - ' . $model->waktu_selesai,
                 'paket' => $model->ruangRapatPaket->name ?? '-',
-                'status' => $model->status_pembayaran, // Akan di-badge di JS
+                'jumlah_peserta' => $model->jumlah_peserta . ' Orang',
+                'total_pembayaran' => $model->total_pembayaran,
+                'status' => $model->status_pembayaran,
             ];
         }
 
