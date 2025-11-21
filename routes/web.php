@@ -92,6 +92,7 @@ Route::name('laporan.')->group(function () {
     // Laporan Ruang Rapat
     // Rute ini sudah benar. Controller (Langkah 4) akan menangani AJAX di rute ini.
     Route::get('/laporan/rapat', [LaporanController::class, 'laporanRuangRapat'])->name('rapat.index');
+    Route::get('/laporan/rapat/export', [LaporanController::class, 'exportExcel'])->name('rapat.export');
         
     // Laporan Kamar Hotel (Stub)
     Route::get('/laporan/kamar', [LaporanController::class, 'laporanKamarHotel'])->name('kamar.index');

@@ -26,12 +26,12 @@
                                 <label for="tanggal_selesai" class="form-label text-dark fs-5 fw-bold">Sampai Tanggal</label>
                                 <input type="date" id="tanggal_selesai" class="form-control shadow-sm form-control-lg">
                             </div>
-                            <div class="col-md-2 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <div class="d-flex gap-2">
-                                    <button type="button" id="btn-filter" class="btn w-100 btn-lg text-white shadow-sm btn-search-custom">
+                                    <button type="button" id="btn-filter" class="btn w-100 btn-lg text-white shadow-sm btn-brown">
                                         Search
                                     </button>
-                                    <button type="button" id="btn-reset" class="btn btn-secondary w-100 btn-lg shadow-sm" title="Reset Filter">
+                                    <button type="button" id="btn-reset" class="btn btn-secondary btn-lg shadow-sm" title="Reset Filter">
                                         <i class="fas fa-sync-alt"></i>
                                     </button>
                                 </div>
@@ -49,8 +49,8 @@
                                 <th>Tanggal</th>
                                 <th>Waktu</th>
                                 <th>Paket</th>
-                                <th>Jml Peserta</th> 
-                                <th>Total Bayar</th>
+                                <th>Jml Peserta</th> {{-- Kolom Baru --}}
+                                <th>Total Bayar</th> {{-- Kolom Baru --}}
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -58,10 +58,14 @@
                     </table>
                 </div>
                 
-                <div class="table-footer">
-                   <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0"><i class="fas fa-history me-2"></i>Riwayat Reservasi</h3>
-                    </div>
+                {{-- FOOTER: TOMBOL EXPORT ADA DISINI --}}
+                <div class="table-footer d-flex justify-content-between align-items-center p-4">
+                   <h3 class="mb-0"><i class="fas fa-history me-2"></i>Riwayat Reservasi</h3>
+                   
+                   {{-- TOMBOL EXPORT COKLAT DI BAWAH --}}
+                   <button type="button" id="btn-export" class="btn btn-lg text-white shadow-sm btn-brown px-4">
+                       <i class="fas fa-file-excel me-2"></i> Export Excel
+                   </button>
                 </div>
 
             </div>
@@ -72,20 +76,18 @@
 
 @section('footer')
 <style>
-    .btn-search-custom { 
-        background-color: #50200C !important; 
-        border-color: #50200C !important; 
+    /* Helper Style Warna Coklat */
+    .btn-brown {
+        background-color: #50200C !important;
+        border-color: #50200C !important;
     }
-    .btn-search-custom:hover { 
-        background-color: #3d1909 !important; 
-        border-color: #3d1909 !important; 
+    .btn-brown:hover {
+        background-color: #3d1909 !important;
+        border-color: #3d1909 !important;
     }
-    .professional-table-container .table-header::before { 
-        display: none !important; 
-        content: none !important; 
-    }
-    .table-header form { 
-        position: relative; 
-        z-index: 10; 
-        }
+    
+    /* Fix Overlay Table */
+    .professional-table-container .table-header::before { display: none !important; content: none !important; }
+    .table-header form { position: relative; z-index: 10; }
 </style>
+@endsection
