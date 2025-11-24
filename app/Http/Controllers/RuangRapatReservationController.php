@@ -2,41 +2,43 @@
 
 namespace App\Http\Controllers;
 
-// Import Model yang kita buat
+// Import Model
 use App\Models\RapatCustomer;
 use App\Models\RapatTransaction;
-use App\Models\RuangRapatPaket; //
+use App\Models\RuangRapatPaket;
 
-// Import class yang dibutuhkan
+// Import class lain
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session; // PENTING untuk menyimpan data antar step
-use Carbon\Carbon; // Untuk menghitung harga berdasarkan durasi
+use Illuminate\Support\Facades\Session;
+use Carbon\Carbon;
 
 class RuangRapatReservationController extends Controller
 {
     /**
-     * Kunci unik untuk session reservasi rapat.
+     * Session Key untuk menyimpan data sementara antar step
      */
     private $sessionKey = 'rapat_reservation';
-
+    
     /**
-     * STEP 1: Menampilkan form data customer.
+     * Konfigurasi Harga Sewa Ruang per Jam
      */
+    private $hargaSewaPerJam = 100000; 
+
+    // =========================================================================
+    // STEP 1: DATA CUSTOMER
+    // =========================================================================
     public function showStep1_CustomerInfo()
     {
-        // Ambil data lama dari session jika ada (untuk fitur back/edit)
+        // Ambil data lama jika user kembali dari step 2
         $reservationData = Session::get($this->sessionKey, []);
         $customer = $reservationData['customer'] ?? null;
         
         return view('rapat.reservation.step1_customer', compact('customer'));
     }
 
-    /**
-     * STEP 1: Menyimpan data customer ke session.
-     */
     public function storeStep1_CustomerInfo(Request $request)
     {
-        // Validasi input
+        // Validasi data diri
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'no_hp' => 'required|string|max:20',
@@ -44,169 +46,157 @@ class RuangRapatReservationController extends Controller
             'instansi' => 'nullable|string|max:255',
         ]);
 
-        // Simpan data customer ke session
+        // Simpan ke session
         Session::put($this->sessionKey . '.customer', $validated);
 
         return redirect()->route('rapat.reservation.showStep2');
     }
 
-    /**
-     * STEP 2: Menampilkan form waktu.
-     */
+    // =========================================================================
+    // STEP 2: DATA WAKTU & DURASI (UPDATED)
+    // =========================================================================
     public function showStep2_TimeInfo()
     {
-        // Cek apakah data step 1 sudah ada
         if (!Session::has($this->sessionKey . '.customer')) {
             return redirect()->route('rapat.reservation.showStep1')->with('error', 'Harap isi data diri terlebih dahulu.');
         }
-
+        
         $reservationData = Session::get($this->sessionKey, []);
         $timeInfo = $reservationData['time'] ?? null;
-        
-        // --- INI PERBAIKANNYA ---
-        $customer = $reservationData['customer']; // 1. Ambil data customer dari session
-        
-        // 2. Kirim 'customer' ke view
+        $customer = $reservationData['customer']; // Untuk info di sidebar/atas
+
         return view('rapat.reservation.step2_time', compact('timeInfo', 'customer'));
-        // --- AKHIR PERBAIKAN ---
     }
 
-    /**
-     * STEP 2: Menyimpan data waktu ke session.
-     */
     public function storeStep2_TimeInfo(Request $request)
     {
-        // Validasi input
+        // Validasi Tanggal, Jam Mulai, Selesai DAN Durasi
         $validated = $request->validate([
             'tanggal_pemakaian' => 'required|date|after_or_equal:today',
             'waktu_mulai' => 'required|date_format:H:i',
             'waktu_selesai' => 'required|date_format:H:i|after:waktu_mulai',
+            // Input baru: Durasi (Integer) untuk hitung biaya
+            'durasi_jam' => 'required|integer|min:1|max:24', 
         ]);
 
-        // Simpan data waktu ke session
+        // Simpan ke session
         Session::put($this->sessionKey . '.time', $validated);
 
         return redirect()->route('rapat.reservation.showStep3');
     }
 
-    /**
-     * STEP 3: Menampilkan form paket.
-     */
-    /**
-     * STEP 3: Menampilkan form paket (VERSI UPGRADE DENGAN SORTING/PAGINATION).
-     */
-    public function showStep3_PaketInfo(Request $request) // Tambahkan Request $request
+    // =========================================================================
+    // STEP 3: PILIH PAKET
+    // =========================================================================
+    public function showStep3_PaketInfo(Request $request)
     {
-        // Cek apakah data step 2 sudah ada
         if (!Session::has($this->sessionKey . '.time')) {
             return redirect()->route('rapat.reservation.showStep2')->with('error', 'Harap isi data waktu terlebih dahulu.');
         }
 
-        // Ambil data dari session
         $reservationData = Session::get($this->sessionKey);
         $timeInfo = $reservationData['time'];
-        $customer = $reservationData['customer']; // Ambil data customer untuk card info
+        $customer = $reservationData['customer'];
         $selectedPaket = $reservationData['paket'] ?? null;
         
-        // Ambil parameter sorting dari request (URL)
-        $sort_name = $request->input('sort_name', 'harga'); // Default sort by harga
-        $sort_type = $request->input('sort_type', 'ASC'); // Default sort ASC
+        // Fitur Sorting Paket
+        $sort_name = $request->input('sort_name', 'harga');
+        $sort_type = $request->input('sort_type', 'ASC');
 
-        // Validasi kolom sort
-        if (!in_array($sort_name, ['harga', 'name'])) {
-            $sort_name = 'harga';
-        }
-        if (!in_array($sort_type, ['ASC', 'DESC'])) {
-            $sort_type = 'ASC';
-        }
+        if (!in_array($sort_name, ['harga', 'name'])) $sort_name = 'harga';
+        if (!in_array($sort_type, ['ASC', 'DESC'])) $sort_type = 'ASC';
 
-        // --- LOGIKA PENTING (Ketersediaan) ---
-        // TODO: Tambahkan logika filter ketersediaan di sini
-        
-        // Ambil data paket DENGAN sorting dan pagination
-        $pakets = RuangRapatPaket::orderBy($sort_name, $sort_type)
-                                ->paginate(5); // Tampilkan 5 paket per halaman
-
-        $paketsCount = $pakets->total(); // Hitung total paket
+        // Ambil Data Paket
+        $pakets = RuangRapatPaket::orderBy($sort_name, $sort_type)->paginate(5);
+        $paketsCount = $pakets->total();
 
         return view('rapat.reservation.step3_paket', compact(
-            'pakets', 
-            'paketsCount',
-            'timeInfo', 
-            'customer', 
-            'selectedPaket', 
-            'sort_name', // Kirim balik untuk 'sticky' dropdown
-            'sort_type'  // Kirim balik untuk 'sticky' dropdown
+            'pakets', 'paketsCount', 'timeInfo', 'customer', 'selectedPaket', 'sort_name', 'sort_type'
         ));
     }
 
-    /**
-     * STEP 3: Menyimpan data paket ke session.
-     */
     public function storeStep3_PaketInfo(Request $request)
     {
-        // Validasi input
+        // Validasi Paket & Peserta
         $validated = $request->validate([
             'ruang_rapat_paket_id' => 'required|exists:ruang_rapat_pakets,id',
-            'jumlah_peserta' => 'required|integer|min:1',
+            'jumlah_peserta' => 'required|integer|min:20', // Minimal 20 sesuai request
+        ], [
+            'jumlah_peserta.min' => 'Mohon maaf, minimal peserta rapat adalah 20 orang.'
         ]);
 
-        // Simpan data paket ke session
         Session::put($this->sessionKey . '.paket', $validated);
 
         return redirect()->route('rapat.reservation.showStep4');
     }
 
-    /**
-     * STEP 4: Menampilkan halaman konfirmasi.
-     */
+    // =========================================================================
+    // STEP 4: KONFIRMASI & HITUNG BIAYA (UPDATED)
+    // =========================================================================
     public function showStep4_Confirmation()
     {
-        // Cek apakah data step 3 sudah ada
         if (!Session::has($this->sessionKey . '.paket')) {
             return redirect()->route('rapat.reservation.showStep3')->with('error', 'Harap pilih paket terlebih dahulu.');
         }
 
-        // Ambil semua data dari session
+        // Ambil semua data session
         $reservationData = Session::get($this->sessionKey);
         $customer = $reservationData['customer'];
         $timeInfo = $reservationData['time'];
         $paketInfo = $reservationData['paket'];
 
-        // Ambil detail paket dari DB
+        // Ambil Objek Paket dari DB
         $paket = RuangRapatPaket::findOrFail($paketInfo['ruang_rapat_paket_id']);
 
-        // --- LOGIKA PENTING (Hitung Harga) ---
-        $waktuMulai = Carbon::parse($timeInfo['waktu_mulai']);
-        $waktuSelesai = Carbon::parse($timeInfo['waktu_selesai']);
-        $durasiJam = $waktuSelesai->diffInHours($waktuMulai);
+        // --- LOGIKA PERHITUNGAN BIAYA ---
         
-        // Asumsi: Harga paket adalah per jam
-        // Jika harga paket BUKAN per jam, ubah logika ini
-        $totalHarga = $paket->harga * $durasiJam;
+        // 1. Ambil Durasi (Jam) yang dipilih user di Step 2
+        $durasiJam = $timeInfo['durasi_jam']; 
+        
+        // 2. Ambil Jumlah Peserta
+        $jumlahOrang = $paketInfo['jumlah_peserta'];
 
-        // Simpan harga ke session untuk disimpan saat pembayaran
+        // 3. Hitung Komponen Biaya
+        // A. Biaya Paket = Harga Paket x Jumlah Orang
+        $biayaPaketTotal = $paket->harga * $jumlahOrang;
+
+        // B. Biaya Sewa Ruang = Rp 100.000 x Durasi Jam
+        $biayaSewaRuangTotal = $this->hargaSewaPerJam * $durasiJam;
+
+        // 4. Total Tagihan Akhir
+        $totalHarga = $biayaPaketTotal + $biayaSewaRuangTotal;
+
+        // Simpan total ke session (penting untuk proses bayar)
         Session::put($this->sessionKey . '.harga', $totalHarga);
 
-        return view('rapat.reservation.step4_confirmation', compact('customer', 'timeInfo', 'paket', 'paketInfo', 'totalHarga', 'durasiJam'));
+        return view('rapat.reservation.step4_confirmation', compact(
+            'customer', 
+            'timeInfo', 
+            'paket', 
+            'paketInfo', 
+            'totalHarga', 
+            'durasiJam', 
+            'biayaPaketTotal',
+            'biayaSewaRuangTotal',
+            'jumlahOrang'
+        ));
     }
 
-    /**
-     * FINAL STEP: Proses Pembayaran dan Simpan ke Database.
-     */
+    // =========================================================================
+    // FINAL: PROSES PEMBAYARAN (LUNAS OTOMATIS)
+    // =========================================================================
     public function processPayment(Request $request)
     {
-        // Cek apakah semua data lengkap di session
+        // Cek apakah session harga ada
         if (!Session::has($this->sessionKey . '.harga')) {
-            return redirect()->route('rapat.reservation.showStep1')->with('error', 'Sesi reservasi tidak lengkap. Silakan mulai dari awal.');
+            return redirect()->route('rapat.reservation.showStep1')->with('error', 'Sesi reservasi habis/tidak lengkap.');
         }
-
+        
+        // Ambil data final dari session
         $data = Session::get($this->sessionKey);
+        $totalTagihan = $data['harga'];
 
-        // --- LOGIKA SIMPAN KE DATABASE ---
-
-        // 1. Simpan Customer (Asumsi: Selalu buat customer baru jika email belum ada, atau cari/ambil ID)
-        // Kita simpan customer baru karena ini adalah flow form step-by-step
+        // 1. Simpan Customer Baru
         $customer = RapatCustomer::create([
             'nama' => $data['customer']['nama'],
             'no_hp' => $data['customer']['no_hp'],
@@ -214,28 +204,32 @@ class RuangRapatReservationController extends Controller
             'instansi' => $data['customer']['instansi'],
         ]);
 
-        // 2. Simpan Transaksi
+        // 2. Simpan Transaksi Rapat
         $transaction = RapatTransaction::create([
             'rapat_customer_id' => $customer->id,
             'ruang_rapat_paket_id' => $data['paket']['ruang_rapat_paket_id'],
+            
+            // Data Waktu
             'tanggal_pemakaian' => $data['time']['tanggal_pemakaian'],
             'waktu_mulai' => $data['time']['waktu_mulai'],
             'waktu_selesai' => $data['time']['waktu_selesai'],
-            'status_reservasi' => 'Confirmed', // Langsung confirmed setelah bayar
+            
+            // Data Peserta & Harga
             'jumlah_peserta' => $data['paket']['jumlah_peserta'],
-            'harga' => $data['harga'],
-            'total_pembayaran' => $data['harga'], 
-            'status_pembayaran' => 'Paid', // Asumsi langsung Lunas
+            'harga' => $totalTagihan,
+            
+            // Data Pembayaran (Otomatis Lunas)
+            'total_pembayaran' => $totalTagihan,
+            'status_pembayaran' => 'Paid',
+            'status_reservasi' => 'Confirmed',
         ]);
 
-        // Hapus session setelah berhasil
+        // 3. Bersihkan Session
         Session::forget($this->sessionKey);
 
-        // ====================================================================
-        // === PERUBAHAN UTAMA: REDIRECT KE HALAMAN MANAJEMEN RUANG RAPAT ===
-        // ====================================================================
+        // 4. Redirect ke Index dengan Pesan Sukses
         return redirect()->route('ruangrapat.index')
-                         ->with('success', 'Reservasi Ruang Rapat berhasil dikonfirmasi! ID Reservasi: ' . $transaction->id);
+                         ->with('success', 'Reservasi Berhasil! Transaksi #' . $transaction->id . ' status Lunas.');
     }
 
     /**
@@ -244,6 +238,6 @@ class RuangRapatReservationController extends Controller
     public function cancelReservation()
     {
         Session::forget($this->sessionKey);
-        return redirect()->route('dashboard.index')->with('success', 'Reservasi ruang rapat dibatalkan.');
+        return redirect()->route('dashboard.index')->with('success', 'Reservasi dibatalkan.');
     }
 }

@@ -9,12 +9,5 @@ class Ingredient extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name', 'unit', 'stock', 'min_stock', 'status'
-    ];
-
-    public function transactions()
-    {
-        return $this->hasMany(IngredientTransaction::class);
-    }
+    protected $guarded = ['id']; // Izinkan mass assignment
 }

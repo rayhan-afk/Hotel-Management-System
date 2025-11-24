@@ -5,7 +5,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border">
                 <div class="card-header">
-                    <h2>Edit Customer</h2>
+                    <h2>Edit Pelanggan</h2>
                 </div>
                 <div class="card-body p-3">
                     <form class="row g-3" method="POST"
@@ -33,7 +33,7 @@
                             @enderror
                         </div>
                         <div class="col-md-12">
-                            <label for="birthdate" class="form-label">Date of birth</label>
+                            <label for="birthdate" class="form-label">Tanggal Lahir</label>
                             <input type="date" class="form-control @error('birthdate') is-invalid @enderror" id="birthdate"
                                 name="birthdate" value="{{ $customer->birthdate }}">
                             @error('birthdate')
@@ -43,12 +43,12 @@
                             @enderror
                         </div>
                         <div class="col-md-12">
-                            <label for="gender" class="form-label">Gender</label>
+                            <label for="gender" class="form-label">Jenis Kelamin</label>
                             <select class="form-select @error('gender') is-invalid @enderror" id="gender" name="gender"
                                 aria-label="Default select example">
                                 {{-- <option selected hidden>Select</option> --}}
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
+                                <option value="Male">Laki-Laki</option>
+                                <option value="Female">Wanita</option>
                             </select>
                             @error('gender')
                                 <div class="text-danger mt-1">
@@ -57,7 +57,7 @@
                             @enderror
                         </div>
                         <div class="col-md-12">
-                            <label for="job" class="form-label">Job</label>
+                            <label for="job" class="form-label">Pekerjaan</label>
                             <input type="text" class="form-control @error('job') is-invalid @enderror" id="job" name="job"
                                 value="{{ $customer->job }}">
                             @error('job')
@@ -67,7 +67,7 @@
                             @enderror
                         </div>
                         <div class="col-md-12">
-                            <label for="address" class="form-label">Address</label>
+                            <label for="address" class="form-label">Alamat</label>
                             <textarea class="form-control" id="address" name="address"
                                 rows="3">{{ $customer->address }}</textarea>
                             @error('address')
@@ -77,7 +77,7 @@
                             @enderror
                         </div>
                         <div class="col-mg-12">
-                            <label for="avatar" class="form-label">Profile Picture</label>
+                            <label for="avatar" class="form-label">Foto Profil</label>
                             <input class="form-control" type="file" id="avatar" name="avatar" >
                             @error('avatar')
                                 <div class="text-danger mt-1">
@@ -86,7 +86,7 @@
                             @enderror
                         </div>
                         <div class="col-12">
-                            <button type="submit" class="btn myBtn shadow-sm border float-end">Save</button>
+                            <button type="submit" class="btn myBtn shadow-sm border float-end">Simpan</button>
                         </div>
                     </form>
                 </div>

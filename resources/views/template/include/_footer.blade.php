@@ -3,12 +3,12 @@
         <div class="col-md-6">
             <div class="d-flex align-items-center">
                 <i class="fas fa-hotel text-primary me-2"></i>
-                <small class="text-muted">© {{ date('Y') }} Laravel Hotel. All rights reserved.</small>
+                <small class="text-muted">© {{ date('Y') }} Hotel Sawunggaling. Hak cipta dilindungi.</small>
             </div>
         </div>
         <div class="col-md-6">
             <div class="d-flex justify-content-end align-items-center">
-                <small class="text-muted me-3">Version 2.0 - Laravel {{ app()->version() }}</small>
+                <small class="text-muted me-3">Version 2.0 - Hotel Sawunggaling {{ app()->version() }}</small>
                 <div class="d-flex gap-2">
                     <a href="https://www.facebook.com/tirajohw/" class="text-muted" data-bs-toggle="tooltip" title="Facebook">
                         <i class="fab fa-facebook"></i>

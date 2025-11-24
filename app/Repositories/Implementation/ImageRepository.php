@@ -10,7 +10,7 @@ class ImageRepository implements ImageRepositoryInterface
     public function uploadImage($path, $file)
     {
         if (! is_dir($path)) {
-            mkdir($path);
+            mkdir($path, 0777, true);
         }
 
         $url = $file->getClientOriginalName();

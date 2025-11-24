@@ -5,13 +5,13 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border">
                 <div class="card-header">
-                    <h2>Add User</h2>
+                    <h2>Tambah User</h2>
                 </div>
                 <div class="card-body p-3">
                     <form class="row g-3" method="POST" action="{{ route('user.store') }}">
                         @csrf
                         <div class="col-md-12">
-                            <label for="name" class="form-label">Name</label>
+                            <label for="name" class="form-label">Nama</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
                                 name="name" value="{{ old('name') }}">
                             @error('name')
@@ -41,9 +41,9 @@
                             @enderror
                         </div>
                         <div class=" col-md-12">
-                            <label for="role" class="form-label">Role</label>
+                            <label for="role" class="form-label">Peran</label>
                             <select id="role" name="role" class="form-select @error('password') is-invalid @enderror">
-                                <option selected disabled hidden>Choose...</option>
+                                <option selected disabled hidden>Pilih...</option>
                                 <option value="Super" @if (old('role') == 'Super') selected @endif>Super</option>
                                 <option value="Admin" @if (old('role') == 'Admin') selected @endif>Admin</option>
                             </select>
@@ -54,7 +54,7 @@
                             @enderror
                         </div>
                         <div class="col-12">
-                            <button type="submit" class="btn btn-light shadow-sm border float-end">Save</button>
+                            <button type="submit" class="btn btn-light shadow-sm border float-end">Simpan</button>
                         </div>
                     </form>
                 </div>

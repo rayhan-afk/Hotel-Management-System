@@ -11,7 +11,7 @@
     <link rel="icon" href="{{ asset('img/logo/sip.png') }}">
     {{-- style --}}
     @vite('resources/sass/app.scss')
-    <title>@yield('title') - Hotel Admin</title>
+    <title>@yield('title') - Hotel Sawunggaling</title>
     @yield('head')
     
 </head>

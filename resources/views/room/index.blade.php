@@ -7,7 +7,7 @@
             <div class="col-12">
                 <button id="add-button" type="button" class="add-room-btn">
                     <i class="fas fa-plus"></i>
-                    Add New Room
+                    Tambah Kamar Baru
                 </button>
             </div>
         </div>
@@ -16,15 +16,15 @@
         <div class="professional-table-container">
             <!-- Table Header -->
             <div class="table-header">
-                <h4><i class="fas fa-bed me-2"></i>Room Management</h4>
-                <p>Manage your hotel rooms, types, and availability status</p>
+                <h4><i class="fas fa-bed me-2"></i>Manajemen Kamar</h4>
+                <p>Manajemen Kamar Hotel, tipe, dan Status Ketersediaan Kamar</p>
             </div>
 
             <!-- Filters Section -->
             <div class="filters-section">
                 <div class="filters-title">
                     <i class="fas fa-filter"></i>
-                    Filter Rooms
+                    Filter Kamar
                 </div>
                 <div class="row">
                     <div class="col-12 col-md-6 col-lg-4">
@@ -33,11 +33,11 @@
                                 <i class="fas fa-toggle-on me-1"></i>Status
                             </label>
                             <select id="status" class="form-select" aria-label="Choose status">
-                                <option selected>All</option>
+                                <option selected>Semua</option>
                                 @forelse ($roomStatuses as $roomStatus)
                                     <option value="{{ $roomStatus->id }}">{{ $roomStatus->name }}</option>
                                 @empty
-                                    <option value="">No room status available</option>
+                                    <option value="">Tidak Ada Kamar Tersedia</option>
                                 @endforelse
                             </select>
                         </div>
@@ -48,11 +48,11 @@
                                 <i class="fas fa-home me-1"></i>Type
                             </label>
                             <select id="type" class="form-select" aria-label="Choose type">
-                                <option selected>All</option>
+                                <option selected>Semua</option>
                                 @forelse ($types as $type)
                                     <option value="{{ $type->id }}">{{ $type->name }}</option>
                                 @empty
-                                    <option value="">No room type available</option>
+                                    <option value="">Tidak Ada Tipe Kamar yang Tersedia</option>
                                 @endforelse
                             </select>
                         </div>
@@ -66,22 +66,22 @@
                     <thead>
                         <tr>
                             <th scope="col">
-                                <i class="fas fa-hashtag me-1"></i>Room Number
+                                <i class="fas fa-hashtag me-1"></i>Nomor Kamar
                             </th>
                             <th scope="col">
-                                <i class="fas fa-home me-1"></i>Type
+                                <i class="fas fa-home me-1"></i>Tipe
                             </th>
                             <th scope="col">
-                                <i class="fas fa-users me-1"></i>Capacity
+                                <i class="fas fa-users me-1"></i>Kapasitas
                             </th>
                             <th scope="col">
-                                <i class="fas fa-dollar-sign me-1"></i>Price / Day
+                                <i class="fas fa-dollar-sign me-1"></i>Harga / Hari
                             </th>
                             <th scope="col">
                                 <i class="fas fa-info-circle me-1"></i>Status
                             </th>
                             <th scope="col">
-                                <i class="fas fa-cog me-1"></i>Actions
+                                <i class="fas fa-cog me-1"></i>Aksi
                             </th>
                         </tr>
                     </thead>
@@ -93,7 +93,7 @@
 
             <!-- Table Footer -->
             <div class="table-footer">
-                <h3><i class="fas fa-bed me-2"></i>Room Inventory</h3>
+                <h3><i class="fas fa-bed me-2"></i>Ketersediaan Kamar</h3>
             </div>
         </div>
     </div>

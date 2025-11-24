@@ -15,13 +15,48 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionRoomReservationController;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\Inventory\IngredientController;
-use App\Http\Controllers\Inventory\IngredientTransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RuangRapatController;
 use App\Http\Controllers\RuangRapatReservationController; 
+use App\Http\Controllers\IngredientController;
+use App\Http\Controllers\IngredientTransactionController; // Dibiarkan jika ada
+use App\Http\Controllers\AmenityController; // ASUMSI: Amenity diletakkan di Inventory/
 use App\Http\Controllers\LaporanController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
+// ==========================================================
+// == START: MANUAL CAPTCHA ROUTE (Ditempatkan di sini) ==
+// ==========================================================
+
+Route::get('/captcha/generate', function (Request $request) {
+    // Pastikan GD Library PHP aktif di server Anda.
+    
+    $captcha_code = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyz"), 0, 5);
+    Session::put('captcha_code', strtoupper($captcha_code));
+
+    $image = imagecreate(150, 40);
+    $background = imagecolorallocate($image, 255, 255, 255);
+    $text_color = imagecolorallocate($image, 0, 0, 0);
+
+    // Tambahkan sedikit gangguan
+    for ($i = 0; $i < 5; $i++) {
+        imageline($image, 0, rand() % 40, 150, rand() % 40, $text_color);
+    }
+
+    imagestring($image, 5, 40, 12, strtoupper($captcha_code), $text_color);
+
+    ob_start();
+    imagepng($image);
+    $contents = ob_get_clean();
+    imagedestroy($image);
+
+    return response($contents)->header('Content-type', 'image/png');
+})->name('captcha.generate');
+
+// ==========================================================
+// == END: MANUAL CAPTCHA ROUTE ==
+// ==========================================================
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -52,8 +87,9 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     Route::resource('roomstatus', RoomStatusController::class);
     Route::resource('transaction', TransactionController::class);
     Route::resource('facility', FacilityController::class);
+    Route::resource('amenity', AmenityController::class);
     Route::resource('ingredient', IngredientController::class);
-    
+
     // ==========================================================
     // == PENGATURAN RUANG RAPAT ==
     // ==========================================================
@@ -85,19 +121,18 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     // == AKHIR PENGATURAN RUANG RAPAT ==
     // ==========================================================
 
-    
     // ==========================================================
-    // == RUTE LAPORAN BARU (SIMPAN DI SINI) ==
-    // ==========================================================
-    Route::name('laporan.')->group(function () {
-        // Laporan Ruang Rapat
-        Route::get('/laporan/rapat', [LaporanController::class, 'laporanRuangRapat'])->name('rapat.index');
+// == RUTE LAPORAN BARU (SIMPAN DI SINI) ==
+// ==========================================================
+Route::name('laporan.')->group(function () {
+    // Laporan Ruang Rapat
+    // Rute ini sudah benar. Controller (Langkah 4) akan menangani AJAX di rute ini.
+    Route::get('/laporan/rapat', [LaporanController::class, 'laporanRuangRapat'])->name('rapat.index');
+    Route::get('/laporan/rapat/export', [LaporanController::class, 'exportExcel'])->name('rapat.export');
         
-        // Laporan Kamar Hotel (Stub)
-        Route::get('/laporan/kamar', [LaporanController::class, 'laporanKamarHotel'])->name('kamar.index');
-    });
-    // ==========================================================
-
+    // Laporan Kamar Hotel (Stub)
+    Route::get('/laporan/kamar', [LaporanController::class, 'laporanKamarHotel'])->name('kamar.index');
+});
 
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
     Route::get('/payment/{payment}/invoice', [PaymentController::class, 'invoice'])->name('payment.invoice');
@@ -109,9 +144,6 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     Route::get('/get-dialy-guest-chart-data', [ChartController::class, 'dailyGuestPerMonth']);
     Route::get('/get-dialy-guest/{year}/{month}/{day}', [ChartController::class, 'dailyGuest'])->name('chart.dailyGuest');
 
-     // Ingredient transactions routes
-    Route::post('/ingredient/transaction', [IngredientTransactionController::class, 'store'])->name('ingredient.transaction.store');
-    Route::get('/ingredient/transaction', [IngredientTransactionController::class, 'index'])->name('ingredient.transaction.index');
 });
 
 Route::group(['middleware' => ['auth', 'checkRole:Super,Admin,Customer']], function () {

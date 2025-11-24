@@ -3,69 +3,86 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\RapatTransaction; // Model transaksi rapat
-use Carbon\Carbon; // Untuk perbandingan waktu
+use App\Repositories\Interface\LaporanRepositoryInterface;
+
+// MENGHAPUS SEMUA REFERENSI KE MAATWEBSITE\EXCEL
 
 class LaporanController extends Controller
 {
-    /**
-     * Menampilkan laporan reservasi ruang rapat yang sudah selesai.
-     */
+    public function __construct(
+        private LaporanRepositoryInterface $laporanRepository
+    ) {}
+
     public function laporanRuangRapat(Request $request)
     {
-        $now = Carbon::now();
-        // Format Y-m-d H:i:s adalah kunci untuk perbandingan di MySQL
-        $nowFormatted = $now->format('Y-m-d H:i:s'); 
-        
-        $baseQuery = RapatTransaction::with('rapatCustomer', 'ruangRapatPaket');
-
-        // Logic search (text)
-        if ($request->filled('search')) {
-            $baseQuery->where(function($q) use ($request) {
-                $q->where('id', $request->input('search'))
-                  ->orWhereHas('rapatCustomer', function ($subQ) use ($request) {
-                      $subQ->where('nama', 'like', '%' . $request->input('search') . '%');
-                  });
-            });
-        }
-        
-        // ==========================================================
-        // == PERBAIKAN: MENAMBAHKAN LOGIKA FILTER PERIODE TANGGAL ==
-        // == (Ini hilang dari kode yang Anda kirim) ==
-        // ==========================================================
-        if ($request->filled('tanggal_mulai')) {
-            $baseQuery->where('tanggal_pemakaian', '>=', $request->input('tanggal_mulai'));
+        if ($request->ajax()) {
+            return $this->laporanRepository->getLaporanRapatDatatable($request);
         }
 
-        if ($request->filled('tanggal_selesai')) {
-            $baseQuery->where('tanggal_pemakaian', '<=', $request->input('tanggal_selesai'));
-        }
-        // ==========================================================
-        
-        // Data Laporan: Hanya reservasi yang sudah selesai (logika ini sudah benar)
-        $rapatTransactionsExpired = $baseQuery->clone()
-            ->whereRaw("CONCAT(tanggal_pemakaian, ' ', waktu_selesai) <= ?", [$nowFormatted])
-            ->orderBy('tanggal_pemakaian', 'DESC')
-            ->orderBy('waktu_selesai', 'DESC')
-            ->paginate(25); // Paginasi lebih besar untuk laporan
-
-        // File view ini akan kita buat di Langkah 4
-        return view('laporan.rapat.index', compact('rapatTransactionsExpired'));
+        return view('laporan.rapat.index');
     }
 
     /**
-     * Stub untuk Laporan Kamar Hotel (laporan.kamar.index)
-     * Biarkan kosong untuk saat ini agar route tidak error
+     * Export CSV Manual (PHP Native)
+     * Ini menjamin fitur Export berfungsi tanpa error library.
      */
+    public function exportExcel(Request $request)
+    {
+        // 1. Ambil data dari Repository (sudah terfilter tanggal)
+        $query = $this->laporanRepository->getLaporanRapatQuery($request);
+        $transactions = $query->get();
+
+        // 2. Tentukan Header CSV (MEMBERIKAN NAMA FILE)
+        $fileName = 'laporan_rapat_' . date('d-m-Y_H-i') . '.csv';
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+        ];
+
+        // 3. Buat fungsi callback untuk streaming data
+        $callback = function() use ($transactions) {
+            $file = fopen('php://output', 'w');
+            
+            // Tambahkan byte order mark (BOM) untuk encoding UTF-8 agar Excel tidak error saat buka CSV
+            fputs($file, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF))); 
+
+            // Tulis Judul Kolom
+            fputcsv($file, [
+                'No Transaksi', 'Instansi / Perusahaan', 'Nama Pemesan', 'No Handphone', 
+                'Email', 'Tanggal Rapat', 'Jam Mulai', 'Jam Selesai', 
+                'Jumlah Peserta', 'Total Tagihan (Rp)', 'Status Pembayaran', 'Status Reservasi'
+            ]);
+
+            // Tulis Data Transaksi per Baris
+            foreach ($transactions as $row) {
+                // Tentukan data row
+                $data = [
+                    '#' . $row->id,
+                    $row->rapatCustomer->instansi ?? '-',
+                    $row->rapatCustomer->nama,
+                    // PERBAIKAN NO HP: Tambahkan apostrophe (') agar menjadi teks
+                    "'" . $row->rapatCustomer->no_hp,
+                    "'" . $row->rapatCustomer->email, 
+                    \App\Helpers\Helper::dateFormat($row->tanggal_pemakaian),
+                    $row->waktu_mulai,
+                    $row->waktu_selesai,
+                    $row->jumlah_peserta,
+                    // PERBAIKAN TOTAL BAYAR: Format angka penuh dengan pemisah ribuan
+                    number_format($row->total_pembayaran, 0, ',', '.'),
+                    $row->status_pembayaran,
+                    $row->status_reservasi,
+                ];
+                fputcsv($file, $data);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function laporanKamarHotel(Request $request)
     {
-        // TODO: Tambahkan logika query untuk transaksi kamar yang sudah selesai di sini
-        $transactionsExpired = collect([]); // Data kosong sementara
-        
-        // Anda perlu membuat view 'laporan.kamar.index'
-        // return view('laporan.kamar.index', compact('transactionsExpired'));
-        
-        // Untuk sementara, kita kembalikan alert agar tidak error
-        return redirect()->route('dashboard.index')->with('info', 'Halaman Laporan Kamar Hotel belum dibuat.');
+        return redirect()->route('dashboard.index')->with('info', 'Fitur belum tersedia.');
     }
 }

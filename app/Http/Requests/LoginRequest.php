@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Session; // <-- TAMBAHKAN INI
 
 class LoginRequest extends FormRequest
 {
@@ -26,9 +27,24 @@ class LoginRequest extends FormRequest
         return [
             'email' => [
                 'required',
+                'email', // Sebaiknya tambahkan validasi format email
             ],
             'password' => [
                 'required',
+            ],
+            // <-- TAMBAHKAN ATURAN VALIDASI CAPTCHA DI SINI -->
+            'captcha' => [
+                'required',
+                // Custom rule untuk membandingkan input dengan kode di Session
+                function ($attribute, $value, $fail) {
+                    // Ambil kode dari session dan bandingkan (CAPITALIZED)
+                    // Kita menggunakan strtoupper($value) untuk memastikan perbandingan case-insensitive
+                    if (Session::get('captcha_code') !== strtoupper($value)) {
+                        $fail('Kode Keamanan yang Anda masukkan salah.');
+                    }
+                    // Setelah dicek, hapus kode lama dari session untuk keamanan
+                    Session::forget('captcha_code');
+                },
             ],
         ];
     }

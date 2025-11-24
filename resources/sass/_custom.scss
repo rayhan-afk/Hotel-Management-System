@@ -359,6 +359,7 @@ body.sidebar-layout {
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     border: 1px solid #f1f5f9;
+    padding: 0;
     max-width: calc(100vw - 20px);
     transition: all 0.3s ease;
 
@@ -396,7 +397,9 @@ body.sidebar-layout {
 }
 
 .table-lh {
+    margin: 0;
     background: white;
+    border-collapse: separate;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
@@ -711,16 +714,22 @@ body.sidebar-layout {
             }
         }
     }
-
+    .table-responsive {
+        margin: 0 !important;
+        border-radius: 0 0 16px 16px;
+}
     tbody {
+        
         tr {
-            transition: all 0.3s ease;
+            transition: all 1s ease;
             border-bottom: 1px solid #f1f5f9;
+            
 
             &:hover {
                 background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
                 transform: scale(1.001);
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
             }
 
             &:last-child {
@@ -748,11 +757,11 @@ body.sidebar-layout {
 
                 // Status badges
                 .badge {
-                    font-size: 0.75rem;
-                    font-weight: 700;
+                    font-size: 0.5rem;
+                    font-weight: 100;
                     padding: 0.5rem 0.875rem;
                     border-radius: 10px;
-                    letter-spacing: 0.025em;
+                    letter-spacing: 0.005em;
                     border: 1px solid transparent;
                     text-transform: uppercase;
 

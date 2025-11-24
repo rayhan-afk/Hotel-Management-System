@@ -14,13 +14,13 @@
                         <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profil</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Pengaturan</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                <i class="fas fa-sign-out-alt me-2"></i>Keluar
                             </a>
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                 @csrf
@@ -35,7 +35,7 @@
             <div class="notifications-header">
                 <div class="notifications-title">
                     <i class="fas fa-bell me-2"></i>
-                    Notifications
+                    Notifikasi
                     @if (auth()->user()->unreadNotifications()->count() > 0)
                         <span class="notification-badge">{{ auth()->user()->unreadNotifications()->count() }}</span>
                     @endif
@@ -55,14 +55,14 @@
                 @empty
                     <div class="notification-empty">
                         <i class="fas fa-bell-slash"></i>
-                        <span>No new notifications</span>
+                        <span>Tidak ada notifikasi</span>
                     </div>
                 @endforelse
 
                 @if (auth()->user()->unreadNotifications()->count() > 3)
                     <div class="notifications-footer">
                         <a href="{{ route('notification.index') }}" class="view-all-notifications">
-                            View all ({{ auth()->user()->unreadNotifications()->count() }})
+                            Lihat Semua ({{ auth()->user()->unreadNotifications()->count() }})
                         </a>
                     </div>
                 @endif
@@ -71,15 +71,15 @@
 
         <nav class="sidebar-nav">
             <div class="nav-section">
-                <div class="nav-section-title">Overview</div>
+                <div class="nav-section-title">Gambaran Umum</div>
                 <a href="{{ route('dashboard.index') }}"
                    class="nav-item {{ in_array(Route::currentRouteName(), ['dashboard.index', 'chart.dailyGuest']) ? 'active' : '' }}">
                     <div class="nav-icon">
                         <i class="fas fa-chart-pie"></i>
                     </div>
                     <div class="nav-content">
-                        <div class="nav-title">Dashboard</div>
-                        <div class="nav-subtitle">Analytics & Overview</div>
+                        <div class="nav-title">Beranda</div>
+                        <div class="nav-subtitle">Analisis & Gambaran Umum</div>
                     </div>
                 </a>
             </div>
@@ -94,8 +94,8 @@
                             <i class="fas fa-credit-card"></i>
                         </div>
                         <div class="nav-content">
-                            <div class="nav-title">Transactions</div>
-                            <div class="nav-subtitle">Bookings & Payments</div>
+                            <div class="nav-title">Transaksi</div>
+                            <div class="nav-subtitle">Pemesanan & Pembayaran</div>
                         </div>
                     </a>
 
@@ -105,8 +105,8 @@
                                 <i class="fas fa-bed"></i>
                             </div>
                             <div class="nav-content">
-                                <div class="nav-title">Room Management</div>
-                                <div class="nav-subtitle">Rooms, Types & Status</div>
+                                <div class="nav-title">Manajemen Kamar</div>
+                                <div class="nav-subtitle">Kamar, Tipe & Status</div>
                             </div>
                             <div class="nav-arrow">
                                 <i class="fas fa-chevron-down"></i>
@@ -115,16 +115,16 @@
                         <div class="collapse {{ in_array(Route::currentRouteName(), ['room.index', 'room.show', 'room.create', 'room.edit', 'type.index', 'type.create', 'type.edit', 'roomstatus.index', 'roomstatus.create', 'roomstatus.edit', 'facility.index', 'facility.create', 'facility.edit']) ? 'show' : '' }} w-100" id="roomSubmenu">
                             <div class="nav-submenu">
                                 <a href="{{ route('room.index') }}" class="nav-subitem {{ in_array(Route::currentRouteName(), ['room.index', 'room.show', 'room.create', 'room.edit']) ? 'active' : '' }}">
-                                    <i class="fas fa-door-open me-2"></i>Rooms
+                                    <i class="fas fa-door-open me-2"></i>Kamar
                                 </a>
                                 <a href="{{ route('type.index') }}" class="nav-subitem {{ in_array(Route::currentRouteName(), ['type.index', 'type.create', 'type.edit']) ? 'active' : '' }}">
-                                    <i class="fas fa-list me-2"></i>Room Types
+                                    <i class="fas fa-list me-2"></i>Tipe Kamar
                                 </a>
                                 <a href="{{ route('roomstatus.index') }}" class="nav-subitem {{ in_array(Route::currentRouteName(), ['roomstatus.index', 'roomstatus.create', 'roomstatus.edit']) ? 'active' : '' }}">
-                                    <i class="fas fa-toggle-on me-2"></i>Room Status
+                                    <i class="fas fa-toggle-on me-2"></i>Status Kamar
                                 </a>
                                 <a href="{{ route('facility.index') }}" class="nav-subitem {{ in_array(Route::currentRouteName(), ['facility.index', 'facility.create', 'facility.edit']) ? 'active' : '' }}">
-                                    <i class="fas fa-concierge-bell me-2"></i>Facilities
+                                    <i class="fas fa-concierge-bell me-2"></i>Fasilitas
                                 </a>
                             </div>
                         </div>
@@ -136,8 +136,8 @@
                                 <i class="fas fa-users"></i>
                             </div>
                             <div class="nav-content">
-                                <div class="nav-title">User Management</div>
-                                <div class="nav-subtitle">Customers & Staff</div>
+                                <div class="nav-title">Manajemen Users</div>
+                                <div class="nav-subtitle">Pengguna & Staff</div>
                             </div>
                             <div class="nav-arrow">
                                 <i class="fas fa-chevron-down"></i>
@@ -146,7 +146,7 @@
                         <div class="collapse {{ in_array(Route::currentRouteName(), ['customer.index', 'customer.create', 'customer.edit', 'user.index', 'user.create', 'user.edit']) ? 'show' : '' }} w-100" id="userSubmenu">
                             <div class="nav-submenu">
                                 <a href="{{ route('customer.index') }}" class="nav-subitem {{ in_array(Route::currentRouteName(), ['customer.index', 'customer.create', 'customer.edit']) ? 'active' : '' }}">
-                                    <i class="fas fa-user-friends me-2"></i>Customers
+                                    <i class="fas fa-user-friends me-2"></i>Pengguna
                                 </a>
                                 @if (auth()->user()->role == 'Super')
                                     <a href="{{ route('user.index') }}" class="nav-subitem {{ in_array(Route::currentRouteName(), ['user.index', 'user.create', 'user.edit']) ? 'active' : '' }}">
@@ -168,30 +168,34 @@
     </div>
 </a>
 
-                    <div class="nav-item dropdown-nav {{ in_array(Route::currentRouteName(), ['persediaan.bahan.index', 'persediaan.amenities.index']) ? 'active' : '' }} ">
-                        <div class="nav-toggle" data-bs-toggle="collapse" data-bs-target="#persediaanSubmenu">
-                            <div class="nav-icon">
-                                <i class="fas fa-boxes"></i> </div>
-                            <div class="nav-content">
-                                <div class="nav-title">Persediaan</div>
-                                <div class="nav-subtitle">Bahan Baku & Amenities</div>
-                            </div>
-                            <div class="nav-arrow">
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                        </div>
-                        <div class="collapse {{ in_array(Route::currentRouteName(), ['persediaan.bahan.index', 'persediaan.amenities.index']) ? 'show' : '' }} w-100" id="persediaanSubmenu">
-                            <div class="nav-submenu">
-                                <a href="#" class="nav-subitem {{ in_array(Route::currentRouteName(), ['persediaan.bahan.index']) ? 'active' : '' }} ">
-                                    <i class="fas fa-cube me-2"></i>Persediaan Bahan Baku
-                                </a>
-                                <a href="#" class="nav-subitem {{ in_array(Route::currentRouteName(), ['persediaan.amenities.index']) ? 'active' : '' }} ">
-                                    <i class="fas fa-soap me-2"></i>Persediaan Amenities
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    </div> 
+                    <div class="nav-item dropdown-nav {{ request()->routeIs(['ingredient.*', 'amenity.*']) ? 'active' : '' }} ">
+    <div class="nav-toggle" data-bs-toggle="collapse" data-bs-target="#persediaanSubmenu">
+        <div class="nav-icon">
+            <i class="fas fa-boxes"></i>
+        </div>
+        <div class="nav-content">
+            <div class="nav-title">Persediaan</div>
+            <div class="nav-subtitle">Bahan Baku & Amenities</div>
+        </div>
+        <div class="nav-arrow">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+    <div class="collapse {{ request()->routeIs(['ingredient.*', 'amenity.*']) ? 'show' : '' }} w-100" id="persediaanSubmenu">
+        <div class="nav-submenu">
+            
+            <a href="{{ route('ingredient.index') }}" class="nav-subitem {{ request()->routeIs('ingredient.*') ? 'active' : '' }} ">
+                <i class="fas fa-cube me-2"></i>Persediaan Bahan Baku
+            </a>
+            
+            <a href="{{ route('amenity.index') }}" class="nav-subitem {{ request()->routeIs('amenity.*') ? 'active' : '' }} ">
+                <i class="fas fa-soap me-2"></i>Persediaan Amenities
+            </a>
+
+        </div>
+    </div>
+</div>
+
                     <div class="nav-section">
                         <div class="nav-section-title">Analytics</div>
 
@@ -232,15 +236,15 @@
                         </div>
                     </div>
                 <div class="nav-section">
-                    <div class="nav-section-title">Administration</div>
+                    <div class="nav-section-title">Administrasi</div>
 
                     <a href="#" class="nav-item">
                         <div class="nav-icon">
                             <i class="fas fa-cogs"></i>
                         </div>
                         <div class="nav-content">
-                            <div class="nav-title">Settings</div>
-                            <div class="nav-subtitle">System Configuration</div>
+                            <div class="nav-title">Pengaturan</div>
+                            <div class="nav-subtitle">Konfigurasi Sistem</div>
                         </div>
                     </a>
                 </div>
@@ -250,7 +254,7 @@
         <div class="sidebar-footer">
             <a href="{{ route('transaction.reservation.createIdentity') }}" class="btn btn-primary w-100 quick-action-btn">
                 <i class="fas fa-plus me-2"></i>
-                New Reservation
+                Reservasi Baru
             </a>
         </div>
     </div>
