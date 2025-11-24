@@ -18,6 +18,10 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RuangRapatController;
 use App\Http\Controllers\RuangRapatReservationController; 
+use App\Http\Controllers\IngredientController;
+use App\Http\Controllers\IngredientTransactionController; // Dibiarkan jika ada
+use App\Http\Controllers\AmenityController; // ASUMSI: Amenity diletakkan di Inventory/
+use App\Http\Controllers\LaporanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 

@@ -235,24 +235,6 @@
                             </div>
                         </div>
                     </div>
-<<<<<<< HEAD
-
-                    </div> <div class="nav-section">
-                    <div class="nav-section-title">Analytics</div>
-
-                    <a href="#" class="nav-item">
-                        <div class="nav-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <div class="nav-content">
-                            <div class="nav-title">Laporan</div>
-                            <div class="nav-subtitle">Keuangan & Analisis</div>
-                        </div>
-                    </a>
-                </div>
-
-=======
->>>>>>> 0ca214b138ea9c55df6362dc5c25004915f22373
                 <div class="nav-section">
                     <div class="nav-section-title">Administrasi</div>
 
