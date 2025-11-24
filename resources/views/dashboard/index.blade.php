@@ -295,4 +295,5 @@
                 toastr.warning(e.message, "Hello, {{ auth()->user()->name }}");
             })
     </script>
+    <!-- askjfnsa -->
 @endsection --}}
