@@ -179,4 +179,35 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 });
 
+// Group Info Kamar (Monitoring)
+Route::prefix('room-info')->as('room-info.')->group(function () {
+    // URL: /room-info/available
+    Route::get('/available', function () {
+        return view('room-info.available');
+    })->name('available');
+
+    // URL: /room-info/reservation
+    Route::get('/reservation', function () {
+        return view('room-info.reservation');
+    })->name('reservation');
+
+    // URL: /room-info/cleaning
+    Route::get('/cleaning', function () {
+        return view('room-info.cleaning');
+    })->name('cleaning');
+});
+
+// Group Pemesanan (Aksi Check-in/Check-out)
+Route::prefix('transaction')->as('transaction.')->group(function () {
+    // URL: /transaction/check-in
+    Route::get('/check-in', function () {
+        return view('transaction.checkin.index');
+    })->name('checkin.index');
+
+    // URL: /transaction/check-out
+    Route::get('/check-out', function () {
+        return view('transaction.checkout.index');
+    })->name('checkout.index');
+});
+
 Route::redirect('/', '/dashboard');

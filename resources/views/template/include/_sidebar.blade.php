@@ -84,11 +84,82 @@
                 </a>
             </div>
 
+            {{-- ========================================================================= --}}
+{{-- JUDUL SECTION BARU: PEMESANAN --}}
+{{-- ========================================================================= --}}
+<div class="nav-section-title">Pemesanan</div>
+
+{{-- ========================================================================= --}}
+{{-- 1. MENU: INFO KAMAR --}}
+{{-- ========================================================================= --}}
+<div class="nav-item dropdown-nav {{ request()->routeIs(['room-info.*']) ? 'active' : '' }} ">
+    <div class="nav-toggle" data-bs-toggle="collapse" data-bs-target="#roomInfoSubmenu">
+        <div class="nav-icon">
+            <i class="fas fa-bed"></i> 
+        </div>
+        <div class="nav-content">
+            <div class="nav-title">Info Kamar</div>
+            <div class="nav-subtitle">Ketersediaan & Status</div>
+        </div>
+        <div class="nav-arrow">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+    <div class="collapse {{ request()->routeIs(['room-info.*']) ? 'show' : '' }} w-100" id="roomInfoSubmenu">
+        <div class="nav-submenu">
+            
+            <a href="{{ route('room-info.available') }}" class="nav-subitem {{ request()->routeIs('room-info.available*') ? 'active' : '' }} ">
+                <i class="fas fa-check-circle me-2"></i>Kamar Tersedia
+            </a>
+            
+            <a href="{{ route('room-info.reservation') }}" class="nav-subitem {{ request()->routeIs('room-info.reservation*') ? 'active' : '' }} ">
+                <i class="fas fa-clock me-2"></i>Reservasi Kamar
+            </a>
+
+            <a href="{{ route('room-info.cleaning') }}" class="nav-subitem {{ request()->routeIs('room-info.cleaning*') ? 'active' : '' }} ">
+                <i class="fas fa-broom me-2"></i>Kamar Dibersihkan
+            </a>
+
+        </div>
+    </div>
+</div>
+
+{{-- ========================================================================= --}}
+{{-- 2. MENU: PEMESANAN (Check-in/out) --}}
+{{-- ========================================================================= --}}
+<div class="nav-item dropdown-nav {{ request()->routeIs(['transaction.checkin.*', 'transaction.checkout.*']) ? 'active' : '' }} ">
+    <div class="nav-toggle" data-bs-toggle="collapse" data-bs-target="#transactionSubmenu">
+        <div class="nav-icon">
+            <i class="fas fa-handshake"></i>
+        </div>
+        <div class="nav-content">
+            <div class="nav-title">Pemesanan</div>
+            <div class="nav-subtitle">Check-in & Check-out</div>
+        </div>
+        <div class="nav-arrow">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+    <div class="collapse {{ request()->routeIs(['transaction.checkin.*', 'transaction.checkout.*']) ? 'show' : '' }} w-100" id="transactionSubmenu">
+        <div class="nav-submenu">
+            
+            <a href="{{ route('transaction.checkin.index') }}" class="nav-subitem {{ request()->routeIs('transaction.checkin.*') ? 'active' : '' }} ">
+                <i class="fas fa-sign-in-alt me-2"></i>Check-in
+            </a>
+            
+            <a href="{{ route('transaction.checkout.index') }}" class="nav-subitem {{ request()->routeIs('transaction.checkout.*') ? 'active' : '' }} ">
+                <i class="fas fa-sign-out-alt me-2"></i>Check-out
+            </a>
+
+        </div>
+    </div>
+</div>
+
             @if (auth()->user()->role == 'Super' || auth()->user()->role == 'Admin')
                 <div class="nav-section">
                     <div class="nav-section-title">Operations</div>
 
-                    <a href="{{ route('transaction.index') }}"
+                    <!-- <a href="{{ route('transaction.index') }}"
                        class="nav-item {{ in_array(Route::currentRouteName(), ['payment.index', 'transaction.index', 'transaction.reservation.createIdentity', 'transaction.reservation.pickFromCustomer', 'transaction.reservation.usersearch', 'transaction.reservation.storeCustomer', 'transaction.reservation.viewCountPerson', 'transaction.reservation.chooseRoom', 'transaction.reservation.confirmation', 'transaction.reservation.payDownPayment']) ? 'active' : '' }}">
                         <div class="nav-icon">
                             <i class="fas fa-credit-card"></i>
@@ -97,7 +168,7 @@
                             <div class="nav-title">Transaksi</div>
                             <div class="nav-subtitle">Pemesanan & Pembayaran</div>
                         </div>
-                    </a>
+                    </a> -->
 
                     <div class="nav-item dropdown-nav {{ in_array(Route::currentRouteName(), ['room.index', 'room.show', 'room.create', 'room.edit', 'type.index', 'type.create', 'type.edit', 'roomstatus.index', 'roomstatus.create', 'roomstatus.edit', 'facility.index', 'facility.create', 'facility.edit']) ? 'active' : '' }}">
                         <div class="nav-toggle" data-bs-toggle="collapse" data-bs-target="#roomSubmenu">
@@ -119,12 +190,6 @@
                                 </a>
                                 <a href="{{ route('type.index') }}" class="nav-subitem {{ in_array(Route::currentRouteName(), ['type.index', 'type.create', 'type.edit']) ? 'active' : '' }}">
                                     <i class="fas fa-list me-2"></i>Tipe Kamar
-                                </a>
-                                <a href="{{ route('roomstatus.index') }}" class="nav-subitem {{ in_array(Route::currentRouteName(), ['roomstatus.index', 'roomstatus.create', 'roomstatus.edit']) ? 'active' : '' }}">
-                                    <i class="fas fa-toggle-on me-2"></i>Status Kamar
-                                </a>
-                                <a href="{{ route('facility.index') }}" class="nav-subitem {{ in_array(Route::currentRouteName(), ['facility.index', 'facility.create', 'facility.edit']) ? 'active' : '' }}">
-                                    <i class="fas fa-concierge-bell me-2"></i>Fasilitas
                                 </a>
                             </div>
                         </div>
