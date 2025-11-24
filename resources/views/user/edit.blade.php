@@ -14,14 +14,14 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border">
                 <div class="card-header">
-                    <h2>Edit User</h2>
+                    <h2>Edit Pengguna</h2>
                 </div>
                 <div class="card-body p-3">
                     <form class="row g-3" method="POST" action="{{ route('user.update', ['user' => $user->id]) }}">
                         @method('PUT')
                         @csrf
                         <div class="col-md-12">
-                            <label for="name" class="form-label">Name</label>
+                            <label for="name" class="form-label">Nama</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
                                 name="name" value="{{ $user->name }}">
                             @error('name')
@@ -41,7 +41,7 @@
                             @enderror
                         </div>
                         <div class=" col-md-12">
-                            <label for="role" class="form-label">Role</label>
+                            <label for="role" class="form-label">Peran</label>
                             <select id="role" name="role" class="form-select @error('password') is-invalid @enderror">
                                 <option selected disabled hidden>Choose...</option>
                                 @if (in_array($user->role, ['Super', 'Admin']))
@@ -49,7 +49,7 @@
                                     <option value="Admin" @if ($user->role == 'Admin') selected @endif>Admin</option>
                                 @endif
                                 @if ($user->role == 'Customer')
-                                    <option value="Customer" @if ($user->role == 'Customer') selected @endif>Customer</option>
+                                    <option value="Customer" @if ($user->role == 'Customer') selected @endif>Pengguna</option>
                                 @endif
                             </select>
                             @error('role')

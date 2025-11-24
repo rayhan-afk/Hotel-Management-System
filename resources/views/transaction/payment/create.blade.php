@@ -7,7 +7,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row mb-3">
-                            <label class=" col-sm-2 col-form-label">Room</label>
+                            <label class=" col-sm-2 col-form-label">Kamar</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" value="{{ $transaction->room->number }}" readonly>
                             </div>
@@ -27,14 +27,14 @@
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class=" col-sm-2 col-form-label">Room Price</label>
+                            <label class=" col-sm-2 col-form-label">Harga Kamar</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control"
                                     value="{{ Helper::convertToRupiah($transaction->room->price) }}" readonly>
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label">Days Count</label>
+                            <label class="col-sm-2 col-form-label">Jumlah Hari</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control"
                                     value="{{ $transaction->getDateDifferenceWithPlural($transaction->check_in, $transaction->check_out) }}"
@@ -42,7 +42,7 @@
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label">Total Price</label>
+                            <label class="col-sm-2 col-form-label">Harga Total</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control"
                                     value="{{ Helper::convertToRupiah($transaction->getTotalPrice($transaction->room->price, $transaction->check_in, $transaction->check_out)) }}"
@@ -50,14 +50,14 @@
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label">Paid Off</label>
+                            <label class="col-sm-2 col-form-label">Lunas</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control"
                                     value="{{ Helper::convertToRupiah($transaction->getTotalPayment()) }}" readonly>
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label">Insufficient</label>
+                            <label class="col-sm-2 col-form-label">Tidak Cukup/Kurang</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control"
                                     value="{{ Helper::convertToRupiah($transaction->getTotalPrice($transaction->room->price, $transaction->check_in, $transaction->check_out) - $transaction->getTotalPayment()) }}"
@@ -70,7 +70,7 @@
                                     action="{{ route('transaction.payment.store', ['transaction' => $transaction->id]) }}">
                                     @csrf
                                     <div class="row mb-3">
-                                        <label for="payment" class="col-sm-2 col-form-label">Pay</label>
+                                        <label for="payment" class="col-sm-2 col-form-label">Bayar</label>
                                         <div class="col-sm-10">
                                             <input type="text" class="form-control @error('payment') is-invalid @enderror"
                                                 placeholder="Input payment" value="" id="payment" name="payment">
@@ -85,7 +85,7 @@
                                             {{ $message }}
                                         </div>
                                     @enderror
-                                    <button class="btn btn-success float-end">Pay</button>
+                                    <button class="btn btn-success float-end">Bayar</button>
                                 </form>
                             </div>
                         </div>

@@ -17,12 +17,12 @@
                     </div>
                 </div>
                 <div class="col-lg-6 mb-2">
-                    <form class="d-flex" method="GET" action="{{ route('user.index') }}">
-                        <input type="hidden" name="qc" value="{{ request()->input('qc') }}">
-                        <input type="hidden" name="customers" value="{{ request()->input('customers') }}">
-                        <input class="form-control me-2" type="search" placeholder="Search by name" aria-label="Search"
-                            id="search-user" name="qu" value="{{ request()->input('qu') }}">
-                        <button class="btn btn-outline-dark" type="submit">Search</button>
+                    <form class="d-flex" method="GET" Aksi="{{ route('user.index') }}">
+                        <input type="hidden" n="qc" value="{{ request()->input('qc') }}">
+                        <input type="hidden" n="customers" value="{{ request()->input('customers') }}">
+                        <input class="form-control me-2" type="search" placeholder="Search by n" aria-label="Search"
+                            id="search-user" n="qu" value="{{ request()->input('qu') }}">
+                        <button class="btn btn-outline-dark" type="submit">Cari</button>
                     </form>
                 </div>
             </div>
@@ -35,10 +35,10 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Name</th>
+                                            <th scope="col">Nama</th>
                                             <th scope="col">Email</th>
-                                            <th scope="col">Role</th>
-                                            <th scope="col">Action</th>
+                                            <th scope="col">Peran</th>
+                                            <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -47,9 +47,9 @@
                                                 <td scope="row">
                                                     {{ ($users->currentpage() - 1) * $users->perpage() + $loop->index + 1 }}
                                                 </td>
-                                                <td>{{ $user->name }}</td>
+                                                <td>{{ $user->n }}</td>
                                                 <td>{{ $user->email }}</td>
-                                                <td>{{ $user->role }}</td>
+                                                <td>{{ $user->Peran }}</td>
                                                 <td>
                                                     <a class="btn btn-light btn-sm rounded shadow-sm border p-0 m-0"
                                                         href="{{ route('user.edit', ['user' => $user->id]) }}"
@@ -63,12 +63,12 @@
                                                     </a>
                                                     <form class="btn btn-sm p-0 m-0" method="POST"
                                                         id="delete-post-form-{{ $user->id }}"
-                                                        action="{{ route('user.destroy', ['user' => $user->id]) }}">
+                                                        Aksi="{{ route('user.destroy', ['user' => $user->id]) }}">
                                                         @csrf
                                                         @method('DELETE')
                                                         <div class="btn btn-light btn-sm rounded shadow-sm border p-0 m-0 delete"
-                                                            user-id="{{ $user->id }}" user-name="{{ $user->name }}"
-                                                            data-bs-toggle="tooltip" user-role="Admin" data-bs-placement="top"
+                                                            user-id="{{ $user->id }}" user-n="{{ $user->n }}"
+                                                            data-bs-toggle="tooltip" user-Peran="Admin" data-bs-placement="top"
                                                             title="Delete User">
                                                             <svg width="25" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
                                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,7 +93,7 @@
                                         @empty
                                             <tr>
                                                 <td colspan="10" class="text-center">
-                                                    There's no data in this table
+                                                    Tidak ada data di tabel ini
                                                 </td>
                                             </tr>
                                         @endforelse
@@ -102,7 +102,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <h3>User</h3>
+                            <h3>Pengguna</h3>
                         </div>
                     </div>
                 </div>
@@ -120,11 +120,11 @@
                 <div class="col-lg-6">
                 </div>
                 <div class="col-lg-6 mb-2">
-                    <form class="d-flex" method="GET" action="{{ route('user.index') }}">
-                        <input type="hidden" name="qu" value="{{ request()->input('qu') }}">
-                        <input type="hidden" name="users" value="{{ request()->input('users') }}">
-                        <input class="form-control me-2" type="search" placeholder="Search by name" aria-label="Search"
-                            id="search-user" name="qc" value="{{ request()->input('qc') }}">
+                    <form class="d-flex" method="GET" Aksi="{{ route('user.index') }}">
+                        <input type="hidden" n="qu" value="{{ request()->input('qu') }}">
+                        <input type="hidden" n="users" value="{{ request()->input('users') }}">
+                        <input class="form-control me-2" type="search" placeholder="Search by n" aria-label="Search"
+                            id="search-user" n="qc" value="{{ request()->input('qc') }}">
                         <button class="btn btn-outline-dark" type="submit">Search</button>
                     </form>
                 </div>
@@ -138,10 +138,10 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Name</th>
+                                            <th scope="col">Nama</th>
                                             <th scope="col">Email</th>
-                                            <th scope="col">Role</th>
-                                            <th scope="col">Action</th>
+                                            <th scope="col">Peran</th>
+                                            <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -150,9 +150,9 @@
                                                 <td scope="row">
                                                     {{ ($customers->currentpage() - 1) * $customers->perpage() + $loop->index + 1 }}
                                                 </td>
-                                                <td>{{ $user->name }}</td>
+                                                <td>{{ $user->n }}</td>
                                                 <td>{{ $user->email }}</td>
-                                                <td>{{ $user->role }}</td>
+                                                <td>{{ $user->Peran }}</td>
                                                 <td>
                                                     <a class="btn btn-light btn-sm rounded shadow-sm border p-0 m-0"
                                                         href="{{ route('user.edit', ['user' => $user->id]) }}"
@@ -166,12 +166,12 @@
                                                     </a>
                                                     <form class="btn btn-sm p-0 m-0" method="POST"
                                                         id="delete-post-form-customer-{{ $user->id }}"
-                                                        action="{{ route('user.destroy', ['user' => $user->id]) }}">
+                                                        Aksi="{{ route('user.destroy', ['user' => $user->id]) }}">
                                                         @csrf
                                                         @method('DELETE')
                                                         <a class="btn btn-light btn-sm rounded shadow-sm border p-0 m-0 delete"
-                                                            href="#" user-id="{{ $user->id }}" user-role="Customer"
-                                                            user-name="{{ $user->name }}" data-bs-toggle="tooltip"
+                                                            href="#" user-id="{{ $user->id }}" user-Peran="Customer"
+                                                            user-n="{{ $user->n }}" data-bs-toggle="tooltip"
                                                             data-bs-placement="top" title="Delete User">
                                                             <svg width="25" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
                                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -196,7 +196,7 @@
                                         @empty
                                             <tr>
                                                 <td colspan="10" class="text-center">
-                                                    There's no data in this table
+                                                    Tidak ada data di tabel ini
                                                 </td>
                                             </tr>
                                         @endforelse
@@ -205,7 +205,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <h3>Customer</h3>
+                            <h3>Pengguna</h3>
                         </div>
                     </div>
                 </div>
@@ -224,8 +224,8 @@
     <script>
         $('.delete').click(function() {
             var user_id = $(this).attr('user-id');
-            var user_name = $(this).attr('user-name');
-            var user_role = $(this).attr('user-role');
+            var user_name = $(this).attr('user-n');
+            var user_Peran = $(this).attr('user-Peran');
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
@@ -244,7 +244,7 @@
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    if (user_role == "Customer") {
+                    if (user_Peran == "Customer") {
                         id = '#delete-post-form-customer-' + user_id
                         $(id).submit();
                     } else {

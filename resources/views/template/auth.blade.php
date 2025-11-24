@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    
     <!-- Vite Assets -->
     @vite('resources/sass/app.scss')
 
@@ -20,11 +20,11 @@
     <!-- Auth Specific Styles -->
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'humnst777';
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #C49A6C 0%, #50200C 100%);
             overflow-x: hidden;
         }
 

@@ -97,7 +97,7 @@
                     <img src="{{ asset('img/default/default-user.jpg') }}"
                         style="border-top-right-radius: 0.5rem; border-top-left-radius: 0.5rem; object-fit: cover; height: 200px;">
                     <div class="card-body">
-                        <h5>Info Pemesan</h5>
+                        <h5>Info Pemesanan</h5>
                         <table>
                             <tr>
                                 <td style="text-align: center; width:50px"><i class="fas fa-user"></i></td>

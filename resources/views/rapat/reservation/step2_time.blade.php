@@ -71,22 +71,35 @@
                                     @enderror
                                 </div>
                             </div>
-
-                            {{-- Info Pemesan --}}
-                            <div class="alert alert-light border mt-2">
-                                <small class="text-muted d-block mb-1">Pemesan:</small>
-                                <strong>{{ $customer['nama'] }}</strong> ({{ $customer['instansi'] ?? 'Perorangan' }})
-                            </div>
-
-                            <div class="d-flex justify-content-between mt-4">
-                                <a href="{{ route('rapat.reservation.showStep1') }}" class="btn btn-secondary">
-                                    <i class="fas fa-arrow-left me-1"></i> Kembali
-                                </a>
-                                <button type="submit" class="btn btn-primary">
-                                    Lanjut <i class="fas fa-arrow-right me-1"></i>
-                                </button>
-                            </div>
-                        </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mt-2">
+                <div class="card shadow-sm">
+                    <img src="{{ asset('img/default/default-user.jpg') }}"
+                        style="border-top-right-radius: 0.5rem; border-top-left-radius: 0.5rem; object-fit: cover; height: 200px;">
+                    <div class="card-body">
+                        <h5>Info Pemesan</h5>
+                        <table>
+                            <tr>
+                                <td style="text-align: center; width:50px"><i class="fas fa-user"></i></td>
+                                <td>{{ $customer['nama'] }}</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><i class="fas fa-envelope"></i></td>
+                                <td>{{ $customer['email'] }}</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><i class="fas fa-phone"></i></td>
+                                <td>{{ $customer['no_hp'] }}</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><i class="fas fa-building"></i></td>
+                                <td>{{ $customer['instansi'] ?? '-' }}</td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>

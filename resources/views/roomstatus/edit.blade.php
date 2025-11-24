@@ -3,7 +3,7 @@
     @method('PUT')
     @csrf
     <div class="col-md-12">
-        <label for="name" class="form-label">Name</label>
+        <label for="name" class="form-label">Nama</label>
         <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
             name="name" value="{{ $roomstatus->name }}">
         @error('name')
@@ -14,7 +14,7 @@
         <div id="error_name" class="text-danger error"></div>
     </div>
     <div class="col-md-12">
-        <label for="code" class="form-label">Code</label>
+        <label for="code" class="form-label">Kode</label>
         <input type="text" class="form-control @error('code') is-invalid @enderror"
             id="code" name="code" value="{{ $roomstatus->code }}">
         @error('code')
@@ -25,7 +25,7 @@
         <div id="error_code" class="text-danger error"></div>
     </div>
     <div class="col-md-12">
-        <label for="information" class="form-label">Information</label>
+        <label for="information" class="form-label">Informasi</label>
         <textarea class="form-control" id="information" name="information" rows="3">{{ $roomstatus->information }}</textarea>
         @error('information')
             <div class="text-danger mt-1">

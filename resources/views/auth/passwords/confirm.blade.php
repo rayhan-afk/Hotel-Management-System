@@ -21,8 +21,8 @@
                     <div class="auth-logo">
                         <i class="fas fa-shield-alt text-warning"></i>
                     </div>
-                    <h1 class="auth-title">Confirm Password</h1>
-                    <p class="auth-subtitle">Please confirm your password before continuing</p>
+                    <h1 class="auth-title">Konfirmasi Kata Sandi</h1>
+                    <p class="auth-subtitle">Tolong Konfirmasi Kata Sandi Untuk Melanjutkan</p>
                 </div>
 
                 <!-- Confirmation Form -->
@@ -32,7 +32,7 @@
                     <!-- Password Field -->
                     <div class="form-group">
                         <label for="password" class="form-label">
-                            <i class="fas fa-lock me-2"></i>Current Password
+                            <i class="fas fa-lock me-2"></i>Kata Sandi Saat Ini
                         </label>
                         <div class="input-wrapper">
                             <input
@@ -62,18 +62,18 @@
                         <button type="submit" class="btn btn-primary auth-submit-btn" id="submitBtn">
                             <span class="btn-text">
                                 <i class="fas fa-check me-2"></i>
-                                Confirm Password
+                                Konfirmasi Kata Sandi
                             </span>
                             <span class="btn-loading d-none">
                                 <i class="fas fa-spinner fa-spin me-2"></i>
-                                Confirming...
+                                Mengkonfirmasi
                             </span>
                         </button>
 
                         @if (Route::has('password.request'))
                             <a href="{{ route('password.request') }}" class="btn btn-outline-light auth-secondary-btn">
                                 <i class="fas fa-key me-2"></i>
-                                Forgot Password?
+                                Lupa Kata Sandi?
                             </a>
                         @endif
                     </div>
@@ -82,7 +82,7 @@
                     <div class="auth-links">
                         <a href="{{ url()->previous() }}" class="auth-link">
                             <i class="fas fa-arrow-left me-2"></i>
-                            Go Back
+                            Kembali
                         </a>
                     </div>
                 </form>
@@ -92,22 +92,22 @@
                     <div class="security-notice">
                         <div class="notice-header">
                             <i class="fas fa-shield-alt text-warning me-2"></i>
-                            <span>Security Confirmation</span>
+                            <span>Informasi Keamanan</span>
                         </div>
                         <p class="notice-text">
-                            This action requires password confirmation for your security.
-                            Your password will not be stored and is only used for verification.
+                           Tindakan ini memerlukan konfirmasi kata sandi demi keamanan Anda.
+                           Kata sandi Anda tidak akan disimpan dan hanya digunakan untuk verifikasi.
                         </p>
                     </div>
 
                     <div class="help-items">
                         <div class="help-item">
                             <i class="fas fa-clock text-info"></i>
-                            <span>Session will remain active for secure operations</span>
+                            <span>"Sesi akan tetap aktif untuk operasi yang aman</span>
                         </div>
                         <div class="help-item">
                             <i class="fas fa-lock text-success"></i>
-                            <span>Your data is protected by encryption</span>
+                            <span>Data Anda dilindungi oleh enkripsi</span>
                         </div>
                     </div>
                 </div>

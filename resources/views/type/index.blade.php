@@ -7,7 +7,7 @@
             <div class="col-12">
                 <button id="add-button" type="button" class="add-type-btn">
                     <i class="fas fa-plus"></i>
-                    Add New Type
+                    Tambah Tipe Baru
                 </button>
             </div>
         </div>
@@ -16,8 +16,8 @@
         <div class="professional-table-container">
             <!-- Table Header -->
             <div class="table-header">
-                <h4><i class="fas fa-home me-2"></i>Room Type Management</h4>
-                <p>Manage different room types and their information</p>
+                <h4><i class="fas fa-home me-2"></i>Manajemen Tipe Kamar</h4>
+                <p>Kelola berbagai jenis kamar dan informasinya</p>
             </div>
 
             <!-- Professional Table -->
@@ -29,13 +29,13 @@
                                 <i class="fas fa-hashtag me-1"></i>#
                             </th>
                             <th scope="col">
-                                <i class="fas fa-tag me-1"></i>Name
+                                <i class="fas fa-tag me-1"></i>Nama
                             </th>
                             <th scope="col">
-                                <i class="fas fa-info-circle me-1"></i>Information
+                                <i class="fas fa-info-circle me-1"></i>Informasi
                             </th>
                             <th scope="col">
-                                <i class="fas fa-cog me-1"></i>Actions
+                                <i class="fas fa-cog me-1"></i>Aksi
                             </th>
                         </tr>
                     </thead>
@@ -47,7 +47,7 @@
 
             <!-- Table Footer -->
             <div class="table-footer">
-                <h3><i class="fas fa-home me-2"></i>Room Types</h3>
+                <h3><i class="fas fa-home me-2"></i>Tipe Kamar</h3>
             </div>
         </div>
     </div>

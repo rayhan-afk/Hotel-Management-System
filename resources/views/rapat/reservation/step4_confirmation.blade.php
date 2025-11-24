@@ -93,14 +93,25 @@
             <div class="col-md-4 mt-2">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold mb-3">Info Pemesan</h5>
-                        <p class="mb-1"><i class="fas fa-user me-2 text-muted"></i> {{ $customer['nama'] }}</p>
-                        <p class="mb-1"><i class="fas fa-building me-2 text-muted"></i> {{ $customer['instansi'] ?? '-' }}</p>
-                        <hr>
-                        <h5 class="card-title fw-bold mb-3">Waktu</h5>
-                        <p class="mb-1"><i class="fas fa-calendar me-2 text-muted"></i> {{ Helper::dateFormat($timeInfo['tanggal_pemakaian']) }}</p>
-                        <p class="mb-1"><i class="fas fa-clock me-2 text-muted"></i> {{ $timeInfo['waktu_mulai'] }} - {{ $timeInfo['waktu_selesai'] }}</p>
-                        <p class="mb-0 text-success fw-bold"><i class="fas fa-hourglass-half me-2"></i> Durasi Bayar: {{ $durasiJam }} Jam</p>
+                        <h5>Info Pemesan</h5>
+                        <table>
+                            <tr>
+                                <td style="text-align: center; width:50px"><i class="fas fa-user"></i></td>
+                                <td>{{ $customer['nama'] }}</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><i class="fas fa-envelope"></i></td>
+                                <td>{{ $customer['email'] }}</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><i class="fas fa-phone"></i></td>
+                                <td>{{ $customer['no_hp'] }}</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><i class="fas fa-building"></i></td>
+                                <td>{{ $customer['instansi'] ?? '-' }}</td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>

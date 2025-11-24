@@ -13,28 +13,28 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="row mb-3">
-                                    <label for="room_number" class="col-sm-2 col-form-label">Room</label>
+                                    <label for="room_number" class="col-sm-2 col-form-label">Ruangan</label>
                                     <div class="col-sm-10">
                                         <input type="text" class="form-control" id="room_number" name="room_number"
                                             placeholder="col-form-label" value="{{ $room->number }} " readonly>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="room_type" class="col-sm-2 col-form-label">Type</label>
+                                    <label for="room_type" class="col-sm-2 col-form-label">Tipe</label>
                                     <div class="col-sm-10">
                                         <input type="text" class="form-control" id="room_type" name="room_type"
                                             placeholder="col-form-label" value="{{ $room->type->name }} " readonly>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="room_capacity" class="col-sm-2 col-form-label">Capacity</label>
+                                    <label for="room_capacity" class="col-sm-2 col-form-label">Kapasitas</label>
                                     <div class="col-sm-10">
                                         <input type="text" class="form-control" id="room_capacity" name="room_capacity"
                                             placeholder="col-form-label" value="{{ $room->capacity }} " readonly>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="room_price" class="col-sm-2 col-form-label">Price / Day</label>
+                                    <label for="room_price" class="col-sm-2 col-form-label">Harga / Hari</label>
                                     <div class="col-sm-10">
                                         <input type="text" class="form-control" id="room_price" name="room_price"
                                             placeholder="col-form-label"
@@ -62,7 +62,7 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label for="how_long" class="col-sm-2 col-form-label">Total Day</label>
+                                        <label for="how_long" class="col-sm-2 col-form-label">Total Hari</label>
                                         <div class="col-sm-10">
                                             <input type="text" class="form-control" id="how_long" name="how_long"
                                                 placeholder="col-form-label"
@@ -71,7 +71,7 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label for="total_price" class="col-sm-2 col-form-label">Total Price</label>
+                                        <label for="total_price" class="col-sm-2 col-form-label">Total Harga</label>
                                         <div class="col-sm-10">
                                             <input type="text" class="form-control" id="total_price" name="total_price"
                                                 placeholder="col-form-label"
@@ -80,7 +80,7 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label for="minimum_dp" class="col-sm-2 col-form-label">Minimum DP</label>
+                                        <label for="minimum_dp" class="col-sm-2 col-form-label">Minimal DP</label>
                                         <div class="col-sm-10">
                                             <input type="text" class="form-control" id="minimum_dp" name="minimum_dp"
                                                 placeholder="col-form-label"
@@ -88,7 +88,7 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label for="downPayment" class="col-sm-2 col-form-label">Payment</label>
+                                        <label for="downPayment" class="col-sm-2 col-form-label">Bayar</label>
                                         <div class="col-sm-10">
                                             <input type="text"
                                                 class="form-control @error('downPayment') is-invalid @enderror"
@@ -105,7 +105,7 @@
                                         <div class="col-sm-2"></div>
                                         <div class="col-sm-10" id="showPaymentType"></div>
                                     </div>
-                                    <button type="submit" class="btn btn-primary float-end">Pay DownPayment</button>
+                                    <button type="submit" class="btn btn-primary float-end">Bayar Uang Muka</button>
                                 </form>
                             </div>
                         </div>
