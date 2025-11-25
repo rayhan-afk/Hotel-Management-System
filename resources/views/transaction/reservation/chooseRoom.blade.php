@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title', 'Choose Room Reservation')
+@section('title', 'Pilih Kamar Reservasi')
 @section('head')
     <link rel="stylesheet" href="{{ asset('style/css/progress-indication.css') }}">
     <style>
@@ -13,136 +13,245 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
         }
-
+        
+        /* Custom Style untuk mempercantik tampilan */
+        .card-room {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+        .card-room:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+        .btn-choose {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            transition: all 0.2s;
+        }
+        .btn-choose:hover {
+            background-color: #0b5ed7;
+            transform: scale(1.01);
+        }
+        .text-brown {
+            color: #8B4513; /* Warna Coklat */
+        }
+        .btn-brown {
+            background-color: #8B4513;
+            color: white;
+            border: none;
+        }
+        .btn-brown:hover {
+            background-color: #A0522D;
+            color: white;
+        }
     </style>
 @endsection
 @section('content')
     @include('transaction.reservation.progressbar')
-    <div class="container mt-3">
-        <div class="row justify-content-md-center">
-            <div class="col-md-8 mt-2">
-                <div class="card shadow-sm border">
-                    <div class="card-body p-3">
-                        <h2>{{ $roomsCount }} Ruangan Tersedia Untuk:</h2>
-                        <p>{{ request()->input('count_person') }}
-                            {{ Helper::plural('People', request()->input('count_person')) }} on
-                            {{ Helper::dateFormat(request()->input('check_in')) }} to
-                            {{ Helper::dateFormat(request()->input('check_out')) }}</p>
-                        <hr>
-                        <form method="GET"
-                            action="{{ route('transaction.reservation.chooseRoom', ['customer' => $customer->id]) }}">
-                            <div class="row mb-2">
-                                <input type="text" hidden name="count_person"
-                                    value="{{ request()->input('count_person') }}">
-                                <input type="date" hidden name="check_in" value="{{ request()->input('check_in') }}">
-                                <input type="date" hidden name="check_out" value="{{ request()->input('check_out') }}">
-                                <div class="col-lg-6">
-                                    <select class="form-select" id="sort_name" name="sort_name"
-                                        aria-label="Default select example">
-                                        <option value="Price" @if (request()->input('sort_name') == 'Price') selected @endif>Harga</option>
-                                        <option value="Number" @if (request()->input('sort_name') == 'Number') selected @endif>Nombor</option>
-                                        <option value="Capacity" @if (request()->input('sort_name') == 'Capacity') selected @endif>Kapasitas</option>
+    
+    {{-- Ambil data tipe kamar untuk filter --}}
+    @php
+        $types = \App\Models\Type::all();
+    @endphp
+
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            {{-- Kolom Kiri: Daftar Kamar --}}
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4">
+                        {{-- Header Informasi Pencarian --}}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h4 class="fw-bold text-primary mb-1">
+                                    <i class="fas fa-bed me-2"></i> {{ $roomsCount }} Ruangan Tersedia
+                                </h4>
+                                <p class="text-muted mb-0 small">
+                                    Untuk <span class="fw-bold text-dark">{{ request()->input('count_person') }} {{ Helper::plural('Orang', request()->input('count_person')) }}</span>
+                                    <span class="mx-2">|</span>
+                                    <i class="fas fa-calendar-alt me-1"></i> {{ Helper::dateFormat(request()->input('check_in')) }} 
+                                    <i class="fas fa-arrow-right mx-1 text-muted"></i> 
+                                    {{ Helper::dateFormat(request()->input('check_out')) }}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        {{-- Form Filter & Sorting --}}
+                        <form method="GET" action="{{ route('transaction.reservation.chooseRoom', ['customer' => $customer->id]) }}" class="mb-4">
+                            {{-- Input Hidden untuk Data Step Sebelumnya --}}
+                            <input type="hidden" name="count_person" value="{{ request()->input('count_person') }}">
+                            <input type="hidden" name="check_in" value="{{ request()->input('check_in') }}">
+                            <input type="hidden" name="check_out" value="{{ request()->input('check_out') }}">
+                            
+                            <div class="row g-3 align-items-end">
+                                {{-- Filter Tipe Kamar --}}
+                                <div class="col-md-5">
+                                    <label for="type_id" class="form-label small text-muted fw-bold text-uppercase">Tipe Kamar</label>
+                                    <select class="form-select shadow-sm" id="type_id" name="type_id" aria-label="Pilih Tipe">
+                                        <option value="">Semua Tipe</option>
+                                        @foreach($types as $type)
+                                            <option value="{{ $type->id }}" @if(request()->input('type_id') == $type->id) selected @endif>
+                                                {{ $type->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
-                                <div class="col-lg-4">
-                                    <select class="form-select" id="sort_type" name="sort_type"
-                                        aria-label="Default select example">
-                                        <option value="ASC" @if (request()->input('sort_type') == 'ASC') selected @endif>Ascending</option>
-                                        <option value="DESC" @if (request()->input('sort_type') == 'DESC') selected @endif>Descending</option>
+
+                                {{-- Sorting Harga --}}
+                                <div class="col-md-5">
+                                    <label for="sort_price" class="form-label small text-muted fw-bold text-uppercase">Urutkan Harga</label>
+                                    <select class="form-select shadow-sm" id="sort_price" name="sort_price" aria-label="Urutkan Harga">
+                                        <option value="ASC" @if (request()->input('sort_price') == 'ASC') selected @endif>Termurah ke Termahal</option>
+                                        <option value="DESC" @if (request()->input('sort_price') == 'DESC') selected @endif>Termahal ke Termurah</option>
                                     </select>
                                 </div>
-                                <div class="col-lg-2">
-                                    <button type="submit" class="btn myBtn shadow-sm border w-100">Cari</button>
+
+                                {{-- Tombol Cari --}}
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100 shadow-sm">
+                                        <i class="fas fa-filter"></i>
+                                    </button>
                                 </div>
                             </div>
                         </form>
-                        <div class="row">
+
+                        {{-- Daftar Kamar (Looping) --}}
+                        <div class="d-grid gap-4">
                             @forelse ($rooms as $room)
-                                <div class="col-lg-12">
-                                    <div
-                                        class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-                                        <div class="col p-4 d-flex flex-column position-static">
-                                            <strong class="d-inline-block mb-2 text-secondary">{{ $room->capacity }}
-                                                {{ Str::plural('Person', $room->capacity) }}</strong>
-                                            <h3 class="mb-0">{{ $room->number }} ~ {{ $room->type->name }}</h3>
-                                            <div class="mb-1 text-muted">{{ Helper::convertToRupiah($room->price) }} /
-                                                Hari
+                                <div class="card card-room rounded overflow-hidden">
+                                    <div class="row g-0">
+                                        {{-- Bagian Informasi Kamar --}}
+                                        <div class="col-md-8 p-4 d-flex flex-column position-static">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div>
+                                                    <span class="badge bg-info text-dark mb-2">{{ $room->type->name }}</span>
+                                                    <h5 class="mb-0 fw-bold">{{ $room->number }} ~ {{ $room->name }}</h5>
+                                                </div>
+                                                <div class="text-end">
+                                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Harga per Malam</small>
+                                                    <h5 class="text-primary fw-bold mb-0">{{ Helper::convertToRupiah($room->price) }}</h5>
+                                                </div>
                                             </div>
-                                            <div class="wrapper">
-                                                <p class="card-text mb-auto demo-1">{{ $room->view }}</p>
+
+                                            <div class="mb-3 d-flex gap-2 flex-wrap">
+                                                <span class="badge bg-light text-dark border">
+                                                    <i class="fas fa-user me-1"></i> {{ $room->capacity }} Orang
+                                                </span>
+                                                @if($room->area_sqm)
+                                                    <span class="badge bg-light text-dark border">
+                                                        <i class="fas fa-ruler-combined me-1"></i> {{ $room->area_sqm }} m²
+                                                    </span>
+                                                @endif
                                             </div>
+
+                                            {{-- Fasilitas Kamar --}}
+                                            <div class="mb-2">
+                                                <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem;">
+                                                    <i class="fas fa-tv me-1"></i> Fasilitas Kamar
+                                                </small>
+                                                <p class="card-text small text-muted mb-0 text-truncate">
+                                                    {{ $room->room_facilities ?? 'Standar' }}
+                                                </p>
+                                            </div>
+
+                                            {{-- Fasilitas Kamar Mandi (DITAMBAHKAN) --}}
+                                            <div class="wrapper flex-grow-1 mb-3">
+                                                <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem;">
+                                                    <i class="fas fa-bath me-1"></i> Kamar Mandi
+                                                </small>
+                                                <p class="card-text small text-muted mb-0 text-truncate">
+                                                    {{ $room->bathroom_facilities ?? 'Standar' }}
+                                                </p>
+                                            </div>
+
                                             <a href="{{ route('transaction.reservation.confirmation', ['customer' => $customer->id, 'room' => $room->id, 'from' => request()->input('check_in'), 'to' => request()->input('check_out')]) }}"
-                                                class="btn myBtn shadow-sm border w-100 m-2">Pilih</a>
+                                                class="btn btn-choose w-100 mt-auto py-2 fw-bold shadow-sm">
+                                                Pilih Kamar Ini <i class="fas fa-arrow-right ms-1"></i>
+                                            </a>
                                         </div>
-                                        <div class="col-auto d-none d-lg-block">
-                                            <img src="{{ $room->firstImage() }}" width="200" height="250" alt="">
+                                        
+                                        {{-- Bagian Gambar Kamar --}}
+                                        <div class="col-md-4 d-none d-md-block position-relative">
+                                            {{-- Mengambil gambar utama --}}
+                                            <img src="{{ $room->firstImage() }}" 
+                                                 class="img-fluid w-100 h-100" 
+                                                 style="object-fit: cover; min-height: 280px;" 
+                                                 alt="Gambar Kamar {{ $room->number }}">
+                                                 
+                                            {{-- Overlay gradient kecil supaya teks putih (jika ada) terbaca --}}
+                                            <div class="position-absolute bottom-0 start-0 w-100 p-2 bg-dark bg-opacity-50 text-white text-center d-md-none">
+                                                <small>Lihat Detail</small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             @empty
-                                <h3>Tidak ada kamar yang tersedia untuk {{ request()->input('count_person') }} orang atau lebih.</h3>
+                                <div class="text-center py-5">
+                                    <div class="mb-3">
+                                        <i class="fas fa-search fa-3x text-muted opacity-50"></i>
+                                    </div>
+                                    <h5 class="text-muted">Tidak ada kamar tersedia.</h5>
+                                    <p class="text-muted small">Coba ubah filter tipe kamar atau tanggal pencarian Anda.</p>
+                                </div>
                             @endforelse
                         </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                {{ $rooms->onEachSide(1)->appends([
-        'count_person' => request()->input('count_person'),
-        'check_in' => request()->input('check_in'),
-        'check_out' => request()->input('check_out'),
-        'sort_name' => request()->input('sort_name'),
-        'sort_type' => request()->input('sort_type'),
-    ])->links('template.paginationlinks') }}
-                            </div>
+
+                        {{-- Pagination --}}
+                        <div class="mt-4 d-flex justify-content-center">
+                            {{ $rooms->onEachSide(1)->appends([
+                                'count_person' => request()->input('count_person'),
+                                'check_in' => request()->input('check_in'),
+                                'check_out' => request()->input('check_out'),
+                                'sort_price' => request()->input('sort_price'),
+                                'type_id' => request()->input('type_id'),
+                            ])->links('template.paginationlinks') }}
                         </div>
+                        
+                        <hr class="my-4">
+
+                        {{-- Tombol Kembali (DIBAWAH & COKLAT) --}}
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ route('transaction.reservation.viewCountPerson', ['customer' => $customer->id]) }}" class="btn btn-brown shadow-sm px-4">
+                                <i class="fas fa-arrow-left me-2"></i> Kembali
+                            </a>
+                            <small class="text-muted">Langkah 2 dari 4</small>
+                        </div>
+
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mt-2">
-                <div class="card shadow-sm">
-                    <img src="{{ $customer->user->getAvatar() }}"
-                        style="border-top-right-radius: 0.5rem; border-top-left-radius: 0.5rem">
-                    <div class="card-body">
-                        <table>
-                            <tr>
-                                <td style="text-align: center; width:50px">
-                                    <span>
-                                        <i class="fas {{ $customer->gender == 'Male' ? 'fa-male' : 'fa-female' }}">
-                                        </i>
-                                    </span>
-                                </td>
-                                <td>
-                                    {{ $customer->name }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; ">
-                                    <span>
-                                        <i class="fas fa-user-md"></i>
-                                    </span>
-                                </td>
-                                <td>{{ $customer->job }}</td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; ">
-                                    <span>
-                                        <i class="fas fa-birthday-cake"></i>
-                                    </span>
-                                </td>
-                                <td>
-                                    {{ $customer->birthdate }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; ">
-                                    <span>
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </span>
-                                </td>
-                                <td>
-                                    {{ $customer->address }}
-                                </td>
-                            </tr>
-                        </table>
+
+            {{-- Kolom Kanan: Info Customer --}}
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 sticky-top" style="top: 20px; z-index: 1;">
+                    <div class="card-header bg-white border-0 pt-4 pb-0 text-center">
+                        <img src="{{ $customer->user->getAvatar() }}"
+                            class="rounded-circle shadow-sm border mb-3" 
+                            style="width: 100px; height: 100px; object-fit: cover;">
+                        <h5 class="fw-bold mb-0">{{ $customer->name }}</h5>
+                        <span class="badge bg-secondary mt-2">{{ $customer->job }}</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span class="text-muted"><i class="fas fa-venus-mars me-2"></i> Gender</span>
+                                <span class="fw-medium">
+                                    <i class="fas {{ $customer->gender == 'Male' ? 'fa-male text-primary' : 'fa-female text-danger' }}"></i>
+                                    {{ $customer->gender }}
+                                </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span class="text-muted"><i class="fas fa-birthday-cake me-2"></i> Lahir</span>
+                                <span class="fw-medium">{{ $customer->birthdate }}</span>
+                            </li>
+                            <li class="list-group-item px-0">
+                                <div class="text-muted mb-1"><i class="fas fa-map-marker-alt me-2"></i> Alamat</div>
+                                <p class="mb-0 small fw-medium">{{ $customer->address }}</p>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>

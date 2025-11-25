@@ -4,46 +4,37 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoomRequest;
 use App\Models\Room;
-use App\Models\RoomStatus;
-use App\Models\Transaction;
 use App\Models\Type;
-use App\Repositories\Interface\ImageRepositoryInterface;
 use App\Repositories\Interface\RoomRepositoryInterface;
-use App\Repositories\Interface\RoomStatusRepositoryInterface;
-use App\Repositories\Interface\TypeRepositoryInterface;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage; // Tambahkan ini untuk manipulasi file
 
 class RoomController extends Controller
 {
-    public function __construct(
-        private RoomRepositoryInterface $roomRepository,
-        private TypeRepositoryInterface $typeRepository,
-        private RoomStatusRepositoryInterface $roomStatusRepositoryInterface
-    ) {}
+    private $roomRepository;
+
+    public function __construct(RoomRepositoryInterface $roomRepository) 
+    {
+        $this->roomRepository = $roomRepository;
+    }
 
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return $this->roomRepository->getRoomsDatatable($request);
+            $data = $this->roomRepository->getRoomsDatatable($request);
+            return response()->json($data);
         }
 
-        $types = $this->typeRepository->getTypeList($request);
-        $roomStatuses = $this->roomStatusRepositoryInterface->getRoomStatusList($request);
-
-        return view('room.index', [
-            'types' => $types,
-            'roomStatuses' => $roomStatuses,
-        ]);
+        return view('room.index');
     }
 
     public function create()
     {
         $types = Type::all();
-        $roomstatuses = RoomStatus::all();
+        
         $view = view('room.create', [
             'types' => $types,
-            'roomstatuses' => $roomstatuses,
+            'room' => null 
         ])->render();
 
         return response()->json([
@@ -53,23 +44,40 @@ class RoomController extends Controller
 
     public function store(StoreRoomRequest $request)
     {
-        $room = Room::create($request->all());
+        // Ambil semua data yang sudah tervalidasi
+        $data = $request->validated();
+
+        // === LOGIKA UPLOAD GAMBAR ===
+        if ($request->hasFile('image')) {
+            // 1. Ambil file
+            $file = $request->file('image');
+            
+            // 2. Buat nama file unik (biar tidak tertimpa)
+            // Contoh: room_101_1699999999.jpg
+            $filename = 'room_' . $data['number'] . '_' . time() . '.' . $file->getClientOriginalExtension();
+            
+            // 3. Simpan file ke folder 'public/img/rooms'
+            // Menggunakan disk 'public' agar bisa diakses dari web
+            $path = $file->storeAs('img/rooms', $filename, 'public');
+            
+            // 4. Simpan path yang bisa diakses publik ke database
+            // 'storage/img/rooms/namafile.jpg'
+            $data['main_image_path'] = 'storage/' . $path;
+        }
+
+        // Simpan data ke database menggunakan Eloquent langsung atau Repository
+        // Karena repository Anda mungkin belum support array $data yang dimodifikasi,
+        // kita pakai Room::create() langsung di sini agar aman dan cepat.
+        Room::create($data);
 
         return response()->json([
-            'message' => 'Room '.$room->number.' created',
+            'message' => 'Room created successfully',
         ]);
     }
 
     public function show(Room $room)
     {
-        $customer = [];
-        $transaction = Transaction::where([['check_in', '<=', Carbon::now()], ['check_out', '>=', Carbon::now()], ['room_id', $room->id]])->first();
-        if (! empty($transaction)) {
-            $customer = $transaction->customer;
-        }
-
         return view('room.show', [
-            'customer' => $customer,
             'room' => $room,
         ]);
     }
@@ -77,11 +85,10 @@ class RoomController extends Controller
     public function edit(Room $room)
     {
         $types = Type::all();
-        $roomstatuses = RoomStatus::all();
-        $view = view('room.edit', [
+        
+        $view = view('room.create', [
             'room' => $room,
             'types' => $types,
-            'roomstatuses' => $roomstatuses,
         ])->render();
 
         return response()->json([
@@ -91,31 +98,56 @@ class RoomController extends Controller
 
     public function update(Room $room, StoreRoomRequest $request)
     {
-        $room->update($request->all());
+        $data = $request->validated();
+
+        // === LOGIKA UPLOAD GAMBAR SAAT UPDATE ===
+        if ($request->hasFile('image')) {
+            // 1. Hapus gambar lama jika ada (Opsional tapi disarankan biar storage gak penuh)
+            if ($room->main_image_path) {
+                // Ubah path 'storage/img/...' menjadi path relatif storage asli 'img/...'
+                $oldPath = str_replace('storage/', '', $room->main_image_path);
+                if (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+
+            // 2. Simpan gambar baru
+            $file = $request->file('image');
+            $filename = 'room_' . $data['number'] . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('img/rooms', $filename, 'public');
+            
+            // 3. Update path di data
+            $data['main_image_path'] = 'storage/' . $path;
+        }
+
+        $room->update($data);
 
         return response()->json([
-            'message' => 'Room '.$room->number.' udpated!',
+            'message' => 'Room updated successfully!',
         ]);
     }
 
-    public function destroy(Room $room, ImageRepositoryInterface $imageRepository)
+    public function destroy(Room $room)
     {
         try {
-            $room->delete();
-
-            $path = 'img/room/'.$room->number;
-            $path = public_path($path);
-
-            if (is_dir($path)) {
-                $imageRepository->destroy($path);
+            // Hapus gambar jika ada
+            if ($room->main_image_path) {
+                $oldPath = str_replace('storage/', '', $room->main_image_path);
+                if (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
             }
 
+            // Hapus data kamar
+            $room->delete();
+
             return response()->json([
-                'message' => 'Room number '.$room->number.' deleted!',
+                'message' => 'Room deleted successfully!',
             ]);
         } catch (\Exception $e) {
+            // Return error 500 agar masuk ke blok catch di JS
             return response()->json([
-                'message' => 'Customer '.$room->number.' cannot be deleted! Error Code:'.$e->errorInfo[1],
+                'message' => 'Error deleting room: ' . $e->getMessage()
             ], 500);
         }
     }

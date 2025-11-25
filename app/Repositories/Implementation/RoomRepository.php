@@ -4,103 +4,124 @@ namespace App\Repositories\Implementation;
 
 use App\Models\Room;
 use App\Repositories\Interface\RoomRepositoryInterface;
+use Illuminate\Http\Request;
 
 class RoomRepository implements RoomRepositoryInterface
 {
-    public function getRooms($request)
+    public function getRooms(Request $request)
     {
-        return Room::with('type', 'roomStatus')
+        // Metode ini untuk pagination biasa (jika dipakai selain di Datatable)
+        return Room::with(['type'])
             ->orderBy('number')
-            ->when($request->status, function ($query) use ($request) {
-                $query->where('room_status_id', $request->status);
-            })
-            ->when($request->type, function ($query) use ($request) {
+            ->when($request->type && $request->type !== 'All', function ($query) use ($request) {
                 $query->where('type_id', $request->type);
             })
-            ->when($request->search, function ($query) use ($request) {
-                $query->where('number', 'LIKE', '%'.$request->search.'%');
-            })
-            ->paginate(5)
-            ->appends($request->all());
+            ->paginate(5);
     }
 
-    public function getRoomsDatatable($request)
+    public function getRoomsDatatable(Request $request)
     {
+        // 1. Definisi Kolom (Harus sinkron dengan JS)
         $columns = [
             0 => 'rooms.number',
-            1 => 'types.name',
-            2 => 'rooms.capacity',
-            3 => 'rooms.price',
-            4 => 'room_statuses.name',
-            5 => 'types.id',
+            1 => 'rooms.name',
+            2 => 'types.name',
+            3 => 'rooms.area_sqm',
+            4 => 'rooms.room_facilities',
+            5 => 'rooms.bathroom_facilities',
+            6 => 'rooms.capacity',
+            7 => 'rooms.price',
+            8 => 'rooms.id',
         ];
 
-        $limit = $request->input('length');
-        $start = $request->input('start');
-        $order = $columns[$request->input('order.0.column')];
-        $dir = $request->input('order.0.dir');
-
+        // 2. Ambil Parameter Datatable
+        $limit = $request->input('length', 10);
+        $start = $request->input('start', 0);
+        $orderColumnIndex = $request->input('order.0.column', 0);
+        $order = $columns[$orderColumnIndex] ?? 'rooms.number';
+        $dir = $request->input('order.0.dir', 'asc');
         $search = $request->input('search.value');
-        $main_query = Room::select(
-            'rooms.id',
-            'rooms.number',
-            'types.name as type',
-            'rooms.capacity',
-            'rooms.price',
-            'room_statuses.name as status',
-        )
-            ->when($request->status !== 'All', function ($query) use ($request) {
-                $query->where('room_status_id', $request->status);
-            })
-            ->when($request->type !== 'All', function ($query) use ($request) {
-                $query->where('type_id', $request->type);
-            })
-            ->leftJoin('types', 'rooms.type_id', '=', 'types.id')
-            ->leftJoin('room_statuses', 'rooms.room_status_id', '=', 'room_statuses.id');
 
-        $totalData = $main_query->get()->count();
+        // 3. Query Builder
+        $query = Room::select('rooms.*', 'types.name as type_name')
+            ->leftJoin('types', 'rooms.type_id', '=', 'types.id');
 
-        $main_query->when($search, function ($query) use ($search, $columns) {
-            $query->where(function ($q) use ($search, $columns) {
-                $i = 0;
-                foreach ($columns as $column) {
-                    if ($i == 0) {
-                        $q->where($column, 'LIKE', "%{$search}%");
-                    } else {
-                        $q->orWhere($column, 'LIKE', "%{$search}%");
-                    }
-                    $i++;
-                }
+        // 4. Filter: Tipe Kamar
+        if ($request->has('type') && $request->type != 'All') {
+            $query->where('rooms.type_id', $request->type);
+        }
+
+        // 5. Filter: Pencarian Global
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('rooms.number', 'LIKE', "%{$search}%")
+                  ->orWhere('rooms.name', 'LIKE', "%{$search}%")
+                  ->orWhere('types.name', 'LIKE', "%{$search}%");
             });
-        });
+        }
 
-        $totalFiltered = $main_query->count();
+        // 6. Hitung Total Data (Sebelum Pagination)
+        $totalData = Room::count();
+        $totalFiltered = $query->count();
 
-        $main_query->offset($start)
+        // 7. Ambil Data (Dengan Pagination & Sorting)
+        $models = $query->orderBy($order, $dir)
+            ->offset($start)
             ->limit($limit)
-            ->orderBy($order, $dir);
+            ->get();
 
-        $models = $main_query->get();
-
+        // 8. Format Data menjadi Array untuk JSON
         $data = [];
         foreach ($models as $model) {
             $data[] = [
                 'id' => $model->id,
                 'number' => $model->number,
-                'type' => $model->type,
-                'price' => $model->price,
+                'name' => $model->name,
+                'type' => $model->type_name, // Dari Alias Select
+                'area_sqm' => $model->area_sqm,
+                'room_facilities' => $model->room_facilities,
+                'bathroom_facilities' => $model->bathroom_facilities,
                 'capacity' => $model->capacity,
-                'status' => $model->status,
+                'price' => $model->price,
             ];
         }
 
-        $response = [
+        // 9. Return Struktur JSON Standar Datatable
+        return [
             'draw' => intval($request->input('draw')),
-            'iTotalRecords' => $totalData,
-            'iTotalDisplayRecords' => $totalFiltered,
-            'aaData' => $data,
+            'recordsTotal' => $totalData, // Perhatikan nama key standar ini
+            'recordsFiltered' => $totalFiltered, // Perhatikan nama key standar ini
+            'data' => $data, // Ubah dari 'aaData' ke 'data' (versi Datatable baru lebih suka 'data')
         ];
-
-        return json_encode($response);
     }
+
+    public function getRoomById($id) { return Room::findOrFail($id); }
+    
+    public function store(Request $request) 
+    { 
+        // Handle File Upload (Gambar)
+        $data = $request->all();
+        if ($request->hasFile('image')) {
+            // Simpan file dan ambil path-nya
+            $path = $request->file('image')->store('img/rooms', 'public');
+            // Tambahkan path ke kolom database
+            $data['main_image_path'] = 'storage/' . $path;
+        }
+
+        return Room::create($data); 
+    }
+    
+    public function update($room, Request $request) 
+    { 
+        $data = $request->all();
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('img/rooms', 'public');
+            $data['main_image_path'] = 'storage/' . $path;
+        }
+        
+        $room->update($data); 
+        return $room; 
+    }
+    
+    public function delete($room) { $room->delete(); }
 }

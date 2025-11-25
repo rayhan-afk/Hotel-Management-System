@@ -18,6 +18,8 @@ class Transaction extends Model
         'check_in',
         'check_out',
         'status',
+        'total_price', // Pastikan ini ada
+        'breakfast',   // Pastikan ini ada
     ];
 
     public function user()

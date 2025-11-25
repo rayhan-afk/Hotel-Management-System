@@ -13,58 +13,74 @@
         </div>
         <!-- Stats Cards -->
         <div class="row mb-4">
+            
+            {{-- 1. KAMAR TERSEDIA (Available Rooms) --}}
             <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 mb-3">
-                <div class="card card-stats h-100">
-                    <div class="card-body text-center">
-                        <div class="stats-number">{{ count($transactions) }}</div>
-                        <div class="stats-label">
-                            <i class="fas fa-users me-2"></i>
-                            Jumlah Kamar Tersedia
+                <a href="{{ route('room-info.available') }}" class="card-link text-decoration-none h-100">
+                    <div class="card card-stats h-100">
+                        <div class="card-body text-center">
+                            <div class="stats-number">{{ $availableRoomsCount }}</div>
+                            <div class="stats-label">
+                                <i class="fas fa-bed me-2"></i>
+                                Jumlah Kamar Tersedia
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
+            
+            {{-- 2. KAMAR TERPAKAI (Occupied Rooms) --}}
             <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 mb-3">
-                <div class="card card-stats card-stats-success h-100">
-                    <div class="card-body text-center">
-                        <div class="stats-number">
-                            {{-- TODO: get completed today bookings --}} 0
-                        </div>
-                        <div class="stats-label">
-                            <i class="fas fa-check-circle me-2"></i>
-                            Jumlah Kamar Terpakai
+                {{-- Diarahkan ke Daftar Tamu yang Sedang Menginap (Check-out Index) --}}
+                <a href="{{ route('transaction.checkout.index') }}" class="card-link text-decoration-none h-100"> 
+                    <div class="card card-stats card-stats-success h-100">
+                        <div class="card-body text-center">
+                            <div class="stats-number">
+                                {{ $occupiedRoomsCount }}
+                            </div>
+                            <div class="stats-label">
+                                <i class="fas fa-check-circle me-2"></i> 
+                                Jumlah Kamar Terpakai
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
+            
+            {{-- 3. RESERVASI HARI INI (Today's Check-ins) --}}
             <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 mb-3">
-                <div class="card card-stats card-stats-warning h-100">
-                    <div class="card-body text-center">
-                        <div class="stats-number">
-                            {{ $transactions->filter(function($t) { return $t->getTotalPrice() - $t->getTotalPayment() > 0; })->count() }}
-                        </div>
-                        <div class="stats-label">
-                            <i class="fas fa-clock me-2"></i>
-                            Jumlah Reservasi
+                {{-- Diarahkan ke halaman Reservasi Kamar (yang menampilkan semua reservasi masa depan, termasuk hari ini) --}}
+                <a href="{{ route('room-info.reservation') }}" class="card-link text-decoration-none h-100">
+                    <div class="card card-stats card-stats-warning h-100">
+                        <div class="card-body text-center">
+                            <div class="stats-number">
+                                {{ $todayReservationsCount }}
+                            </div>
+                            <div class="stats-label">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                Reservasi Hari Ini
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
+            
+            {{-- 4. KAMAR DIBERSIHKAN (Cleaning Rooms) --}}
             <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 mb-3">
-                <div class="card card-stats card-stats-danger h-100">
-                    <div class="card-body text-center">
-                        <div class="stats-number">
-                            {{ $transactions->filter(function($t) {
-                                return Helper::getDateDifference(now(), $t->check_out) < 1 &&
-                                       $t->getTotalPrice() - $t->getTotalPayment() > 0;
-                            })->count() }}
-                        </div>
-                        <div class="stats-label">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            Kamar Sedang Dibersihkan
+                {{-- Diarahkan ke halaman Kamar Dibersihkan --}}
+                <a href="{{ route('room-info.cleaning') }}" class="card-link text-decoration-none h-100">
+                    <div class="card card-stats card-stats-danger h-100">
+                        <div class="card-body text-center">
+                            <div class="stats-number">
+                                {{ $cleaningRoomsCount }}
+                            </div>
+                            <div class="stats-label">
+                                <i class="fas fa-broom me-2"></i>
+                                Kamar Sedang Dibersihkan
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
 

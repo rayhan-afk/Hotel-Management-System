@@ -22,6 +22,9 @@ use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\IngredientTransactionController; // Dibiarkan jika ada
 use App\Http\Controllers\AmenityController; // ASUMSI: Amenity diletakkan di Inventory/
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\RoomInfoController;
+use App\Http\Controllers\CheckinController; 
+use App\Http\Controllers\CheckoutController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -179,35 +182,32 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 });
 
-// Group Info Kamar (Monitoring)
-Route::prefix('room-info')->as('room-info.')->group(function () {
-    // URL: /room-info/available
-    Route::get('/available', function () {
-        return view('room-info.available');
-    })->name('available');
+// Group Pemesanan (Aksi Check-in/Check-out) - MENGGUNAKAN CONTROLLER BARU
+Route::prefix('transaction')->as('transaction.')->middleware('auth')->group(function () {
+    
+    // Check-in
+    Route::get('/check-in', [CheckinController::class, 'index'])->name('checkin.index');
+    Route::post('/check-in/{transaction}', [CheckinController::class, 'store'])->name('checkin.store');
 
-    // URL: /room-info/reservation
-    Route::get('/reservation', function () {
-        return view('room-info.reservation');
-    })->name('reservation');
-
-    // URL: /room-info/cleaning
-    Route::get('/cleaning', function () {
-        return view('room-info.cleaning');
-    })->name('cleaning');
+    // Check-out
+    Route::get('/check-out', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/check-out/{transaction}', [CheckoutController::class, 'process'])->name('checkout.process');
+    
+    // Rute lain yang sudah ada, misalnya:
+    // Route::get('/reservation/identity', [TransactionRoomReservationController::class, 'createIdentity'])->name('reservation.createIdentity');
 });
 
-// Group Pemesanan (Aksi Check-in/Check-out)
-Route::prefix('transaction')->as('transaction.')->group(function () {
-    // URL: /transaction/check-in
-    Route::get('/check-in', function () {
-        return view('transaction.checkin.index');
-    })->name('checkin.index');
+// Group Info Kamar (Monitoring) - LOGIKA BARU MENGGUNAKAN CONTROLLER
+Route::prefix('room-info')->as('room-info.')->middleware('auth')->group(function () {
+    
+    // URL: /room-info/available
+    Route::get('/available', [RoomInfoController::class, 'availableRooms'])->name('available');
 
-    // URL: /transaction/check-out
-    Route::get('/check-out', function () {
-        return view('transaction.checkout.index');
-    })->name('checkout.index');
+    // URL: /room-info/reservation
+    Route::get('/reservation', [RoomInfoController::class, 'pendingReservations'])->name('reservation');
+
+    // URL: /room-info/cleaning
+    Route::get('/cleaning', [RoomInfoController::class, 'cleaningRooms'])->name('cleaning');
 });
 
 Route::redirect('/', '/dashboard');

@@ -1,175 +1,190 @@
 @extends('template.master')
-@section('title', 'Choose Day Reservation')
+@section('title', 'Konfirmasi Reservasi')
 @section('head')
     <link rel="stylesheet" href="{{ asset('style/css/progress-indication.css') }}">
+    <style>
+        .invoice-card {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+        }
+        .invoice-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+        }
+        .invoice-body {
+            padding: 30px;
+        }
+        .table-invoice th {
+            font-weight: 600;
+            color: #555;
+        }
+        .table-invoice td {
+            vertical-align: middle;
+        }
+        .total-row {
+            background-color: #eef2f7;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .breakfast-badge {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+    </style>
 @endsection
 @section('content')
     @include('transaction.reservation.progressbar')
-    <div class="container mt-3">
-        <div class="row justify-content-md-center">
-            <div class="col-md-8 mt-2">
-                <div class="card shadow-sm border">
-                    <div class="card-body p-4">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="row mb-3">
-                                    <label for="room_number" class="col-sm-2 col-form-label">Ruangan</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control" id="room_number" name="room_number"
-                                            placeholder="col-form-label" value="{{ $room->number }} " readonly>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="room_type" class="col-sm-2 col-form-label">Tipe</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control" id="room_type" name="room_type"
-                                            placeholder="col-form-label" value="{{ $room->type->name }} " readonly>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="room_capacity" class="col-sm-2 col-form-label">Kapasitas</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control" id="room_capacity" name="room_capacity"
-                                            placeholder="col-form-label" value="{{ $room->capacity }} " readonly>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="room_price" class="col-sm-2 col-form-label">Harga / Hari</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control" id="room_price" name="room_price"
-                                            placeholder="col-form-label"
-                                            value="{{ Helper::convertToRupiah($room->price) }}" readonly>
-                                    </div>
-                                </div>
+    
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            {{-- Kolom Kiri: Invoice Tagihan --}}
+            <div class="col-lg-8">
+                <div class="card invoice-card mb-4">
+                    <div class="invoice-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold text-primary"><i class="fas fa-file-invoice me-2"></i>Rincian Tagihan</h4>
+                        <!-- <span class="badge bg-danger text-white px-3 py-2">Belum Dibayar</span> -->
+                    </div>
+                    <div class="invoice-body">
+                        
+                        {{-- Detail Reservasi --}}
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <p class="text-muted mb-1 small text-uppercase fw-bold">Info Kamar</p>
+                                <h5 class="fw-bold">{{ $room->number }} - {{ $room->type->name }}</h5>
+                                <p class="mb-0 text-muted"><i class="fas fa-user me-1"></i> {{ $room->capacity }} Orang</p>
                             </div>
-                            <hr>
-                            <div class="col-sm-12 mt-2">
-                                <form method="POST"
-                                    action="{{ route('transaction.reservation.payDownPayment', ['customer' => $customer->id, 'room' => $room->id]) }}">
-                                    @csrf
-                                    <div class="row mb-3">
-                                        <label for="check_in" class="col-sm-2 col-form-label">Check In</label>
-                                        <div class="col-sm-10">
-                                            <input type="date" class="form-control" id="check_in" name="check_in"
-                                                placeholder="col-form-label" value="{{ $stayFrom }}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <label for="check_out" class="col-sm-2 col-form-label">Check Out</label>
-                                        <div class="col-sm-10">
-                                            <input type="date" class="form-control" id="check_out" name="check_out"
-                                                placeholder="col-form-label" value="{{ $stayUntil }}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <label for="how_long" class="col-sm-2 col-form-label">Total Hari</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="how_long" name="how_long"
-                                                placeholder="col-form-label"
-                                                value="{{ $dayDifference }} {{ Helper::plural('Day', $dayDifference) }} "
-                                                readonly>
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <label for="total_price" class="col-sm-2 col-form-label">Total Harga</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="total_price" name="total_price"
-                                                placeholder="col-form-label"
-                                                value="{{ Helper::convertToRupiah(Helper::getTotalPayment($dayDifference, $room->price)) }} "
-                                                readonly>
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <label for="minimum_dp" class="col-sm-2 col-form-label">Minimal DP</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="minimum_dp" name="minimum_dp"
-                                                placeholder="col-form-label"
-                                                value="{{ Helper::convertToRupiah($downPayment) }} " readonly>
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <label for="downPayment" class="col-sm-2 col-form-label">Bayar</label>
-                                        <div class="col-sm-10">
-                                            <input type="text"
-                                                class="form-control @error('downPayment') is-invalid @enderror"
-                                                id="downPayment" name="downPayment" placeholder="Input payment here"
-                                                value="{{ old('downPayment') }}">
-                                            @error('downPayment')
-                                                <div class="text-danger mt-1">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col-sm-2"></div>
-                                        <div class="col-sm-10" id="showPaymentType"></div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary float-end">Bayar Uang Muka</button>
-                                </form>
+                            <div class="col-md-6 text-md-end">
+                                <p class="text-muted mb-1 small text-uppercase fw-bold">Tanggal Menginap</p>
+                                <p class="mb-0 fw-bold">{{ Helper::dateFormat($stayFrom) }} — {{ Helper::dateFormat($stayUntil) }}</p>
+                                <p class="mb-0 text-primary">{{ $dayDifference }} Malam</p>
                             </div>
                         </div>
+
+                        <hr class="my-4">
+
+                        <form method="POST" 
+                              id="reservation-form"
+                              data-room-price="{{ $room->price }}" 
+                              data-duration="{{ $dayDifference }}"
+                              action="{{ route('transaction.reservation.payDownPayment', ['customer' => $customer->id, 'room' => $room->id]) }}">
+                            @csrf
+                            
+                            <input type="hidden" name="check_in" value="{{ $stayFrom }}">
+                            <input type="hidden" name="check_out" value="{{ $stayUntil }}">
+                            <input type="hidden" name="how_long" value="{{ $dayDifference }}">
+
+                            {{-- Tabel Rincian Biaya --}}
+                            <div class="table-responsive">
+                                <table class="table table-invoice">
+                                    <thead>
+                                        <tr>
+                                            <th>Deskripsi Item</th>
+                                            <th class="text-end">Harga Satuan</th>
+                                            <th class="text-center">Qty</th>
+                                            <th class="text-end">Jumlah</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{-- Item 1: Sewa Kamar --}}
+                                        <tr>
+                                            <td>
+                                                <span class="fw-bold">Sewa Kamar</span>
+                                                <div class="small text-muted">Harga per malam</div>
+                                            </td>
+                                            <td class="text-end">{{ Helper::convertToRupiah($room->price) }}</td>
+                                            <td class="text-center">{{ $dayDifference }} Malam</td>
+                                            <td class="text-end fw-bold">{{ Helper::convertToRupiah($room->price * $dayDifference) }}</td>
+                                        </tr>
+
+                                        {{-- Item 2: Sarapan (Dinamis) --}}
+                                        <tr id="row_breakfast" style="display: none;">
+                                            <td>
+                                                <span class="fw-bold text-success">Paket Sarapan</span>
+                                                <div class="small text-muted">
+                                                    <span class="breakfast-badge"><i class="fas fa-utensils me-1"></i> Max 2 Orang</span>
+                                                </div>
+                                            </td>
+                                            <td class="text-end">Rp 140.000</td>
+                                            <td class="text-center">{{ $dayDifference }} Malam</td>
+                                            <td class="text-end fw-bold text-success" id="display_breakfast_total">Rp 0</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        {{-- Opsi Tambahan --}}
+                                        <tr>
+                                            <td colspan="4" class="bg-light p-3">
+                                                <div class="d-flex align-items-center justify-content-end">
+                                                    <label for="breakfast" class="fw-bold me-3 mb-0 text-dark">
+                                                        <i class="fas fa-coffee me-1 text-warning"></i> Tambah Sarapan?
+                                                    </label>
+                                                    <select class="form-select w-auto border-primary" id="breakfast" name="breakfast">
+                                                        <option value="No" selected>Tidak</option>
+                                                        <option value="Yes">Ya, Tambahkan (+Rp 140.000/malam)</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                        {{-- Total Bayar (Lunas) --}}
+                                        <tr class="total-row text-primary">
+                                            <td colspan="3" class="text-end">Total yang Harus Dibayar</td>
+                                            <td class="text-end" id="display_total_price">
+                                                {{ Helper::convertToRupiah($room->price * $dayDifference) }}
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            {{-- Tombol Aksi --}}
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{{ route('transaction.reservation.chooseRoom', ['customer' => $customer->id]) }}?check_in={{$stayFrom}}&check_out={{$stayUntil}}&count_person={{request()->input('count_person') ?? 1}}" 
+                                   class="btn btn-outline-secondary px-4 py-2">
+                                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                                </a>
+                                <button type="submit" class="btn btn-primary px-5 py-2 shadow-sm fw-bold">
+                                    Konfirmasi & Bayar Lunas <i class="fas fa-money-bill-wave ms-2"></i>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mt-2">
-                <div class="card shadow-sm">
-                    <img src="{{ $customer->user->getAvatar() }}"
-                        style="border-top-right-radius: 0.5rem; border-top-left-radius: 0.5rem">
-                    <div class="card-body">
-                        <table>
-                            <tr>
-                                <td style="text-align: center; width:50px">
-                                    <span>
-                                        <i class="fas {{ $customer->gender == 'Male' ? 'fa-male' : 'fa-female' }}">
-                                        </i>
-                                    </span>
-                                </td>
-                                <td>
-                                    {{ $customer->name }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; ">
-                                    <span>
-                                        <i class="fas fa-user-md"></i>
-                                    </span>
-                                </td>
-                                <td>{{ $customer->job }}</td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; ">
-                                    <span>
-                                        <i class="fas fa-birthday-cake"></i>
-                                    </span>
-                                </td>
-                                <td>
-                                    {{ $customer->birthdate }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; ">
-                                    <span>
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </span>
-                                </td>
-                                <td>
-                                    {{ $customer->address }}
-                                </td>
-                            </tr>
-                        </table>
+
+            {{-- Kolom Kanan: Data Pelanggan --}}
+            <div class="col-lg-4">
+                <div class="card invoice-card border-0 sticky-top" style="top: 20px; z-index: 1;">
+                    <div class="card-header bg-white text-center py-4 border-0">
+                        <img src="{{ $customer->user->getAvatar() }}"
+                            class="rounded-circle shadow border p-1" 
+                            style="width: 100px; height: 100px; object-fit: cover;">
+                        <h5 class="mt-3 mb-0 fw-bold">{{ $customer->name }}</h5>
+                        <p class="text-muted small mb-0">{{ $customer->job }}</p>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-4 py-3 d-flex justify-content-between">
+                                <span class="text-muted"><i class="fas fa-venus-mars me-2"></i> Gender</span>
+                                <span class="fw-medium">{{ $customer->gender }}</span>
+                            </li>
+                            <li class="list-group-item px-4 py-3 d-flex justify-content-between">
+                                <span class="text-muted"><i class="fas fa-birthday-cake me-2"></i> Lahir</span>
+                                <span class="fw-medium">{{ $customer->birthdate }}</span>
+                            </li>
+                            <li class="list-group-item px-4 py-3">
+                                <div class="text-muted mb-1"><i class="fas fa-map-marker-alt me-2"></i> Alamat</div>
+                                <p class="mb-0 fw-medium small">{{ $customer->address }}</p>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-@endsection
-@section('footer')
-<script>
-    $('#downPayment').keyup(function() {
-        $('#showPaymentType').text('Rp. ' + parseFloat($(this).val(), 10).toFixed(2).replace(
-                /(\d)(?=(\d{3})+\.)/g, "$1.")
-            .toString());
-    });
-</script>
 @endsection
