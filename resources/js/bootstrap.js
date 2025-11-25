@@ -79,6 +79,7 @@ import axios from "axios";
         import("./pages/room-status"),
         import("./pages/type"),
         import("./pages/room"),
+        import("./pages/reservation"),
         import("./pages/dashboard"),
         import("./pages/login"),
         import("./pages/global"),

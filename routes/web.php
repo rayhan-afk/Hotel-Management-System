@@ -22,6 +22,9 @@ use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\IngredientTransactionController; // Dibiarkan jika ada
 use App\Http\Controllers\AmenityController; // ASUMSI: Amenity diletakkan di Inventory/
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\RoomInfoController;
+use App\Http\Controllers\CheckinController; 
+use App\Http\Controllers\CheckoutController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -177,6 +180,34 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/reset-password/{token}', fn (string $token) => view('auth.reset-password', ['token' => $token]))
         ->name('password.reset');
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+});
+
+// Group Pemesanan (Aksi Check-in/Check-out) - MENGGUNAKAN CONTROLLER BARU
+Route::prefix('transaction')->as('transaction.')->middleware('auth')->group(function () {
+    
+    // Check-in
+    Route::get('/check-in', [CheckinController::class, 'index'])->name('checkin.index');
+    Route::post('/check-in/{transaction}', [CheckinController::class, 'store'])->name('checkin.store');
+
+    // Check-out
+    Route::get('/check-out', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/check-out/{transaction}', [CheckoutController::class, 'process'])->name('checkout.process');
+    
+    // Rute lain yang sudah ada, misalnya:
+    // Route::get('/reservation/identity', [TransactionRoomReservationController::class, 'createIdentity'])->name('reservation.createIdentity');
+});
+
+// Group Info Kamar (Monitoring) - LOGIKA BARU MENGGUNAKAN CONTROLLER
+Route::prefix('room-info')->as('room-info.')->middleware('auth')->group(function () {
+    
+    // URL: /room-info/available
+    Route::get('/available', [RoomInfoController::class, 'availableRooms'])->name('available');
+
+    // URL: /room-info/reservation
+    Route::get('/reservation', [RoomInfoController::class, 'pendingReservations'])->name('reservation');
+
+    // URL: /room-info/cleaning
+    Route::get('/cleaning', [RoomInfoController::class, 'cleaningRooms'])->name('cleaning');
 });
 
 Route::redirect('/', '/dashboard');
