@@ -351,7 +351,7 @@ body.sidebar-layout {
    Table Styles (Mobile First)
    =================================== */
 .table-responsive {
-    background: white;
+    background: #F7F3E4 !important;
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
     margin-bottom: 1.5rem;
@@ -414,12 +414,7 @@ body.sidebar-layout {
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(
-            135deg,
-            #667eea 0%,
-            #764ba2 50%,
-            #f093fb 100%
-        );
+        background: #F7F3E4;
         z-index: 1;
     }
 
@@ -636,7 +631,7 @@ body.sidebar-layout {
    Professional Table Styles
    =================================== */
 .professional-table {
-    background: white;
+    background: #F7F3E4 !important;
     border-radius: 0;
     overflow: hidden;
     font-size: 0.875rem;
@@ -1054,7 +1049,7 @@ body.sidebar-layout {
    =================================== */
 .dataTables_wrapper {
     padding: 1.5rem;
-    background: white;
+    background: #F7F3E4 !important;
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
     border: 1px solid #f1f5f9;
@@ -1118,7 +1113,7 @@ body.sidebar-layout {
         font-size: 0.875rem;
         margin-top: 1.5rem;
         text-align: left;
-        color: #64748b;
+        color: #50200C !important;
         font-weight: 500;
         padding: 1rem 0;
         border-top: 1px solid #f1f5f9;
@@ -1204,7 +1199,8 @@ body.sidebar-layout {
    Professional Table Container (Mobile First)
    =================================== */
 .professional-table-container {
-    background: white;
+    background: #F7F3E4 !important;
+    background-color: #F7F3E4 !important;
     border-radius: 20px;
     margin-bottom: 2rem;
     box-shadow: 0 4px 32px rgba(0, 0, 0, 0.06), 0 2px 16px rgba(0, 0, 0, 0.04);
@@ -1226,12 +1222,7 @@ body.sidebar-layout {
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(
-            135deg,
-            #667eea 0%,
-            #764ba2 50%,
-            #f093fb 100%
-        );
+        background: #F7F3E4 !important;
         z-index: 1;
     }
 
@@ -2581,4 +2572,148 @@ a:active {
     &[aria-expanded="true"] .profile-arrow {
         transform: rotate(180deg);
     }
+}
+
+.swal2-confirm.text-50200C,
+.swal2-cancel.text-50200C {
+    color: #50200C !important;
+}
+
+// .table-header {
+//     background-color: #F7F3E4 !important;
+//     padding: 20px;
+//     border-radius: 10px 10px 0 0;
+// }
+
+.table-header {
+    background: #F7F3E4 !important;
+    background-image: none !important;
+}
+
+table.dataTable {
+    background-color: #F7F3E4 !important;
+}
+
+table.dataTable thead th {
+    background-color: #F7F3E4 !important;
+}
+
+table.dataTable tbody td {
+    background-color: #F7F3E4 !important;
+}
+
+table.dataTable thead th {
+    background-color: #C49A6C !important;
+    color: white !important;      /* warna tulisan */
+    border-color: #C49A6C !important; /* biar rapi */
+}
+
+table.dataTable thead th {
+    color: #50200C !important;
+}
+
+table.dataTable tbody td {
+    color: #50200C !important;
+}
+
+.table-header h4 {
+    color: #50200C !important;
+}
+
+.table-header h4,
+.table-header h4 i {
+    color: #50200C !important;
+}
+
+.table-header p {
+    color: rgba(80, 32, 12, 0.6) !important;
+}
+
+table i,
+table svg,
+table .material-icons {
+    color: #50200C !important;
+    fill: #50200C !important;
+}
+
+/* ===================================
+   OVERRIDE PAKSA UNTUK DATATABLES WRAPPER
+   =================================== */
+
+#page-content-wrapper .dataTables_wrapper,
+#page-content-wrapper .dataTables_wrapper .dt-container,
+#page-content-wrapper .dataTables_wrapper .dt-container > div,
+#page-content-wrapper .dataTables_wrapper .row.mt-2,
+#page-content-wrapper .dataTables_wrapper .dataTables_length,
+#page-content-wrapper .dataTables_wrapper .dataTables_filter {
+    /* Gunakan warna yang Anda inginkan dan pastikan !important */
+    background-color: #F7F3E4 !important; 
+    background: #F7F3E4 !important;
+}
+
+/* Jika masih tidak berhasil, coba atur background menjadi transparan */
+#page-content-wrapper .dataTables_wrapper .row.mt-2.justify-content-between {
+    background: transparent !important; /* Gunakan transparan agar warna parent terlihat */
+    background-color: transparent !important;
+}
+
+/* PAKSA semua label di DataTables menjadi coklat */
+.dataTables_wrapper label,
+.dt-container label {
+    color: #50200C !important;
+}
+
+/* PAKSA warna text search input */
+.dataTables_wrapper input[type="search"],
+.dt-container input[type="search"] {
+    color: #50200C !important;
+}
+
+/* ===================================
+   OVERRIDE PALING EKSTREM
+   =================================== */
+
+/* Menimpa semua background pada wrapper footer DataTables */
+#page-content-wrapper .dataTables_wrapper .dt-empty-footer * {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+
+/* Mengatur warna teks informasi */
+#page-content-wrapper .dataTables_info {
+    color: #50200C !important;
+}
+
+/* Mengatur warna tombol paginasi aktif */
+#page-content-wrapper .page-item.active .page-link {
+    background-color: #50200C !important;
+    border-color: #50200C !important;
+    color: white !important;
+}
+
+/* Mengatur warna tombol paginasi normal/hover */
+#page-content-wrapper .page-link {
+    color: #50200C !important; 
+    border-color: #50200C !important; 
+}
+
+#page-content-wrapper .page-link:hover {
+    background-color: #50200C !important;
+    color: white !important;
+}
+
+/* ===================================
+   OVERRIDE LATAR BELAKANG FOOTER
+   =================================== */
+
+/* Menargetkan div.table-footer yang berisi "Amenity Inventory" */
+.table-footer {
+    background-color: #F7F3E4 !important; /* Gunakan warna background body */
+    background: #F7F3E4 !important;
+}
+
+/* Jika class table-footer tidak cukup spesifik, gunakan struktur lengkap: */
+.professional-table-container .table-footer {
+    background-color: #F7F3E4 !important;
+    background: #F7F3E4 !important;
 }

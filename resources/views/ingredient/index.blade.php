@@ -38,7 +38,7 @@
                         <th><i class="fas fa-ruler me-1"></i>Satuan</th>
                         <th><i class="fas fa-info-circle me-1"></i>Status</th>
                         <th><i class="fas fa-align-left me-1"></i>Keterangan</th>
-                        <th><i class="fas fa-cog me-1"></i>Action</th>
+                        <th><i class="fas fa-cog me-1"></i>Aksi</th>
                     </tr>
                 </thead>
                 <tbody></tbody>

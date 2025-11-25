@@ -119,9 +119,14 @@ $(function () {
                 text: "Data tidak bisa dikembalikan!",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Ya, Hapus!"
+                confirmButtonColor: "#F2C2B8",
+                cancelButtonColor: "#8FB8E1",
+                confirmButtonText: "Ya, Hapus!",
+                cancelButtonText: "Batal",
+                customClass: {
+                    confirmButton: 'text-50200C',
+                    cancelButton: 'text-50200C'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     $(`#delete-amenity-form-${id}`).trigger('submit');

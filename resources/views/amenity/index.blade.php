@@ -6,17 +6,16 @@
             <div class="col-12">
                 <button id="add-button" type="button" class="add-room-btn">
                     <i class="fas fa-plus"></i>
-                    Add New Amenity
+                    Tambah Amenities
                 </button>
             </div>
         </div>
 
         <div class="professional-table-container">
             <div class="table-header">
-                <h4><i class="fas fa-soap me-2"></i>Amenity Management</h4>
-                <p>Manage hotel amenities stock and details</p>
+                <h4><i class="fas fa-soap me-2"></i>Manajemen Amenities</h4>
+                <p>Daftar stok amenities untuk setiap kamar hotel</p>
             </div>
-
             <div class="table-responsive">
                 <table id="amenity-table" class="professional-table table" style="width: 100%;">
                     <thead>
@@ -51,7 +50,7 @@
                             
                             {{-- 7. Action --}}
                             <th scope="col">
-                                <i class="fas fa-cog me-1"></i>Actions
+                                <i class="fas fa-cog me-1"></i>Aksi
                             </th>
                         </tr>
                     </thead>
@@ -60,7 +59,6 @@
             </div>
 
             <div class="table-footer">
-                <h3><i class="fas fa-soap me-2"></i>Amenity Inventory</h3>
             </div>
         </div>
     </div>
