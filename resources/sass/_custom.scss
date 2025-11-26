@@ -1134,7 +1134,7 @@ body.sidebar-layout {
             border-radius: 8px !important;
             border: 1px solid #e2e8f0 !important;
             background: white !important;
-            color: #64748b !important;
+            color: #50200C !important;
             text-decoration: none;
             transition: all 0.2s ease;
             min-width: 40px;
@@ -1146,7 +1146,7 @@ body.sidebar-layout {
                     #f8fafc 0%,
                     #f1f5f9 100%
                 ) !important;
-                color: #374151 !important;
+                color: #50200C !important;
                 border-color: #cbd5e1 !important;
                 transform: translateY(-1px);
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -2340,7 +2340,7 @@ body.sidebar-layout {
 .pagination {
     .page-link {
         border: none;
-        color: #64748b;
+        color: #50200C;
         padding: 0.375rem 0.5rem;
         margin: 0 0.125rem;
         border-radius: 6px;
@@ -2354,12 +2354,12 @@ body.sidebar-layout {
 
         &:hover {
             background-color: #f1f5f9;
-            color: #2563eb;
+            color: #50200C;
         }
     }
 
     .page-item.active .page-link {
-        background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+        background: #50200C;
         border: none;
         color: white;
     }
@@ -2684,23 +2684,23 @@ table .material-icons {
     color: #50200C !important;
 }
 
-/* Mengatur warna tombol paginasi aktif */
-#page-content-wrapper .page-item.active .page-link {
-    background-color: #50200C !important;
-    border-color: #50200C !important;
-    color: white !important;
-}
+// /* Mengatur warna tombol paginasi aktif */
+// #page-content-wrapper .page-item.active .page-link {
+//     background-color: #50200C !important;
+//     border-color: #50200C !important;
+//     color: white !important;
+// }
 
-/* Mengatur warna tombol paginasi normal/hover */
-#page-content-wrapper .page-link {
-    color: #50200C !important; 
-    border-color: #50200C !important; 
-}
+// /* Mengatur warna tombol paginasi normal/hover */
+// #page-content-wrapper .page-link {
+//     color: #50200C !important; 
+//     border-color: #50200C !important; 
+// }
 
-#page-content-wrapper .page-link:hover {
-    background-color: #50200C !important;
-    color: white !important;
-}
+// #page-content-wrapper .page-link:hover {
+//     background-color: #50200C !important;
+//     color: white !important;
+// }
 
 /* ===================================
    OVERRIDE LATAR BELAKANG FOOTER
@@ -2716,4 +2716,87 @@ table .material-icons {
 .professional-table-container .table-footer {
     background-color: #F7F3E4 !important;
     background: #F7F3E4 !important;
+}
+
+div.dt-container div.dt-info {
+    color: #50200C !important;
+}
+
+div.dt-container .dt-paging .dt-paging-button {
+    color: #50200C !important;
+}
+
+/* Atur warna tombol Close */
+.modal-content .btn.btn-secondary {
+    background-color: #C49A6C !important; 
+    color: #50200C !important;
+    border: none !important;
+}
+
+/* Atur warna tombol Save */
+.modal-content .btn.btn-primary {
+    background-color: #50200C !important;
+    color: white !important;
+    border: 1px solid #50200C !important;
+}
+
+/* Hover efek */
+.modal-content .btn:hover {
+    opacity: 0.85 !important;
+}
+
+/* Warna teks label */
+.modal-content label {
+    color: #50200C !important;
+    font-weight: 600;
+}
+
+/* Warna border & teks input */
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+    color: #50200C !important;
+    border-color: #C49A6C !important;
+}
+
+/* Placeholder */
+.modal-content ::placeholder {
+    color: rgba(80, 32, 12, 0.6) !important;
+}
+
+/* Warna judul modal */
+#main-modal .modal-title {
+    color: #50200C !important;
+    font-weight: 700;
+}
+
+/* Ubah tombol SAVE (id = btn-modal-save) */
+#btn-modal-save {
+    background-color: #A8D5BA; 
+    border-color: #A8D5BA;
+    color: #50200C !important;
+}
+
+/* Tombol Close (tombol pertama) */
+#main-modal .modal-footer button:first-child {
+    background-color: #F2C2B8 !important;
+    border-color: #F2C2B8 !important;
+    color: #50200C !important;
+    font-weight: 600;
+}
+
+/* icon close X */
+#main-modal .btn-close {
+    background-image: none !important;
+    position: relative;
+}
+
+#main-modal .btn-close::before {
+    content: '×';
+    font-size: 28px;
+    line-height: 1;
+    color: #50200C;
+    position: absolute;
+    top: -6px;
+    left: 2px;
 }

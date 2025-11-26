@@ -54,7 +54,7 @@ $(function () {
                     } 
                     // 2. Kurang dari 20 = Menipis
                     else if (stok < 20) {
-                        return `<span class="badge bg-warning text-dark">Menipis</span>`;
+                        return `<span class="badge bg-warning">Menipis</span>`;
                     } 
                     // 3. Lebih dari 50 = Tersedia
                     else if (stok > 50) {
@@ -145,7 +145,7 @@ $(function () {
             $("#main-modal .modal-body").html(`Fetching data...`);
             const id = $(this).data("id");
             const response = await $.get(`/amenity/${id}/edit`);
-            $("#main-modal .modal-title").text("Edit Amenity");
+            $("#main-modal .modal-title").text("Edit Amenities");
             $("#main-modal .modal-body").html(response.view);
         })
         .on("click", "#btn-modal-save", function () {
@@ -154,7 +154,7 @@ $(function () {
         .on("submit", "#form-save-amenity", async function (e) {
             e.preventDefault();
             if (typeof CustomHelper !== 'undefined') CustomHelper.clearError();
-            $("#btn-modal-save").attr("disabled", true).text("Saving...");
+            $("#btn-modal-save").attr("disabled", true).text("Menyimpan...");
             
             try {
                 const response = await $.ajax({
@@ -174,7 +174,7 @@ $(function () {
                     Swal.fire({ icon: "error", title: "Error", text: "Something went wrong!" });
                 }
             } finally {
-                $("#btn-modal-save").attr("disabled", false).text("Save");
+                $("#btn-modal-save").attr("disabled", false).text("Simpan");
             }
         })
         .on("submit", ".delete-amenity", async function (e) {
