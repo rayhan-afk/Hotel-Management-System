@@ -22,6 +22,7 @@ use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\IngredientTransactionController; // Dibiarkan jika ada
 use App\Http\Controllers\AmenityController; // ASUMSI: Amenity diletakkan di Inventory/
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\LaporanKamarController;
 use App\Http\Controllers\RoomInfoController;
 use App\Http\Controllers\CheckinController; 
 use App\Http\Controllers\CheckoutController;
@@ -134,7 +135,8 @@ Route::name('laporan.')->group(function () {
     Route::get('/laporan/rapat/export', [LaporanController::class, 'exportExcel'])->name('rapat.export');
         
     // Laporan Kamar Hotel (Stub)
-    Route::get('/laporan/kamar', [LaporanController::class, 'laporanKamarHotel'])->name('kamar.index');
+     Route::get('/laporan/kamar', [LaporanKamarController::class, 'index'])->name('kamar.index');
+    Route::get('/laporan/kamar/export', [LaporanKamarController::class, 'exportExcel'])->name('kamar.export');
 });
 
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');

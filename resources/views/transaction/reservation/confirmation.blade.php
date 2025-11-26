@@ -70,14 +70,12 @@
 
                         <form method="POST" 
                               id="reservation-form"
-                              data-room-price="{{ $room->price }}" 
-                              data-duration="{{ $dayDifference }}"
                               action="{{ route('transaction.reservation.payDownPayment', ['customer' => $customer->id, 'room' => $room->id]) }}">
                             @csrf
                             
                             <input type="hidden" name="check_in" value="{{ $stayFrom }}">
                             <input type="hidden" name="check_out" value="{{ $stayUntil }}">
-                            <input type="hidden" name="how_long" value="{{ $dayDifference }}">
+                            <input type="hidden" name="total_price" value="{{ $downPayment }}"> 
 
                             {{-- Tabel Rincian Biaya --}}
                             <div class="table-responsive">
@@ -144,7 +142,7 @@
 
                             {{-- Tombol Aksi --}}
                             <div class="d-flex justify-content-between mt-4">
-                                <a href="{{ route('transaction.reservation.chooseRoom', ['customer' => $customer->id]) }}?check_in={{$stayFrom}}&check_out={{$stayUntil}}&count_person={{request()->input('count_person') ?? 1}}" 
+                                <a href="{{ route('transaction.reservation.chooseRoom', ['customer' => $customer->id]) }}?check_in={{$stayFrom}}&check_out={{$stayUntil}}" 
                                    class="btn btn-outline-secondary px-4 py-2">
                                     <i class="fas fa-arrow-left me-2"></i>Kembali
                                 </a>
@@ -187,4 +185,46 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('footer')
+<script>
+    // Script untuk update tampilan harga jika sarapan dipilih
+    const roomPriceTotal = {{ $room->price * $dayDifference }};
+    const dayCount = {{ $dayDifference }};
+    const breakfastPricePerDay = 140000; 
+
+    const breakfastSelect = document.getElementById('breakfast');
+    const rowBreakfast = document.getElementById('row_breakfast');
+    const displayBreakfastTotal = document.getElementById('display_breakfast_total');
+    const displayTotalPrice = document.getElementById('display_total_price');
+
+    // Fungsi format Rupiah
+    const formatRupiah = (number) => {
+        return new Intl.NumberFormat('id-ID', { 
+            style: 'currency', 
+            currency: 'IDR',
+            minimumFractionDigits: 0 
+        }).format(number);
+    };
+
+    breakfastSelect.addEventListener('change', function() {
+        let currentTotal = roomPriceTotal;
+        
+        if (this.value === 'Yes') {
+            const breakfastTotal = breakfastPricePerDay * dayCount;
+            currentTotal += breakfastTotal;
+            
+            // Tampilkan baris sarapan
+            rowBreakfast.style.display = 'table-row';
+            displayBreakfastTotal.innerText = formatRupiah(breakfastTotal);
+        } else {
+            // Sembunyikan baris sarapan
+            rowBreakfast.style.display = 'none';
+        }
+
+        // Update Total Akhir
+        displayTotalPrice.innerText = formatRupiah(currentTotal);
+    });
+</script>
 @endsection

@@ -289,9 +289,10 @@
                             
                             <div class="collapse {{ $isLaporanActive ? 'show' : '' }} w-100" id="laporanSubmenu">
                                 <div class="nav-submenu">
-                                    <a href="#" class="nav-subitem {{ Route::currentRouteName() == 'laporan.kamar.index' ? 'active' : '' }} ">
-                                        <i class="fas fa-bed me-2"></i>Laporan Kamar Hotel
-                                    </a>
+                                    {{-- Laporan Kamar Hotel --}}
+                <a href="{{ route('laporan.kamar.index') }}" class="nav-subitem {{ Route::currentRouteName() == 'laporan.kamar.index' ? 'active' : '' }} ">
+                    <i class="fas fa-bed me-2"></i>Laporan Kamar Hotel
+                </a>
                                     {{-- Pastikan route 'laporan.rapat.index' sudah ada di web.php --}}
                                     <a href="{{ route('laporan.rapat.index') }}" class="nav-subitem {{ Route::currentRouteName() == 'laporan.rapat.index' ? 'active' : '' }} ">
                                         <i class="fas fa-handshake me-2"></i>Laporan Ruang Rapat
