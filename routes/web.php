@@ -23,9 +23,12 @@ use App\Http\Controllers\IngredientTransactionController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LaporanKamarController;
-use App\Http\Controllers\RoomInfoController;
+// use App\Http\Controllers\RoomInfoController;
 use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\KamarTersediaController;
+use App\Http\Controllers\ReservasiKamarController;
+use App\Http\Controllers\KamarDibersihkanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -177,9 +180,19 @@ Route::group(['middleware' => 'guest'], function () {
 // == ROOM INFO (Monitoring)
 // ==========================================================
 Route::prefix('room-info')->as('room-info.')->middleware('auth')->group(function () {
-    Route::get('/available', [RoomInfoController::class, 'availableRooms'])->name('available');
-    Route::get('/reservation', [RoomInfoController::class, 'pendingReservations'])->name('reservation');
-    Route::get('/cleaning', [RoomInfoController::class, 'cleaningRooms'])->name('cleaning');
+    
+    // 1. Kamar Tersedia
+    // Method di controller barunya adalah 'index'
+    Route::get('/available', [KamarTersediaController::class, 'index'])->name('available');
+
+    // 2. Reservasi Kamar
+    // Method di controller barunya adalah 'index' (seperti yang kita buat sebelumnya)
+    Route::get('/reservation', [ReservasiKamarController::class, 'index'])->name('reservation');
+    Route::post('/reservation/{id}/cancel', [ReservasiKamarController::class, 'cancel'])->name('reservation.cancel');
+
+    // 3. Kamar Dibersihkan
+    // Method di controller barunya adalah 'index'
+    Route::get('/cleaning', [KamarDibersihkanController::class, 'index'])->name('cleaning');
 });
 
 
