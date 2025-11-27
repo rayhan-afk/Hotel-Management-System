@@ -108,34 +108,36 @@ $(function () {
         .on("click", ".delete", function (e) {
             e.preventDefault();
             var id = $(this).data("id");
-            const swalWithBootstrapButtons = Swal.mixin({
+            Swal.fire({
+                title: "Yakin ingin menghapus?",
+                text: "Data tidak bisa dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#F2C2B8",
+                cancelButtonColor: "#8FB8E1",
+                confirmButtonText: "Ya, Hapus!",
+                cancelButtonText: "Batal",
                 customClass: {
-                    confirmButton: "btn btn-success",
-                    cancelButton: "btn btn-danger",
-                },
-                buttonsStyling: false,
-            });
+                    title: 'swal2-title-custom', 
+                    html: 'swal2-html-custom',
+                    popup: 'swal2-popup-custom',
 
-            swalWithBootstrapButtons
-                .fire({
-                    title: "Apakah Anda yakin?",
-                    text: "Data paket ruang rapat akan dihapus dan tidak dapat dikembalikan!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Ya, hapus!",
-                    cancelButtonText: "Batal",
-                    reverseButtons: true,
-                })
-                .then((result) => {
-                    if (result.isConfirmed) {
-                        // Submit form penghapusan yang sesuai dengan ID
-                        $(`#delete-ruangrapat-form-${id}`).submit();
-                    }
-                });
+                    confirmButton: 'text-50200C',
+                    cancelButton: 'text-50200C'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $(`#delete-amenity-form-${id}`).trigger('submit');
+                }
+            });
         })
         // --- Tombol Tambah Data (Buka Modal) ---
         .on("click", "#add-button", async function () {
             modal.show();
+            $("#btn-modal-save").text("Simpan").attr("disabled", true);
+            $('button[data-bs-dismiss="modal"]:not(.btn-close)').text("Batal");
+            $('.btn-close[data-bs-dismiss="modal"]').text('');
+
             $("#main-modal .modal-title").text("Tambah Paket Ruang Rapat");
             $("#main-modal .modal-body").html(`<div class="text-center my-5"><span class="spinner-border text-primary"></span><br>Loading...</div>`);
 
@@ -148,6 +150,9 @@ $(function () {
                 } else {
                      $("#main-modal .modal-body").html(`<div class="alert alert-danger">Gagal memuat form.</div>`);
                 }
+                $("#btn-modal-save").text("Simpan").attr("disabled", false);
+                $('button[data-bs-dismiss="modal"]:not(.btn-close)').text("Batal");
+                $('.btn-close[data-bs-dismiss="modal"]').text('');
             } catch (error) {
                 console.error(error);
                 $("#main-modal .modal-body").html(`<div class="alert alert-danger">Terjadi kesalahan jaringan.</div>`);
@@ -207,6 +212,10 @@ $(function () {
         // --- Tombol Edit (Buka Modal Edit) ---
         .on("click", '[data-action="edit-ruangrapat"]', async function () {
             modal.show();
+            $("#btn-modal-save").text("Simpan").attr("disabled", true);
+            $('button[data-bs-dismiss="modal"]:not(.btn-close)').text("Batal");
+            $('.btn-close[data-bs-dismiss="modal"]').text('');
+
             $("#main-modal .modal-title").text("Edit Paket Ruang Rapat");
             $("#main-modal .modal-body").html(`<div class="text-center my-5"><span class="spinner-border text-primary"></span><br>Loading data...</div>`);
 
@@ -220,6 +229,9 @@ $(function () {
                 } else {
                      $("#main-modal .modal-body").html(`<div class="alert alert-danger">Gagal memuat data.</div>`);
                 }
+                $("#btn-modal-save").text("Simpan").attr("disabled", false);
+                $('button[data-bs-dismiss="modal"]:not(.btn-close)').text("Batal");
+                $('.btn-close[data-bs-dismiss="modal"]').text('');
             } catch (error) {
                 $("#main-modal .modal-body").html(`<div class="alert alert-danger">Terjadi kesalahan saat mengambil data.</div>`);
             }

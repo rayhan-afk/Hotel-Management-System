@@ -199,11 +199,11 @@ body.sidebar-layout {
 }
 
 .btn-hotel-primary {
-    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    background: #50200C !important;
     color: white;
 
     &:hover {
-        background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+        background: #50200C !important;
         color: white;
     }
 }
@@ -226,7 +226,7 @@ body.sidebar-layout {
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    background: white;
+    background: #F7F3E4;
     max-width: 100%;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -2772,8 +2772,8 @@ div.dt-container .dt-paging .dt-paging-button {
 
 /* Ubah tombol SAVE (id = btn-modal-save) */
 #btn-modal-save {
-    background-color: #A8D5BA; 
-    border-color: #A8D5BA;
+    background-color: #A8D5BA !important; 
+    border-color: #A8D5BA !important;
     color: #50200C !important;
 }
 
@@ -2799,4 +2799,30 @@ div.dt-container .dt-paging .dt-paging-button {
     position: absolute;
     top: -6px;
     left: 2px;
+}
+
+/* Mengubah warna teks Judul ("Yakin ingin menghapus?") */
+.swal2-title-custom {
+    color: #50200C !important;
+}
+
+/* Mengubah warna teks Deskripsi ("Data tidak bisa dikembalikan!") */
+.swal2-html-custom {
+    color: #50200C !important;
+}
+
+/* Jika tidak berhasil, coba targetkan selector bawaan SweetAlert2 secara langsung */
+.swal2-popup {
+    /* Hanya jika Anda ingin mengubah warna Teks Deskripsi */
+    .swal2-html-container { 
+        color: #50200C !important;
+    }
+}
+
+.table thead th {
+    color: #50200C !important;
+}
+
+.warna-coklat td {
+    color: #50200C !important;
 }

@@ -2,6 +2,11 @@ $(function () {
     const currentRoute = window.location.pathname;
     if (!currentRoute.includes("ingredient")) return;
 
+    $("#main-modal").off("show.bs.modal");
+    $("#main-modal").on("show.bs.modal", function () {
+        
+    });
+
     const datatable = $("#ingredient-table").DataTable({
         processing: true,
         serverSide: true,
@@ -84,18 +89,25 @@ $(function () {
     const modal = new bootstrap.Modal(document.getElementById("main-modal"));
 
     $("#add-button").on("click", async function () {
-        $("#mainModalLabel").text("Tambah Bahan Baku");
+        $("#main-modal .modal-title").text("Tambah Bahan Baku");
         $(".modal-body").html('Loading...');
         modal.show();
+         $("#btn-modal-save").text("Simpan");
+        $('button[data-bs-dismiss="modal"]:not(.btn-close)').text("Batal");
+        $('.btn-close[data-bs-dismiss="modal"]').text('');
+
         const response = await $.get("/ingredient/create");
         $(".modal-body").html(response.view);
     });
 
-    $(document).on("click", '[data-action="edit"]', async function () {
+     $(document).on("click", '[data-action="edit"]', async function () {
         const id = $(this).data("id");
-        $("#mainModalLabel").text("Edit Bahan Baku");
+        $("#main-modal .modal-title").text("Edit Amenities");
         $(".modal-body").html('Loading...');
         modal.show();
+        $("#btn-modal-save").text("Simpan");
+        $('button[data-bs-dismiss="modal"]:not(.btn-close)').text("Batal");
+        $('.btn-close[data-bs-dismiss="modal"]').text('');
         const response = await $.get(`/ingredient/${id}/edit`);
         $(".modal-body").html(response.view);
     });

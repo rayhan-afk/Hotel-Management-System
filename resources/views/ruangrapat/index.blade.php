@@ -31,14 +31,14 @@
         <div class="col-lg-6">
             <div class="row my-2 mt-4 ms-1">
                 <div class="col-lg-12">
-                    <h5><i class="fas fa-calendar-check me-2"></i>Jadwal Reservasi</h5>
+                    <h5 style="color:#50200C;"><i class="fas fa-calendar-check me-2"></i>Jadwal Reservasi</h5>
                 </div>
             </div>
             <div class="card p-0">
                 <div class="card-body">
                     <div class="table-responsive" style="max-width: calc(100vw - 50px)">
                         <table class="table table-sm table-hover">
-                            <thead style="background-color: #f7f3e8;">
+                            <thead style="background-color: #F7F3E4;">
                                 <tr>
                                     <th>Instansi/Perusahaan</th>
                                     <th>Tanggal</th>
@@ -53,7 +53,7 @@
                                     @php
                                         $fullStartTime = $transaction->tanggal_pemakaian . ' ' . $transaction->waktu_mulai;
                                     @endphp
-                                    <tr data-start-time-str="{{ $fullStartTime }}">
+                                    <tr data-start-time-str="{{ $fullStartTime }}" class="warna-coklat">
                                         <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td>
                                         <td>{{ Helper::dateFormat($transaction->tanggal_pemakaian) }}</td>
                                         <td>{{ $transaction->waktu_mulai }} - {{ $transaction->waktu_selesai }}</td>
@@ -76,7 +76,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center"> Tidak ada jadwal reservasi.
+                                        <td colspan="6" class="text-center" style="color:#50200C;"> Tidak ada jadwal reservasi.
                                         </td>
                                     </tr>
                                 @endforelse </tbody>
@@ -96,7 +96,7 @@
                 <div class="col-lg-12">
                     <h5>
                         <i class="fas fa-dot-circle me-2" style="color: #8B4513;"></i>
-                        <span class="text-dark">Reservasi Berlangsung</span>
+                        <span style="color:#50200C;">Reservasi Berlangsung</span>
                     </h5>
                 </div>
             </div>
@@ -117,7 +117,7 @@
                                 @php
                                     $fullEndTime = $transaction->tanggal_pemakaian . ' ' . $transaction->waktu_selesai;
                                 @endphp
-                                <tr data-end-time-str="{{ $fullEndTime }}">
+                                <tr data-end-time-str="{{ $fullEndTime }}" class="warna-coklat">
                                     <td>{{ $transaction->rapatCustomer->instansi ?? '-' }}</td>
                                     <td>{{ $transaction->waktu_selesai }}</td>
                                     <td>{{ $transaction->ruangRapatPaket->name }}</td>
@@ -129,7 +129,7 @@
                                 </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="text-center"> Tidak ada reservasi berlangsung.
+                                        <td colspan="4" class="text-center" style="color:#50200C;"> Tidak ada reservasi berlangsung.
                                         </td>
                                     </tr>
                                 @endforelse
@@ -172,7 +172,6 @@
             </table>
         </div>
         <div class="table-footer">
-            <h3><i class="fas fa-handshake me-2"></i>Daftar Ruang Rapat</h3>
         </div>
     </div>
 </div>
