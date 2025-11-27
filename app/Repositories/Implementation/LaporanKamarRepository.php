@@ -62,6 +62,20 @@ class LaporanKamarRepository implements LaporanKamarRepositoryInterface
         return $query;
     }
 
+    public function saveToLaporan($t)
+{
+    Transaction::create([
+        'customer_id' => $t->customer_id,
+        'room_id' => $t->room_id,
+        'check_in' => $t->check_in,
+        'check_out' => $t->check_out,
+        'breakfast' => $t->breakfast,
+        'total_price' => $t->total_price,
+        'status' => 'Paid'
+    ]);
+}
+
+
     /**
      * Khusus DataTables: Mengambil query dasar + Pagination.
      */

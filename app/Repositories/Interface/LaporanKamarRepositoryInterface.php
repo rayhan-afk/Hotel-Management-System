@@ -21,4 +21,7 @@ interface LaporanKamarRepositoryInterface
      * @return \Illuminate\Http\JsonResponse
      */
     public function getLaporanKamarDatatable($request);
+
+    public function saveToLaporan($transaction);
+
 }

@@ -194,6 +194,10 @@ Route::prefix('transaction')->as('transaction.')->middleware('auth')->group(func
 
     Route::get('/check-out', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/check-out/{transaction}', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::post('/transaction/checkout/{id}', 
+    [CheckoutController::class, 'processCheckout']
+)->name('transaction.checkout.process');
+
 });
 
 
@@ -207,3 +211,4 @@ Route::resource('transaction', TransactionController::class)->middleware('auth')
 // == ROOT REDIRECT ==
 // ==========================================================
 Route::redirect('/', '/dashboard');
+
