@@ -19,6 +19,7 @@ use App\Repositories\Implementation\LaporanKamarRepository;
 use App\Repositories\Implementation\CheckinRepository;
 use App\Repositories\Implementation\CheckoutRepository;
 use App\Repositories\Implementation\ReservasiKamarRepository;
+use App\Repositories\Implementation\KamarTersediaRepository;
 use App\Repositories\Interface\CustomerRepositoryInterface;
 use App\Repositories\Interface\ImageRepositoryInterface;
 use App\Repositories\Interface\PaymentRepositoryInterface;
@@ -36,6 +37,7 @@ use App\Repositories\Interface\LaporanKamarRepositoryInterface;
 use App\Repositories\Interface\CheckinRepositoryInterface;
 use App\Repositories\Interface\CheckoutRepositoryInterface;
 use App\Repositories\Interface\ReservasiKamarRepositoryInterface;
+use App\Repositories\Interface\KamarTersediaRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -63,6 +65,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CheckinRepositoryInterface::class, CheckinRepository::class);
         $this->app->bind(CheckoutRepositoryInterface::class, CheckoutRepository::class);
         $this->app->bind(ReservasiKamarRepositoryInterface::class, ReservasiKamarRepository::class);
+        $this->app->bind(KamarTersediaRepositoryInterface::class, KamarTersediaRepository::class);
         
     }
 

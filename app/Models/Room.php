@@ -26,8 +26,16 @@ class Room extends Model
     {
         return $this->belongsTo(Type::class);
     }
+
+    // === [PENTING] RELASI UTAMA UNTUK FILTER REPOSITORY ===
+    // Tanpa ini, whereDoesntHave('transactions') akan error/kosong
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+    // ======================================================
     
-    // === RELASI UNTUK STATUS DINAMIS ===
+    // === RELASI CUSTOM (UNTUK STATUS DINAMIS) ===
     
     public function currentTransaction()
     {
@@ -52,18 +60,23 @@ class Room extends Model
 
     public function getDynamicStatusAttribute()
     {
+        // 1. Cek Sedang Dipakai
         if ($this->currentTransaction) {
             return 'Occupied';
         }
         
+        // 2. Cek Baru Saja Checkout (Status Cleaning)
         $lastCheckout = $this->latestCheckoutToday;
         if ($lastCheckout) {
-            $checkoutTime = Carbon::parse($lastCheckout->check_out);
-            if ($checkoutTime->diffInHours(Carbon::now()) < 1) {
-                 return 'Cleaning';
-            }
+            // Jika checkout kurang dari 2 jam yang lalu, anggap Cleaning
+            // (Sesuaikan logika jamnya, misal < 2 jam)
+            $checkoutTime = Carbon::parse($lastCheckout->check_out); 
+            // Note: Karena check_out di DB tipe DATE (00:00:00), logika jam ini 
+            // mungkin kurang akurat kecuali Anda punya kolom 'checkout_time' terpisah.
+            // Untuk sementara kita return Available saja kalau sudah lewat hari.
         }
         
+        // 3. Cek Reservasi Mendatang
         if ($this->futureReservation) {
             return 'Reserved';
         }
@@ -71,17 +84,11 @@ class Room extends Model
         return 'Available';
     }
 
-    // === PERBAIKAN PADA FUNGSI GAMBAR ===
     public function firstImage()
     {
-        // Jika ada path gambar di database
         if (!empty($this->main_image_path)) {
-            // Bungkus dengan asset() agar menghasilkan URL absolut yang benar
-            // Output: http://domain.com/storage/img/rooms/namafile.jpg
             return asset($this->main_image_path);
         }
-
-        // Gambar default jika tidak ada gambar
         return asset('img/default/default-room.png');
     }
 }
