@@ -88,5 +88,6 @@ import axios from "axios";
         import("./pages/ingredient"),
         import("./pages/laporan-rapat"),
         import("./pages/laporan-kamar"),
+        import("./pages/checkin"),
     ]);
 })();

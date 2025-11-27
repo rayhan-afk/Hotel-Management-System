@@ -17,25 +17,23 @@ use App\Http\Controllers\TypeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RuangRapatController;
-use App\Http\Controllers\RuangRapatReservationController; 
+use App\Http\Controllers\RuangRapatReservationController;
 use App\Http\Controllers\IngredientController;
-use App\Http\Controllers\IngredientTransactionController; // Dibiarkan jika ada
-use App\Http\Controllers\AmenityController; // ASUMSI: Amenity diletakkan di Inventory/
+use App\Http\Controllers\IngredientTransactionController;
+use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LaporanKamarController;
 use App\Http\Controllers\RoomInfoController;
-use App\Http\Controllers\CheckinController; 
+use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\CheckoutController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
-// ==========================================================
-// == START: MANUAL CAPTCHA ROUTE (Ditempatkan di sini) ==
-// ==========================================================
 
+// ==========================================================
+// == MANUAL CAPTCHA ==
+// ==========================================================
 Route::get('/captcha/generate', function (Request $request) {
-    // Pastikan GD Library PHP aktif di server Anda.
-    
     $captcha_code = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyz"), 0, 5);
     Session::put('captcha_code', strtoupper($captcha_code));
 
@@ -43,7 +41,6 @@ Route::get('/captcha/generate', function (Request $request) {
     $background = imagecolorallocate($image, 255, 255, 255);
     $text_color = imagecolorallocate($image, 0, 0, 0);
 
-    // Tambahkan sedikit gangguan
     for ($i = 0; $i < 5; $i++) {
         imageline($image, 0, rand() % 40, 150, rand() % 40, $text_color);
     }
@@ -58,23 +55,25 @@ Route::get('/captcha/generate', function (Request $request) {
     return response($contents)->header('Content-type', 'image/png');
 })->name('captcha.generate');
 
-// ==========================================================
-// == END: MANUAL CAPTCHA ROUTE ==
-// ==========================================================
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
 
+// ==========================================================
+// == ROLE SUPER ==
+// ==========================================================
 Route::group(['middleware' => ['auth', 'checkRole:Super']], function () {
     Route::resource('user', UserController::class);
 });
 
+
+// ==========================================================
+// == ROLE SUPER & ADMIN ==
+// ==========================================================
 Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
+
+    // Upload & Delete Gambar
     Route::post('/room/{room}/image/upload', [ImageController::class, 'store'])->name('image.store');
     Route::delete('/image/{image}', [ImageController::class, 'destroy'])->name('image.destroy');
 
+    // Reservation Flow
     Route::name('transaction.reservation.')->group(function () {
         Route::get('/createIdentity', [TransactionRoomReservationController::class, 'createIdentity'])->name('createIdentity');
         Route::get('/pickFromCustomer', [TransactionRoomReservationController::class, 'pickFromCustomer'])->name('pickFromCustomer');
@@ -89,26 +88,22 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     Route::resource('type', TypeController::class);
     Route::resource('room', RoomController::class);
     Route::resource('roomstatus', RoomStatusController::class);
-    Route::resource('transaction', TransactionController::class);
     Route::resource('facility', FacilityController::class);
     Route::resource('amenity', AmenityController::class);
     Route::resource('ingredient', IngredientController::class);
 
+
     // ==========================================================
     // == PENGATURAN RUANG RAPAT ==
     // ==========================================================
-    
-    // 1. Rute utama untuk Manajemen Paket (AJAX DataTable) & List Reservasi
     Route::resource('ruangrapat', RuangRapatController::class);
 
-    // 2. Rute untuk CANCEL reservasi
-    Route::delete('/rapat/reservasi/{rapatTransaction}/cancel', [RuangRapatController::class, 'cancelReservation'])
-          ->name('rapat.transaction.cancel');
+    Route::delete('/rapat/reservasi/{rapatTransaction}/cancel', 
+        [RuangRapatController::class, 'cancelReservation'])->name('rapat.transaction.cancel');
 
-    // 3. Rute untuk RIWAYAT PEMBAYARAN Rapat
-    Route::get('/rapat/payments', [RuangRapatController::class, 'paymentHistory'])->name('rapat.payment.index');
+    Route::get('/rapat/payments', 
+        [RuangRapatController::class, 'paymentHistory'])->name('rapat.payment.index');
 
-    // 4. GRUP RUTE UNTUK ALUR 4-LANGKAH
     Route::group(['prefix' => 'rapat/reservasi', 'as' => 'rapat.reservation.'], function () {
         Route::get('/step-1', [RuangRapatReservationController::class, 'showStep1_CustomerInfo'])->name('showStep1');
         Route::post('/step-1', [RuangRapatReservationController::class, 'storeStep1_CustomerInfo'])->name('storeStep1');
@@ -120,96 +115,95 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
         Route::post('/bayar', [RuangRapatReservationController::class, 'processPayment'])->name('processPayment');
         Route::get('/cancel', [RuangRapatReservationController::class, 'cancelReservation'])->name('cancel');
     });
-    
-    // ==========================================================
-    // == AKHIR PENGATURAN RUANG RAPAT ==
-    // ==========================================================
+
 
     // ==========================================================
-// == RUTE LAPORAN BARU (SIMPAN DI SINI) ==
-// ==========================================================
-Route::name('laporan.')->group(function () {
-    // Laporan Ruang Rapat
-    // Rute ini sudah benar. Controller (Langkah 4) akan menangani AJAX di rute ini.
-    Route::get('/laporan/rapat', [LaporanController::class, 'laporanRuangRapat'])->name('rapat.index');
-    Route::get('/laporan/rapat/export', [LaporanController::class, 'exportExcel'])->name('rapat.export');
-        
-    // Laporan Kamar Hotel (Stub)
-     Route::get('/laporan/kamar', [LaporanKamarController::class, 'index'])->name('kamar.index');
-    Route::get('/laporan/kamar/export', [LaporanKamarController::class, 'exportExcel'])->name('kamar.export');
-});
+    // == LAPORAN ==
+    // ==========================================================
+    Route::name('laporan.')->group(function () {
+        Route::get('/laporan/rapat', [LaporanController::class, 'laporanRuangRapat'])->name('rapat.index');
+        Route::get('/laporan/rapat/export', [LaporanController::class, 'exportExcel'])->name('rapat.export');
 
+        Route::get('/laporan/kamar', [LaporanKamarController::class, 'index'])->name('kamar.index');
+        Route::get('/laporan/kamar/export', [LaporanKamarController::class, 'exportExcel'])->name('kamar.export');
+    });
+
+    // Payment
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
     Route::get('/payment/{payment}/invoice', [PaymentController::class, 'invoice'])->name('payment.invoice');
-    
     Route::get('/transaction/{transaction}/payment/create', [PaymentController::class, 'create'])->name('transaction.payment.create');
-    
     Route::post('/transaction/{transaction}/payment/store', [PaymentController::class, 'store'])->name('transaction.payment.store');
-    
+
+    // Charts
     Route::get('/get-dialy-guest-chart-data', [ChartController::class, 'dailyGuestPerMonth']);
     Route::get('/get-dialy-guest/{year}/{month}/{day}', [ChartController::class, 'dailyGuest'])->name('chart.dailyGuest');
-
 });
 
+
+// ==========================================================
+// == ROLE SUPER, ADMIN, CUSTOMER ==
+// ==========================================================
 Route::group(['middleware' => ['auth', 'checkRole:Super,Admin,Customer']], function () {
     Route::get('/activity-log', [ActivityController::class, 'index'])->name('activity-log.index');
     Route::get('/activity-log/all', [ActivityController::class, 'all'])->name('activity-log.all');
-    Route::resource('user', UserController::class)->only([
-        'show',
-    ]);
+    Route::resource('user', UserController::class)->only(['show']);
 
     Route::view('/notification', 'notification.index')->name('notification.index');
-
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/mark-all-as-read', [NotificationsController::class, 'markAllAsRead'])->name('notification.markAllAsRead');
-
     Route::get('/notification-to/{id}', [NotificationsController::class, 'routeTo'])->name('notification.routeTo');
 });
 
-// Login routes
+
+// ==========================================================
+// == AUTH (LOGIN, FORGOT PASSWORD) ==
+// ==========================================================
 Route::view('/login', 'auth.login')->name('login.index');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
-// Forgot Password routes
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/forgot-password', fn () => view('auth.passwords.email'))->name('password.request');
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
 
-    // Reset Password routes
-    Route::get('/reset-password/{token}', fn (string $token) => view('auth.reset-password', ['token' => $token]))
-        ->name('password.reset');
+    Route::get('/reset-password/{token}', fn ($token) => view('auth.reset-password', ['token' => $token]))->name('password.reset');
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 });
 
-// Group Pemesanan (Aksi Check-in/Check-out) - MENGGUNAKAN CONTROLLER BARU
-Route::prefix('transaction')->as('transaction.')->middleware('auth')->group(function () {
-    
-    // Check-in
-    Route::get('/check-in', [CheckinController::class, 'index'])->name('checkin.index');
-    Route::post('/check-in/{transaction}', [CheckinController::class, 'store'])->name('checkin.store');
 
-    // Check-out
-    Route::get('/check-out', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/check-out/{transaction}', [CheckoutController::class, 'process'])->name('checkout.process');
-    
-    // Rute lain yang sudah ada, misalnya:
-    // Route::get('/reservation/identity', [TransactionRoomReservationController::class, 'createIdentity'])->name('reservation.createIdentity');
-});
-
-// Group Info Kamar (Monitoring) - LOGIKA BARU MENGGUNAKAN CONTROLLER
+// ==========================================================
+// == ROOM INFO (Monitoring)
+// ==========================================================
 Route::prefix('room-info')->as('room-info.')->middleware('auth')->group(function () {
-    
-    // URL: /room-info/available
     Route::get('/available', [RoomInfoController::class, 'availableRooms'])->name('available');
-
-    // URL: /room-info/reservation
     Route::get('/reservation', [RoomInfoController::class, 'pendingReservations'])->name('reservation');
-
-    // URL: /room-info/cleaning
     Route::get('/cleaning', [RoomInfoController::class, 'cleaningRooms'])->name('cleaning');
 });
 
+
+// ==========================================================
+// == OPERASIONAL (CHECK-IN & CHECK-OUT)  <-- DIPINDAHKAN KE ATAS
+// ==========================================================
+Route::prefix('transaction')->as('transaction.')->middleware('auth')->group(function () {
+    Route::get('/check-in', [CheckinController::class, 'index'])->name('checkin.index');
+    Route::get('/check-in/{transaction}/edit', [CheckinController::class, 'edit'])->name('checkin.edit');
+    Route::put('/check-in/{transaction}', [CheckinController::class, 'update'])->name('checkin.update');
+    Route::delete('/check-in/{transaction}', [CheckinController::class, 'destroy'])->name('checkin.destroy');
+
+    Route::get('/check-out', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/check-out/{transaction}', [CheckoutController::class, 'process'])->name('checkout.process');
+});
+
+
+// ==========================================================
+// == RESOURCE TRANSACTION (HARUS DIBAWAH CHECK-IN)
+// ==========================================================
+Route::resource('transaction', TransactionController::class)->middleware('auth');
+
+
+// ==========================================================
+// == ROOT REDIRECT ==
+// ==========================================================
 Route::redirect('/', '/dashboard');
