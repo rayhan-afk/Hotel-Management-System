@@ -11,25 +11,36 @@ use App\Models\Customer;
 use App\Models\Room;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Notifications\NewRoomReservationDownPayment;
+// Hapus Use PaymentRepositoryInterface
 use App\Repositories\Interface\CustomerRepositoryInterface;
-use App\Repositories\Interface\PaymentRepositoryInterface;
+use App\Repositories\Interface\RoomRepositoryInterface;
 use App\Repositories\Interface\TransactionRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TransactionRoomReservationController extends Controller
 {
-    // ... (Method pickFromCustomer, createIdentity, storeCustomer, viewCountPerson tetap sama)
+    private $customerRepository;
+    private $roomRepository;
+    private $transactionRepository;
+
+    // Hapus PaymentRepository dari constructor
+    public function __construct(
+        TransactionRepositoryInterface $transactionRepository, 
+        CustomerRepositoryInterface $customerRepository, 
+        RoomRepositoryInterface $roomRepository
+    )
+    {
+        $this->transactionRepository = $transactionRepository;
+        $this->customerRepository = $customerRepository;
+        $this->roomRepository = $roomRepository;
+    }
 
     public function pickFromCustomer(Request $request, CustomerRepositoryInterface $customerRepository)
     {
-        $customers = $customerRepository->get($request);
-        $customersCount = $customerRepository->count($request);
-
+        $customers = $customerRepository->getCustomers($request); 
         return view('transaction.reservation.pickFromCustomer', [
             'customers' => $customers,
-            'customersCount' => $customersCount,
         ]);
     }
 
@@ -59,7 +70,6 @@ class TransactionRoomReservationController extends Controller
         $stayUntil = $request->check_out;
         $occupiedRoomIds = $this->getOccupiedRoomID($stayFrom, $stayUntil);
         
-        // Query Pencarian Kamar (Filter & Sort)
         $query = Room::with('type')->whereNotIn('id', $occupiedRoomIds);
 
         if ($request->has('type_id') && $request->type_id != '') {
@@ -86,81 +96,71 @@ class TransactionRoomReservationController extends Controller
     {
         $dayDifference = Helper::getDateDifference($stayFrom, $stayUntil);
         
-        // Hitung harga dasar (tanpa sarapan) untuk tampilan awal
+        // Hitung total harga kamar
         $roomPriceTotal = $room->price * $dayDifference;
-        $downPayment = $roomPriceTotal * 0.15; 
+        
+        // Tampilkan harga penuh sebagai 'downPayment' agar user tahu totalnya
+        $downPayment = $roomPriceTotal; 
 
         return view('transaction.reservation.confirmation', [
             'customer' => $customer,
             'room' => $room,
             'stayFrom' => $stayFrom,
             'stayUntil' => $stayUntil,
-            'downPayment' => $downPayment,
+            'downPayment' => $downPayment, 
             'dayDifference' => $dayDifference,
         ]);
     }
 
-    // === LOGIKA PEMBAYARAN DIPERBARUI ===
-    public function payDownPayment(
-        Customer $customer,
-        Room $room,
-        Request $request,
-        TransactionRepositoryInterface $transactionRepository,
-        PaymentRepositoryInterface $paymentRepository
-    ) {
-        // 1. Hitung Durasi
+    public function payDownPayment(Customer $customer, Room $room, Request $request) 
+    {
+        // 1. Hitung Durasi & Harga
         $dayDifference = Helper::getDateDifference($request->check_in, $request->check_out);
-        
-        // 2. Hitung Harga Kamar
         $roomPriceTotal = $room->price * $dayDifference;
 
-        // 3. Hitung Harga Sarapan (Logika di Server)
         $breakfastPrice = 0;
         if ($request->breakfast === 'Yes') {
-            $breakfastPrice = 140000 * $dayDifference; // Rp 140.000 per malam
+            $breakfastPrice = 140000 * $dayDifference; 
         }
 
-        // 4. Hitung Grand Total & DP
         $grandTotal = $roomPriceTotal + $breakfastPrice;
-        $minimumDownPayment = $grandTotal * 0.15;
 
-        // 5. Validasi Data
         $request->validate([
             'breakfast' => 'required|in:Yes,No',
         ]);
 
-        // 6. Validasi Ketersediaan Kamar
+        // 2. Cek Ketersediaan
         $occupiedRoomIds = $this->getOccupiedRoomID($request->check_in, $request->check_out);
         if ($occupiedRoomIds->contains($room->id)) {
             return redirect()->back()->with('failed', 'Maaf, Kamar ini baru saja dipesan orang lain.');
         }
 
-        // 7. Masukkan Data Hasil Hitungan ke Request (Agar tersimpan di Repo)
+        // 3. Siapkan Data Transaksi
         $request->merge([
-            'total_price' => $grandTotal, // Total harga masuk database
-            'downPayment' => $minimumDownPayment, // DP otomatis minimal 15%
-            'status' => 'Down Payment' 
+            'total_price' => $grandTotal,
+            'status' => 'Paid' // Langsung Lunas
         ]);
 
-        // 8. Simpan Transaksi
-        $transaction = $transactionRepository->store($request, $customer, $room);
+        // 4. SIMPAN TRANSAKSI SAJA (Hapus penyimpanan Payment)
+        $this->transactionRepository->store($request, $customer, $room);
         
-        // 9. Simpan Pembayaran
-        $status = 'Down Payment';
-        $payment = $paymentRepository->store($request, $transaction, $status);
-
-        // 10. Notifikasi
+        // 5. Notifikasi (Hanya Event sederhana, JANGAN panggil notifikasi email Payment)
         $superAdmins = User::where('role', 'Super')->get();
         foreach ($superAdmins as $superAdmin) {
             $message = 'Reservation added by ' . $customer->name;
             event(new NewReservationEvent($message, $superAdmin));
-            $superAdmin->notify(new NewRoomReservationDownPayment($transaction, $payment));
+            
+            // BAGIAN INI DIHAPUS KARENA MEMBUTUHKAN DATA PAYMENT:
+            // $superAdmin->notify(new NewRoomReservationDownPayment($transaction, $payment)); 
         }
 
         event(new RefreshDashboardEvent('Someone reserved a room'));
 
-        return redirect()->route('transaction.index')
+        return redirect()->route('dashboard.index')
             ->with('success', 'Room ' . $room->number . ' booked successfully!');
+            $request->validate([
+    'breakfast' => 'required|in:Yes,No',
+]);
     }
 
     private function getOccupiedRoomID($checkIn, $checkOut)

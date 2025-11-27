@@ -58,7 +58,7 @@
                             </div>
                             <div class="stats-label">
                                 <i class="fas fa-calendar-alt me-2"></i>
-                                Reservasi Hari Ini
+                                Jumlah Reservasi
                             </div>
                         </div>
                     </div>
@@ -85,162 +85,169 @@
         </div>
 
         <div class="row">
-            <div class="col-lg-8 mb-4">
-                <div class="card card-lh h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="mb-0 fw-bold">
-                                <i class="fas fa-calendar-day text-primary me-2"></i>
-                                Tamu Hari ini 
-                            </h5>
-                            <small class="text-muted">{{ now()->format('l, F j, Y') }}</small>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" title="Export">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" title="Refresh">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive" >
-                            <table class="table table-lh mb-0" >
-                                <thead>
-                                    <tr>
-                                        <th>Tamu</th>
-                                        <th>Kamar</th>
-                                        <th>Check-in/Out</th>
-                                        <th>Harga</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($transactions as $transaction)
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="{{ $transaction->customer->user->getAvatar() }}"
-                                                        class="rounded-circle me-3" width="40" height="40" alt="">
-                                                    <div>
-                                                        <div class="fw-medium">
-                                                            <a href="{{ route('customer.show', ['customer' => $transaction->customer->id]) }}"
-                                                               class="text-decoration-none">
-                                                                {{ $transaction->customer->name }}
-                                                            </a>
-                                                        </div>
-                                                        <div class="text-muted small">ID: {{ $transaction->customer->id }}</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
+
+    <!-- ===================== TAMU HARI INI (KIRI) ===================== -->
+    <div class="col-lg-8 mb-4">
+        <div class="card card-lh h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-calendar-day text-primary me-2"></i>
+                        Tamu Hari ini
+                    </h5>
+                    <small class="text-muted">{{ now()->format('l, F j, Y') }}</small>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" title="Refresh" onclick="location.reload()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-lh mb-0">
+                        <thead>
+                            <tr>
+                                <th>Tamu</th>
+                                <th>Kamar</th>
+                                <th>Check-in/Out</th>
+                                <th>Sarapan</th>
+                                <th>Total Harga</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @forelse ($transactions as $transaction)
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ $transaction->customer->user->getAvatar() }}"
+                                                 class="rounded-circle me-3" width="40" height="40" alt="">
+
+                                            <div>
                                                 <div class="fw-medium">
-                                                    <a href="{{ route('room.show', ['room' => $transaction->room->id]) }}"
+                                                    <a href="{{ route('customer.show', ['customer' => $transaction->customer->id]) }}"
                                                        class="text-decoration-none">
-                                                        Room {{ $transaction->room->number }}
+                                                        {{ $transaction->customer->name }}
                                                     </a>
                                                 </div>
-                                                <div class="text-muted small">{{ $transaction->room->type->name ?? 'Standard' }}</div>
-                                            </td>
-                                            <td>
-                                                <div class="small">
-                                                    <div><strong>In:</strong> {{ Helper::dateFormat($transaction->check_in) }}</div>
-                                                    <div><strong>Out:</strong> {{ Helper::dateFormat($transaction->check_out) }}</div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                @php
-                                                    $daysLeft = Helper::getDateDifference(now(), $transaction->check_out);
-                                                @endphp
-                                                <span class="badge {{ $daysLeft <= 0 ? 'bg-danger' : ($daysLeft <= 1 ? 'bg-warning' : 'bg-success') }} badge-lh">
-                                                    {{ $daysLeft == 0 ? 'Last Day' : $daysLeft . ' ' . Helper::plural('Day', $daysLeft) }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                @php
-                                                    $balance = $transaction->getTotalPrice() - $transaction->getTotalPayment();
-                                                @endphp
-                                                @if($balance <= 0)
-                                                    <span class="text-success fw-medium">Paid</span>
-                                                @else
-                                                    <span class="text-danger fw-medium">{{ Helper::convertToRupiah($balance) }}</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <div class="d-flex flex-column gap-1">
-                                                    <span class="badge {{ $transaction->getTotalPrice() - $transaction->getTotalPayment() == 0 ? 'bg-success' : 'bg-warning' }} badge-lh">
-                                                        {{ $transaction->getTotalPrice() - $transaction->getTotalPayment() == 0 ? 'Completed' : 'In Progress' }}
-                                                    </span>
-                                                    @if (Helper::getDateDifference(now(), $transaction->check_out) < 1 && $transaction->getTotalPrice() - $transaction->getTotalPayment() > 0)
-                                                        <span class="badge bg-danger badge-lh">
-                                                            <i class="fas fa-exclamation-triangle me-1"></i>
-                                                            Urgent
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="text-center py-5">
-                                                <div class="text-muted">
-                                                    <i class="fas fa-bed mb-3" style="font-size: 3rem; opacity: 0.3;"></i>
-                                                    <p class="mb-0">Tidak ada tamu yang check-in hari ini</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                                                <div class="text-muted small">ID: {{ $transaction->customer->id }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="fw-medium">
+                                            <a href="{{ route('room.show', ['room' => $transaction->room->id]) }}"
+                                               class="text-decoration-none">
+                                                Room {{ $transaction->room->number }}
+                                            </a>
+                                        </div>
+                                        <div class="text-muted small">{{ $transaction->room->type->name ?? 'Standard' }}</div>
+                                    </td>
+
+                                    <td class="small">
+                                        <div><strong>In:</strong> {{ Helper::dateFormat($transaction->check_in) }}</div>
+                                        <div><strong>Out:</strong> {{ Helper::dateFormat($transaction->check_out) }}</div>
+                                    </td>
+
+                                    <td>
+                                        @if($transaction->breakfast == 'Yes')
+                                            <span class="badge bg-success badge-lh">Yes</span>
+                                        @else
+                                            <span class="badge bg-secondary badge-lh">No</span>
+                                        @endif
+                                    </td>
+
+                                    <td class="fw-medium">
+                                        {{ Helper::convertToRupiah($transaction->total_price ?? $transaction->getTotalPrice()) }}
+                                    </td>
+
+                                    <td>
+                                        <span class="badge bg-success badge-lh">Paid</span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <div class="text-muted">
+                                            <i class="fas fa-bed mb-3" style="font-size: 3rem; opacity: 0.3;"></i>
+                                            <p class="mb-0">Tidak ada tamu yang check-in hari ini</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Monthly Chart -->
-            <div class="col-lg-4 mb-4">
-                <div class="card card-lh h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0 fw-bold">
-                            <i class="fas fa-chart-line text-primary me-2"></i>
-                            Tamu Bulanan
-                        </h5>
-                        <small class="text-muted">Tamu Bulanan untuk {{ Helper::thisMonth() }}/{{ Helper::thisYear() }}</small>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center mb-4">
-                            <div class="d-flex justify-content-center align-items-center">
-                                <div class="text-center">
-                                    <div class="h2 text-primary mb-0">{{ count($transactions) }}</div>
-                                    <small class="text-muted">Jumlah Tamu Bulan ini</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="position-relative mb-4">
-                            <canvas this-year="{{ Helper::thisYear() }}" this-month="{{ Helper::thisMonth() }}"
-                                    id="visitors-chart" height="200" width="100%" class="chartjs-render-monitor"></canvas>
-                        </div>
-
-                        <div class="d-flex justify-content-between text-center">
-                            <div class="flex-fill">
-                                <div class="d-flex align-items-center justify-content-center mb-1">
-                                    <div class="bg-primary rounded me-2" style="width: 12px; height: 12px;"></div>
-                                    <small class="text-muted">Bulan ini</small>
-                                </div>
-                            </div>
-                            <div class="flex-fill">
-                                <div class="d-flex align-items-center justify-content-center mb-1">
-                                    <div class="bg-secondary rounded me-2" style="width: 12px; height: 12px;"></div>
-                                    <small class="text-muted">Bulan Lalu</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="card-footer text-center">
+                <a href="{{ route('transaction.index') }}" class="text-decoration-none fw-bold small">
+                    Lihat Semua Reservasi <i class="fas fa-arrow-right ms-1"></i>
+                </a>
             </div>
         </div>
+    </div>
+
+
+    <!-- ===================== TAMU BULANAN (KANAN) ===================== -->
+    <div class="col-lg-4 mb-4">
+        <div class="card card-lh h-100">
+            <div class="card-header">
+                <h5 class="mb-0 fw-bold">
+                    <i class="fas fa-chart-line text-primary me-2"></i>
+                    Tamu Bulanan
+                </h5>
+                <small class="text-muted">
+                    Tamu Bulanan untuk {{ Helper::thisMonth() }}/{{ Helper::thisYear() }}
+                </small>
+            </div>
+
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="text-center">
+                            <div class="h2 text-primary mb-0">{{ count($transactions) }}</div>
+                            <small class="text-muted">Jumlah Tamu Bulan Ini</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="position-relative mb-4">
+                    <canvas
+                        this-year="{{ Helper::thisYear() }}"
+                        this-month="{{ Helper::thisMonth() }}"
+                        id="visitors-chart"
+                        height="200"
+                        class="chartjs-render-monitor">
+                    </canvas>
+                </div>
+
+                <div class="d-flex justify-content-between text-center">
+                    <div class="flex-fill">
+                        <div class="d-flex align-items-center justify-content-center mb-1">
+                            <div class="bg-primary rounded me-2" style="width: 12px; height: 12px;"></div>
+                            <small class="text-muted">Bulan Ini</small>
+                        </div>
+                    </div>
+                    <div class="flex-fill">
+                        <div class="d-flex align-items-center justify-content-center mb-1">
+                            <div class="bg-secondary rounded me-2" style="width: 12px; height: 12px;"></div>
+                            <small class="text-muted">Bulan Lalu</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
 
         <!-- Quick Actions -->
         <div class="row">
@@ -250,6 +257,7 @@
                         <h5 class="mb-0 fw-bold">
                             <i class="fas fa-bolt text-warning me-2"></i>
                             Akses Cepat
+                        </h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -278,11 +286,13 @@
                                 </a>
                             </div>
                             <div class="col-lg-3 col-md-6 mb-3">
-                                <a href="{{ route('payment.index') }}"
-                                   class="btn btn-outline-secondary btn-lh w-100 h-100 d-flex flex-column align-items-center justify-content-center"
+                                {{-- Karena fitur payment dihapus, tombol ini bisa diarahkan ke laporan atau dihapus --}}
+                                {{-- Jika tetap ingin ada tombol, arahkan ke Laporan Reservasi --}}
+                                <a href="#" 
+                                   class="btn btn-outline-secondary btn-lh w-100 h-100 d-flex flex-column align-items-center justify-content-center disabled"
                                    style="min-height: 80px;">
-                                    <i class="fas fa-credit-card mb-2" style="font-size: 1.5rem;"></i>
-                                    <span>Riwayat Pembayaran</span>
+                                    <i class="fas fa-file-invoice mb-2" style="font-size: 1.5rem;"></i>
+                                    <span>Laporan Reservasi</span>
                                 </a>
                             </div>
                         </div>

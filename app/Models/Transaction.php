@@ -18,8 +18,8 @@ class Transaction extends Model
         'check_in',
         'check_out',
         'status',
-        'total_price', // Pastikan ini ada
-        'breakfast',   // Pastikan ini ada
+        'total_price',
+        'breakfast',
     ];
 
     public function user()
@@ -37,13 +37,16 @@ class Transaction extends Model
         return $this->belongsTo(Room::class);
     }
 
-    public function payment()
-    {
-        return $this->hasMany(Payment::class);
-    }
+    // Relasi payment dihapus karena tabelnya sudah tidak ada
 
     public function getTotalPrice()
     {
+        // Prioritaskan harga yang tersimpan di database (karena sudah fix termasuk breakfast)
+        if ($this->total_price) {
+            return $this->total_price;
+        }
+
+        // Fallback hitung manual jika data lama kosong
         $day = Helper::getDateDifference($this->check_in, $this->check_out);
         $room_price = $this->room->price;
 
@@ -58,20 +61,6 @@ class Transaction extends Model
         return $day.' '.$plural;
     }
 
-    public function getTotalPayment()
-    {
-        $totalPayment = 0;
-        foreach ($this->payment as $payment) {
-            $totalPayment += $payment->price;
-        }
-
-        return $totalPayment;
-    }
-
-    public function getMinimumDownPayment()
-    {
-        $dayDifference = Helper::getDateDifference($this->check_in, $this->check_out);
-
-        return ($this->room->price * $dayDifference) * 0.15;
-    }
+    // getTotalPayment() DIHAPUS karena tabel payment tidak ada
+    // getMinimumDownPayment() DIHAPUS
 }

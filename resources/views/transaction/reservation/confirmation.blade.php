@@ -48,7 +48,6 @@
                 <div class="card invoice-card mb-4">
                     <div class="invoice-header d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold text-primary"><i class="fas fa-file-invoice me-2"></i>Rincian Tagihan</h4>
-                        <!-- <span class="badge bg-danger text-white px-3 py-2">Belum Dibayar</span> -->
                     </div>
                     <div class="invoice-body">
                         
@@ -70,14 +69,12 @@
 
                         <form method="POST" 
                               id="reservation-form"
-                              data-room-price="{{ $room->price }}" 
-                              data-duration="{{ $dayDifference }}"
                               action="{{ route('transaction.reservation.payDownPayment', ['customer' => $customer->id, 'room' => $room->id]) }}">
                             @csrf
                             
                             <input type="hidden" name="check_in" value="{{ $stayFrom }}">
                             <input type="hidden" name="check_out" value="{{ $stayUntil }}">
-                            <input type="hidden" name="how_long" value="{{ $dayDifference }}">
+                            <input type="hidden" name="total_price" id="input_total_price" value="{{ $downPayment }}"> 
 
                             {{-- Tabel Rincian Biaya --}}
                             <div class="table-responsive">
@@ -120,10 +117,11 @@
                                         <tr>
                                             <td colspan="4" class="bg-light p-3">
                                                 <div class="d-flex align-items-center justify-content-end">
-                                                    <label for="breakfast" class="fw-bold me-3 mb-0 text-dark">
+                                                    <label for="breakfast_select" class="fw-bold me-3 mb-0 text-dark">
                                                         <i class="fas fa-coffee me-1 text-warning"></i> Tambah Sarapan?
                                                     </label>
-                                                    <select class="form-select w-auto border-primary" id="breakfast" name="breakfast">
+                                                    {{-- ID diganti jadi 'breakfast_select' untuk menghindari konflik JS lama --}}
+                                                    <select class="form-select w-auto border-primary" id="breakfast_select" name="breakfast">
                                                         <option value="No" selected>Tidak</option>
                                                         <option value="Yes">Ya, Tambahkan (+Rp 140.000/malam)</option>
                                                     </select>
@@ -144,7 +142,7 @@
 
                             {{-- Tombol Aksi --}}
                             <div class="d-flex justify-content-between mt-4">
-                                <a href="{{ route('transaction.reservation.chooseRoom', ['customer' => $customer->id]) }}?check_in={{$stayFrom}}&check_out={{$stayUntil}}&count_person={{request()->input('count_person') ?? 1}}" 
+                                <a href="{{ route('transaction.reservation.chooseRoom', ['customer' => $customer->id]) }}?check_in={{$stayFrom}}&check_out={{$stayUntil}}" 
                                    class="btn btn-outline-secondary px-4 py-2">
                                     <i class="fas fa-arrow-left me-2"></i>Kembali
                                 </a>
@@ -187,4 +185,55 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('footer')
+<script>
+    // Ambil variabel PHP langsung (Lebih aman daripada parsing atribut data HTML)
+    const roomPricePerNight = {{ $room->price }};
+    const dayCount = {{ $dayDifference }};
+    const breakfastPricePerDay = 140000; 
+    const baseTotal = roomPricePerNight * dayCount;
+
+    // Elemen DOM
+    const breakfastSelect = document.getElementById('breakfast_select');
+    const rowBreakfast = document.getElementById('row_breakfast');
+    const displayBreakfastTotal = document.getElementById('display_breakfast_total');
+    const displayTotalPrice = document.getElementById('display_total_price');
+    const inputTotalPrice = document.getElementById('input_total_price');
+
+    // Fungsi Format Rupiah
+    const formatRupiah = (number) => {
+        return new Intl.NumberFormat('id-ID', { 
+            style: 'currency', 
+            currency: 'IDR', 
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0 
+        }).format(number);
+    };
+
+    // Event Listener
+    breakfastSelect.addEventListener('change', function() {
+        let currentTotal = baseTotal;
+        
+        if (this.value === 'Yes') {
+            // Jika pilih sarapan
+            const breakfastTotal = breakfastPricePerDay * dayCount;
+            currentTotal += breakfastTotal;
+            
+            // Tampilkan baris sarapan & update harga
+            rowBreakfast.style.display = 'table-row';
+            displayBreakfastTotal.innerText = formatRupiah(breakfastTotal);
+        } else {
+            // Jika tidak pilih sarapan
+            rowBreakfast.style.display = 'none';
+        }
+
+        // Update Tampilan Total Akhir & Input Hidden
+        displayTotalPrice.innerText = formatRupiah(currentTotal);
+        if(inputTotalPrice) {
+            inputTotalPrice.value = currentTotal;
+        }
+    });
+</script>
 @endsection

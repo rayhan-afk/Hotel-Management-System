@@ -10,11 +10,7 @@
                         <i class="fas fa-plus"></i>
                     </button>
                 </span>
-                <span data-bs-toggle="tooltip" data-bs-placement="right" title="Payment History">
-                    <a href="{{route('payment.index')}}" class="btn btn-sm shadow-sm myBtn border rounded">
-                        <i class="fas fa-history"></i>
-                    </a>
-                </span>
+                {{-- Tombol History Payment DIHAPUS --}}
             </div>
         </div>
         <div class="col-lg-6 mb-2">
@@ -46,8 +42,7 @@
                                     <th>Check Out</th>
                                     <th>Hari</th>
                                     <th>Total Harga</th>
-                                    <th>Lunas</th>
-                                    <th>Debit</th>
+                                    <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -66,22 +61,21 @@
                                         <td>{{ Helper::convertToRupiah($transaction->getTotalPrice()) }}
                                         </td>
                                         <td>
-                                            {{ Helper::convertToRupiah($transaction->getTotalPayment()) }}
-                                        </td>
-                                        <td>{{ $transaction->getTotalPrice() - $transaction->getTotalPayment() <= 0 ? '-' : Helper::convertToRupiah($transaction->getTotalPrice() - $transaction->getTotalPayment()) }}
+                                            <span class="badge bg-success">Lunas (Paid)</span>
                                         </td>
                                         <td>
-                                            <a class="btn btn-light btn-sm rounded shadow-sm border p-1 m-0 {{$transaction->getTotalPrice() - $transaction->getTotalPayment() <= 0 ? 'disabled' : ''}}"
-                                                href="{{ route('transaction.payment.create', ['transaction' => $transaction->id]) }}"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Pay">
-                                                <i class="fas fa-money-bill-wave-alt"></i>
-                                            </a>
+                                            {{-- Tombol Pay DIHAPUS/DISABLED --}}
+                                            <button class="btn btn-light btn-sm rounded shadow-sm border p-1 m-0 disabled"
+                                                disabled
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Already Paid">
+                                                <i class="fas fa-check-circle text-success"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
                                         <td colspan="15" class="text-center">
-                                            Tidak ada data di tabel in
+                                            Tidak ada data di tabel ini
                                         </td>
                                     </tr>
                                 @endforelse
@@ -95,7 +89,7 @@
     </div>
     <div class="row my-2 mt-4 ms-1">
         <div class="col-lg-12">
-            <h5>Kadaluarsa: </h5>
+            <h5>Kadaluarsa / Selesai: </h5>
         </div>
     </div>
     <div class="row">
@@ -114,9 +108,8 @@
                                     <th>Check Out</th>
                                     <th>Hari</th>
                                     <th>Total Harga</th>
-                                    <th>Lunas</th>
-                                    <th>Debit</th>
-                                    <th>Aksi/th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -134,16 +127,13 @@
                                     <td>{{ Helper::convertToRupiah($transaction->getTotalPrice()) }}
                                     </td>
                                     <td>
-                                        {{ Helper::convertToRupiah($transaction->getTotalPayment()) }}
-                                    </td>
-                                    <td>{{ $transaction->getTotalPrice() - $transaction->getTotalPayment() <= 0 ? '-' : Helper::convertToRupiah($transaction->getTotalPrice($transaction->room->price, $transaction->check_in, $transaction->check_out) - $transaction->getTotalPayment()) }}
+                                        <span class="badge bg-success">Selesai</span>
                                     </td>
                                     <td>
-                                        <a class="btn btn-light btn-sm rounded shadow-sm border p-1 m-0 {{$transaction->getTotalPrice($transaction->room->price, $transaction->check_in, $transaction->check_out) - $transaction->getTotalPayment() <= 0 ? 'disabled' : ''}}"
-                                            href="{{ route('transaction.payment.create', ['transaction' => $transaction->id]) }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Pay">
-                                            <i class="fas fa-money-bill-wave-alt"></i>
-                                        </a>
+                                        <button class="btn btn-light btn-sm rounded shadow-sm border p-1 m-0 disabled"
+                                            disabled>
+                                            <i class="fas fa-check-circle text-success"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             @empty
@@ -161,8 +151,6 @@
             </div>
         </div>
     </div>
-
-
 
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
