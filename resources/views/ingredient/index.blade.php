@@ -45,7 +45,6 @@
             </table>
         </div>
         <div class="table-footer">
-            <h3><i class="fas fa-carrot me-2"></i>Daftar Bahan Baku</h3>
         </div>
     </div>
 </div>
@@ -59,7 +58,7 @@
             </div>
             <div class="modal-body"></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 <button type="button" class="btn btn-primary" id="btn-modal-save">Simpan</button>
             </div>
         </div>

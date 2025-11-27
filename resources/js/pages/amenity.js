@@ -110,6 +110,22 @@ $(function () {
         focus: true,
     });
 
+    // $('[data-bs-dismiss="modal"]').text("Batal");
+    $('button[data-bs-dismiss="modal"]:not(.btn-close)').text("Batal");
+    $('.btn-close[data-bs-dismiss="modal"]').text('');
+
+    $("#main-modal").on('hidden.bs.modal', function () {
+        $("#btn-modal-save").text("Simpan").attr("disabled", false);
+        $("button[data-bs-dismiss=modal]").text("Batal");
+        $(".btn-close[data-bs-dismiss=modal]").text('');
+        $("#main-modal .modal-body").html("");
+    });
+
+    $("#main-modal").on("show.bs.modal", function () {
+        $("#main-modal .modal-title").text("");              
+        $("#main-modal .modal-body").html("Fetching data...");
+    });
+
     $(document)
         .on("click", ".delete", function (e) {
             e.preventDefault();
@@ -124,6 +140,10 @@ $(function () {
                 confirmButtonText: "Ya, Hapus!",
                 cancelButtonText: "Batal",
                 customClass: {
+                    title: 'swal2-title-custom', 
+                    html: 'swal2-html-custom',
+                    popup: 'swal2-popup-custom',
+
                     confirmButton: 'text-50200C',
                     cancelButton: 'text-50200C'
                 }
@@ -135,18 +155,37 @@ $(function () {
         })
         .on("click", "#add-button", async function () {
             modal.show();
+            $("#btn-modal-save").text("Simpan").attr("disabled", true);
+            $('button[data-bs-dismiss="modal"]:not(.btn-close)').text("Batal");
+            $('.btn-close[data-bs-dismiss="modal"]').text('');
+
             $("#main-modal .modal-body").html(`Fetching data...`);
+
             const response = await $.get(`/amenity/create`);
-            $("#main-modal .modal-title").text("Add New Amenity");
+            $("#main-modal .modal-title").text("Tambah Amenities");
             $("#main-modal .modal-body").html(response.view);
+
+            $("#btn-modal-save").text("Simpan").attr("disabled", false);
+            $('button[data-bs-dismiss="modal"]:not(.btn-close)').text("Batal");
+            $('.btn-close[data-bs-dismiss="modal"]').text('');
         })
         .on("click", '[data-action="edit-amenity"]', async function () {
             modal.show();
+            $("#btn-modal-save").text("Simpan").attr("disabled", true);
+            $('button[data-bs-dismiss="modal"]:not(.btn-close)').text("Batal");
+            $('.btn-close[data-bs-dismiss="modal"]').text('');
+
             $("#main-modal .modal-body").html(`Fetching data...`);
+
             const id = $(this).data("id");
             const response = await $.get(`/amenity/${id}/edit`);
+
             $("#main-modal .modal-title").text("Edit Amenities");
             $("#main-modal .modal-body").html(response.view);
+
+            $("#btn-modal-save").text("Simpan").attr("disabled", false);
+            $('button[data-bs-dismiss="modal"]:not(.btn-close)').text("Batal");
+            $('.btn-close[data-bs-dismiss="modal"]').text('');
         })
         .on("click", "#btn-modal-save", function () {
             $("#form-save-amenity").submit();
