@@ -4,7 +4,7 @@
 @section('content')
 <div class="container-fluid">
     
-    {{-- HEADER TITLE --}}
+    {{-- HEADER --}}
     <div class="row my-2 mt-4 ms-1">
         <div class="col-lg-12">
             <h2><i class="fas fa-bed me-2"></i>Laporan Kamar Hotel</h2>
@@ -41,7 +41,7 @@
                     </form>
                 </div>
 
-                {{-- TABEL DATATABLES --}}
+                {{-- TABEL --}}
                 <div class="table-responsive mt-3">
                     <table id="laporan-kamar-table" class="professional-table table table-hover" style="width: 100%;">
                         <thead style="background-color: #f7f3e8;">
@@ -55,18 +55,16 @@
                                 <th class="text-center">Status</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {{-- Data akan diisi oleh DataTables AJAX --}}
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
                 
-                {{-- FOOTER: TOMBOL EXPORT --}}
+                {{-- FOOTER --}}
                 <div class="table-footer d-flex justify-content-between align-items-center p-4">
                    <h3 class="mb-0"><i class="fas fa-history me-2"></i>Riwayat Reservasi</h3>
                    
                    <button type="button" id="btn-export-kamar" class="btn btn-lg text-white shadow-sm btn-brown px-4">
-                       <i class="fas fa-file-csv me-2"></i> Export CSV
+                       <i class="fas fa-file-excel me-2"></i> Export Excel
                    </button>
                 </div>
 
@@ -79,7 +77,6 @@
 @section('footer')
 @vite('resources/js/pages/laporan-kamar.js')
 <style>
-    /* Helper Style Warna Coklat (Sama seperti Laporan Rapat) */
     .btn-brown {
         background-color: #50200C !important;
         border-color: #50200C !important;
@@ -88,8 +85,6 @@
         background-color: #3d1909 !important;
         border-color: #3d1909 !important;
     }
-    
-    /* Fix Overlay Table agar form filter bisa diklik */
     .professional-table-container .table-header::before { display: none !important; content: none !important; }
     .table-header form { position: relative; z-index: 10; }
 </style>

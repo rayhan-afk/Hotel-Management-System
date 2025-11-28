@@ -14,32 +14,26 @@ class LaporanKamarRepository implements LaporanKamarRepositoryInterface
      */
     public function getLaporanKamarQuery($request)
     {
-        $startDate = $request->input('start_date'); // Nama input filter di view kamar
+        $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         
-        // --- PERBAIKAN PENTING UNTUK MENCEGAH ARRAY TO STRING CONVERSION ---
-        // 1. Prioritaskan pengambilan nilai dari 'search.value' (untuk DataTables)
+        // --- LOGIKA SEARCH (SAMA SEPERTI SEBELUMNYA) ---
         $searchDatatableValue = $request->input('search.value');
-        
-        // 2. Jika bukan dari DataTables (misalnya dari URL Export), gunakan 'search'
         $searchUrlValue = $request->input('search');
-        
-        // Pilih nilai search yang paling relevan (string), jika ada
         $search = $searchDatatableValue ?: $searchUrlValue;
         
         if (is_array($search)) {
             $search = $search['value'] ?? null;
         }
-        // --------------------------------------------------------------------
+        // ------------------------------------------------
 
-        // Query Builder untuk Reservasi Kamar (Transaction Model)
         $query = Transaction::select('transactions.*')
             ->join('customers', 'transactions.customer_id', '=', 'customers.id')
             ->join('rooms', 'transactions.room_id', '=', 'rooms.id')
-            ->join('types', 'rooms.type_id', '=', 'types.id') // Join Type Kamar
+            ->join('types', 'rooms.type_id', '=', 'types.id')
             ->with(['customer.user', 'room.type']); 
 
-        // Filter 1: Rentang Tanggal Check-In
+        // Filter Tanggal
         if ($startDate) {
             $query->where('transactions.check_in', '>=', $startDate);
         }
@@ -47,7 +41,7 @@ class LaporanKamarRepository implements LaporanKamarRepositoryInterface
             $query->where('transactions.check_in', '<=', $endDate);
         }
 
-        // Filter 2: Pencarian Teks (Nama Tamu, No Kamar, Tipe Kamar)
+        // Filter Search Global
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('customers.name', 'LIKE', "%{$search}%")
@@ -56,34 +50,33 @@ class LaporanKamarRepository implements LaporanKamarRepositoryInterface
             });
         }
         
-        // Default urutan: Check-in Terbaru
+        // Default Order
         $query->orderBy('transactions.check_in', 'DESC');
 
         return $query;
     }
 
     public function saveToLaporan($t)
-{
-    Transaction::create([
-        'customer_id' => $t->customer_id,
-        'room_id' => $t->room_id,
-        'check_in' => $t->check_in,
-        'check_out' => $t->check_out,
-        'breakfast' => $t->breakfast,
-        'total_price' => $t->total_price,
-        'status' => 'Paid'
-    ]);
-}
-
+    {
+        Transaction::create([
+            'customer_id' => $t->customer_id,
+            'room_id' => $t->room_id,
+            'check_in' => $t->check_in,
+            'check_out' => $t->check_out,
+            'breakfast' => $t->breakfast,
+            'total_price' => $t->total_price,
+            'status' => 'Paid'
+        ]);
+    }
 
     /**
-     * Khusus DataTables: Mengambil query dasar + Pagination.
+     * Khusus DataTables
      */
     public function getLaporanKamarDatatable($request)
     {
         $query = $this->getLaporanKamarQuery($request); 
 
-        // Definisi Kolom untuk Sorting DataTables
+        // Kolom untuk Sorting
         $columns = [
             0 => 'customers.name',
             1 => 'rooms.number',
@@ -97,7 +90,7 @@ class LaporanKamarRepository implements LaporanKamarRepositoryInterface
         $totalData = Transaction::count();
         $totalFiltered = $query->count(); 
 
-        // --- PAGINATION ---
+        // Pagination
         $limit = $request->input('length');
         $start = $request->input('start');
         $orderColumnIndex = $request->input('order.0.column');
@@ -109,15 +102,14 @@ class LaporanKamarRepository implements LaporanKamarRepositoryInterface
             $query->offset($start)->limit($limit);
         }
 
-        // Terapkan sorting
         $query->orderBy($orderBy, $orderDir);
 
         $models = $query->get();
 
-        // Mapping Data JSON
         $data = [];
         foreach ($models as $model) {
-            // Hitung Total Harga (Support method model lama & kolom baru)
+            // Hitung Total Harga
+            // Prioritaskan kolom 'total_price' di DB, fallback ke hitung manual
             $totalHarga = $model->total_price ?? $model->getTotalPrice();
 
             $data[] = [
@@ -126,17 +118,22 @@ class LaporanKamarRepository implements LaporanKamarRepositoryInterface
                 'check_in' => Helper::dateFormat($model->check_in),
                 'check_out' => Helper::dateFormat($model->check_out),
                 'sarapan' => $model->breakfast,
-                'total_harga' => Helper::convertToRupiah($totalHarga), 
-                'status' => 'Paid', // Hardcode status 'Paid' sesuai logika baru
+                
+                // === PERBAIKAN UTAMA ===
+                // Kirim ANGKA MENTAH (float/int), bukan string "Rp ...".
+                // Javascript akan memformatnya menjadi Rupiah.
+                'total_harga' => (float) $totalHarga, 
+                // =======================
+                
+                'status' => 'Paid', 
             ];
         }
 
-        // Return format JSON untuk DataTables
         return response()->json([
             'draw' => intval($request->input('draw')),
             'iTotalRecords' => $totalData,
             'iTotalDisplayRecords' => $totalFiltered,
-            'aaData' => $data, // Versi lama DataTables pakai aaData
+            'aaData' => $data, 
         ]);
     }
 }
