@@ -12,18 +12,16 @@ class TransactionRepository implements TransactionRepositoryInterface
 {
     public function store($request, $customer, $room)
     {
-        // HANYA SIMPAN TRANSAKSI
-        // Hapus bagian Payment::create([...]) jika ada di sini
-        
+        // Gunakan $request->total_price dan $request->status yang sudah di-merge di Controller
         return Transaction::create([
-            'user_id' => auth()->user()->id,
+            'user_id'     => auth()->id(), // Asumsi yang input adalah admin yang login
             'customer_id' => $customer->id,
-            'room_id' => $room->id,
-            'check_in' => $request->check_in,
-            'check_out' => $request->check_out,
-            'status' => 'Paid', // Status langsung Paid
-            'total_price' => $request->total_price,
-            'breakfast' => $request->breakfast ?? 'No',
+            'room_id'     => $room->id,
+            'check_in'    => $request->check_in,
+            'check_out'   => $request->check_out,
+            'status'      => $request->status,      // Pastikan kolom ini diisi
+            'total_price' => $request->total_price, // Pastikan kolom ini diisi
+            'breakfast'   => $request->breakfast    // Simpan status breakfast
         ]);
     }
 

@@ -114,53 +114,42 @@ class TransactionRoomReservationController extends Controller
 
     public function payDownPayment(Customer $customer, Room $room, Request $request) 
     {
-        // 1. Hitung Durasi & Harga
-        $dayDifference = Helper::getDateDifference($request->check_in, $request->check_out);
-        $roomPriceTotal = $room->price * $dayDifference;
-
-        $breakfastPrice = 0;
-        if ($request->breakfast === 'Yes') {
-            $breakfastPrice = 140000 * $dayDifference; 
-        }
-
-        $grandTotal = $roomPriceTotal + $breakfastPrice;
-
+        // 1. Validasi Input TERLEBIH DAHULU (Best Practice)
         $request->validate([
+            'check_in'  => 'required|date',
+            'check_out' => 'required|date|after:check_in',
             'breakfast' => 'required|in:Yes,No',
         ]);
 
-        // 2. Cek Ketersediaan
+        // 2. Cek Ketersediaan Kamar (Mencegah Double Booking)
         $occupiedRoomIds = $this->getOccupiedRoomID($request->check_in, $request->check_out);
         if ($occupiedRoomIds->contains($room->id)) {
-            return redirect()->back()->with('failed', 'Maaf, Kamar ini baru saja dipesan orang lain.');
+            return redirect()->back()
+                ->with('failed', 'Maaf, Kamar ini baru saja dipesan orang lain di tanggal yang sama.');
         }
 
-        // 3. Siapkan Data Transaksi
+        // 3. Hitung Durasi & Harga Total
+        $dayDifference = Helper::getDateDifference($request->check_in, $request->check_out);
+        $roomPriceTotal = $room->price * $dayDifference;
+        $breakfastPrice = ($request->breakfast === 'Yes') ? (140000 * $dayDifference) : 0;
+        $grandTotal     = $roomPriceTotal + $breakfastPrice;
+
+        // 4. Siapkan Data untuk Repository
+        // Kita merge data penting agar Repository bisa langsung pakai $request->all() atau spesifik
         $request->merge([
             'total_price' => $grandTotal,
-            'status' => 'Paid' // Langsung Lunas
+            'status'      => 'Paid' // Pastikan ini masuk ke DB
         ]);
 
-        // 4. SIMPAN TRANSAKSI SAJA (Hapus penyimpanan Payment)
+        // 5. Simpan Transaksi via Repository
         $this->transactionRepository->store($request, $customer, $room);
         
-        // 5. Notifikasi (Hanya Event sederhana, JANGAN panggil notifikasi email Payment)
-        $superAdmins = User::where('role', 'Super')->get();
-        foreach ($superAdmins as $superAdmin) {
-            $message = 'Reservation added by ' . $customer->name;
-            event(new NewReservationEvent($message, $superAdmin));
-            
-            // BAGIAN INI DIHAPUS KARENA MEMBUTUHKAN DATA PAYMENT:
-            // $superAdmin->notify(new NewRoomReservationDownPayment($transaction, $payment)); 
-        }
+        // 6. Notifikasi Dashboard (Opsional, pastikan event handler ada)
+        event(new RefreshDashboardEvent('New reservation created'));
 
-        event(new RefreshDashboardEvent('Someone reserved a room'));
-
+        // 7. Redirect ke Dashboard dengan Pesan Sukses
         return redirect()->route('dashboard.index')
-            ->with('success', 'Room ' . $room->number . ' booked successfully!');
-            $request->validate([
-    'breakfast' => 'required|in:Yes,No',
-]);
+            ->with('success', 'Reservasi kamar ' . $room->number . ' berhasil! Status: Lunas.');
     }
 
     private function getOccupiedRoomID($checkIn, $checkOut)
