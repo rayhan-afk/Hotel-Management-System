@@ -2,13 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\Interface\KamarDibersihkanRepositoryInterface;
 use Illuminate\Http\Request;
 
 class KamarDibersihkanController extends Controller
 {
-    public function index()
+    private $kamarDibersihkanRepository;
+
+    public function __construct(KamarDibersihkanRepositoryInterface $kamarDibersihkanRepository)
     {
-        // Kode sementara agar tidak error
-        return "Halaman Kamar Dibersihkan (Sedang dibuat)";
+        $this->kamarDibersihkanRepository = $kamarDibersihkanRepository;
+    }
+
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            return response()->json(
+                $this->kamarDibersihkanRepository->getDatatable($request)
+            );
+        }
+
+        return view('room-info.cleaning');
     }
 }

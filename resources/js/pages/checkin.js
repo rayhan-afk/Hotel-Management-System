@@ -1,136 +1,130 @@
 $(function () {
     const currentRoute = window.location.pathname;
-    if (!currentRoute.includes("check-in")) return;
+    // Cek route agar script ini hanya jalan di halaman check-in
+    if (!currentRoute.includes("transaction/check-in")) return;
 
     const tableElement = $("#checkin-table");
-    let datatable = null;
 
     if (tableElement.length > 0) {
-        datatable = tableElement.DataTable({
+        const table = tableElement.DataTable({
             processing: true,
             serverSide: true,
             ajax: {
                 url: "/transaction/check-in",
                 type: "GET",
+                error: function (xhr, status, error) {
+                    console.error("Datatable Error:", error);
+                },
             },
             columns: [
-                { data: "id", name: "id", className: "fw-bold" },
-                { data: "customer", name: "customer" },
-                { data: "room", name: "room" }, // Sudah ada HTML dari repo (type kamar text-muted)
-                { data: "check_in", name: "check_in" },
-                { data: "check_out", name: "check_out" },
+                // 1. No
                 { 
-                    data: "breakfast", 
-                    name: "breakfast",
+                    data: null, 
+                    sortable: false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                // 2. Tamu
+                { 
+                    name: "customers.name", 
+                    data: "customer_name",
+                    className: "fw-bold text-primary"
+                },
+                // 3. Kamar
+                { 
+                    name: "rooms.number", 
+                    data: "room_info",
                     render: function(data) {
-                        // Badge sederhana untuk Sarapan
-                        if(data === 'Yes' || data === 'Included') {
-                            return '<span class="badge bg-info text-dark">Ya</span>';
-                        }
-                        return '<span class="badge bg-secondary">Tidak</span>';
-                    }
-                },
-                { 
-                    data: "total_price", 
-                    name: "total_price",
-                    className: "fw-bold text-end" // Rata kanan untuk uang
-                },
-                {
-                    data: "status",
-                    name: "status",
-                    render: function (data) {
-                        // Ubah status 'Paid' menjadi Badge Lunas
-                        if (data === "Paid") {
-                            return '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Lunas</span>';
-                        }
-                        return '<span class="badge bg-warning text-dark">' + data + '</span>';
-                    }
-                },
-                {
-                    data: "action",
-                    orderable: false,
-                    searchable: false,
-                    className: "text-center",
-                    render: function (id) {
                         return `
-                            <button class="btn btn-sm btn-primary btn-edit me-1" data-id="${id}" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger btn-delete" data-id="${id}" title="Cancel/Delete">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
+                            <div class="d-flex flex-column">
+                                <span class="fw-bold text-dark">${data.number}</span>
+                                <span class="text-muted small">${data.type}</span>
+                            </div>
                         `;
                     }
                 },
+                // 4. Check In
+                { name: "transactions.check_in", data: "check_in" },
+                // 5. Check Out
+                { name: "transactions.check_out", data: "check_out" },
+                // 6. Sarapan
+                { 
+                    name: "transactions.id", // Dummy
+                    data: "breakfast",
+                    className: "text-center",
+                    orderable: false,
+                    render: function(data) {
+                        return data == 1 
+                            ? '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Yes</span>' 
+                            : '<span class="badge bg-secondary">No</span>';
+                    }
+                },
+                // 7. Total Harga
+                { 
+                    name: "rooms.price", 
+                    data: "total_price",
+                    className: "text-end fw-bold",
+                    render: function(data) {
+                        return new Intl.NumberFormat('id-ID', { 
+                            style: 'currency', 
+                            currency: 'IDR',
+                            minimumFractionDigits: 0 
+                        }).format(data);
+                    }
+                },
+                // 8. Status
+                { 
+                    name: "transactions.status", 
+                    data: "status",
+                    className: "text-center",
+                    render: function(data) {
+                        // Biasanya status Check-in warnanya biru/primary
+                        return `<span class="badge bg-primary px-3 py-1 rounded-pill">${data}</span>`;
+                    }
+                },
+                // 9. Aksi (Edit)
+                {
+                    data: 'raw_id',
+                    orderable: false,
+                    searchable: false,
+                    className: "text-center",
+                    render: function(id) {
+                        return `
+                            <button class="btn btn-sm btn-info text-white btn-edit rounded-circle shadow-sm" 
+                                    data-id="${id}" 
+                                    data-bs-toggle="tooltip" 
+                                    title="Edit Data Check-in">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        `;
+                    }
+                }
             ],
-            order: [[3, "asc"]] // Default urut check-in terdekat
+            order: [[3, 'desc']], // Urutkan berdasarkan Check-in terbaru
+            drawCallback: function() {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl)
+                })
+            }
+        });
+
+        // Event Edit (Menampilkan Modal)
+        $(document).on('click', '.btn-edit', function() {
+            let id = $(this).data('id');
+            let modal = new bootstrap.Modal(document.getElementById('editCheckinModal'));
+            
+            // Tampilkan loading dulu
+            $('#editCheckinBody').html('<div class="text-center py-3"><div class="spinner-border text-primary"></div></div>');
+            modal.show();
+
+            // Fetch form edit dari server
+            $.get(`/transaction/check-in/${id}/edit`, function(response) {
+                $('#editCheckinBody').html(response);
+            }).fail(function() {
+                $('#editCheckinBody').html('<div class="alert alert-danger">Gagal memuat data.</div>');
+            });
         });
     }
-
-    // --- EVENT: KLIK TOMBOL EDIT (Tidak Berubah) ---
-    $(document).on("click", ".btn-edit", function () {
-        const id = $(this).data("id");
-        $("#editCheckinModal").modal("show");
-        $.get(`/transaction/check-in/${id}/edit`, function (html) {
-            $("#editCheckinBody").html(html);
-        }).fail(function() {
-            $("#editCheckinBody").html("<p class='text-danger'>Gagal memuat data.</p>");
-        });
-    });
-
-    // --- EVENT: SUBMIT FORM UPDATE (Tidak Berubah) ---
-    $(document).on("submit", "#form-edit-checkin", function (e) {
-        e.preventDefault();
-        const form = $(this);
-        const btn = form.find("button[type=submit]");
-        btn.prop("disabled", true).text("Menyimpan...");
-
-        $.ajax({
-            url: form.attr("action"),
-            type: "POST",
-            data: form.serialize(),
-            success: function (res) {
-                $("#editCheckinModal").modal("hide");
-                datatable.ajax.reload();
-                Swal.fire("Berhasil", res.message, "success");
-            },
-            error: function (xhr) {
-                btn.prop("disabled", false).text("Simpan Perubahan");
-                Swal.fire("Error", "Gagal memperbarui data", "error");
-            }
-        });
-    });
-
-    // --- EVENT: KLIK TOMBOL DELETE (Tidak Berubah) ---
-    $(document).on("click", ".btn-delete", function () {
-        const id = $(this).data("id");
-        Swal.fire({
-            title: "Batalkan Reservasi?",
-            text: "Data ini akan dihapus permanen!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Ya, Hapus!",
-            cancelButtonText: "Batal"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: `/transaction/check-in/${id}`,
-                    type: "POST",
-                    data: {
-                        _method: "DELETE",
-                        _token: $('meta[name="csrf-token"]').attr("content")
-                    },
-                    success: function (res) {
-                        datatable.ajax.reload();
-                        Swal.fire("Terhapus!", res.message, "success");
-                    },
-                    error: function () {
-                        Swal.fire("Error", "Gagal menghapus data", "error");
-                    }
-                });
-            }
-        });
-    });
 });

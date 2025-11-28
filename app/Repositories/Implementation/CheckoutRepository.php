@@ -2,63 +2,98 @@
 
 namespace App\Repositories\Implementation;
 
-use App\Helpers\Helper;
 use App\Models\Transaction;
 use App\Repositories\Interface\CheckoutRepositoryInterface;
+use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class CheckoutRepository implements CheckoutRepositoryInterface
 {
+    // === 1. SESUAIKAN NAMA METHOD DENGAN INTERFACE ===
     public function getCheckoutDatatable($request)
     {
-        // Ambil tamu yang sudah waktunya checkout
-        $query = Transaction::with(['customer', 'room.type', 'user'])
-            ->where('status', 'Paid')
-            ->where('check_out', '<=', Carbon::now()->format('Y-m-d'));
+        $columns = [
+            0 => 'transactions.id',
+            1 => 'customers.name',
+            2 => 'rooms.number',
+            3 => 'transactions.check_in',
+            4 => 'transactions.check_out',
+            5 => 'transactions.id',
+            6 => 'rooms.price',
+            7 => 'transactions.status',
+            8 => 'transactions.id',
+        ];
 
-        // Filter pencarian
-        if (!empty($request->search['value'])) {
-            $search = $request->search['value'];
+        $query = Transaction::query()
+            ->select([
+                'transactions.*',
+                'customers.name as customer_name',
+                'rooms.number as room_number',
+                'rooms.price as room_price',
+                'types.name as type_name'
+            ])
+            ->join('customers', 'transactions.customer_id', '=', 'customers.id')
+            ->join('rooms', 'transactions.room_id', '=', 'rooms.id')
+            ->join('types', 'rooms.type_id', '=', 'types.id')
+            ->where('transactions.status', 'Check In');
 
+        if ($request->has('search') && $search = $request->input('search.value')) {
             $query->where(function ($q) use ($search) {
-                $q->whereHas('customer', fn($c) => $c->where('name', 'like', "%{$search}%"))
-                  ->orWhereHas('room', fn($r) => $r->where('number', 'like', "%{$search}%"))
-                  ->orWhere('id', 'like', "%{$search}%");
+                $q->where('customers.name', 'LIKE', "%{$search}%")
+                  ->orWhere('rooms.number', 'LIKE', "%{$search}%")
+                  ->orWhere('types.name', 'LIKE', "%{$search}%");
             });
         }
 
-        $totalData = $query->count();
-        $query->orderBy('check_out', 'ASC');
+        $limit = $request->input('length', 10);
+        $start = $request->input('start', 0);
+        $orderIdx = $request->input('order.0.column', 0);
+        $orderCol = $columns[$orderIdx] ?? 'transactions.check_out';
+        $orderDir = $request->input('order.0.dir', 'asc');
 
-        $limit = $request->length ?? 10;
-        $start = $request->start ?? 0;
+        $countQuery = clone $query;
+        $totalFiltered = $countQuery->count();
 
-        $data = $query->skip($start)->take($limit)->get();
+        $models = $query->orderBy($orderCol, $orderDir)
+            ->offset($start)
+            ->limit($limit)
+            ->get();
 
-        $formattedData = [];
+        $data = [];
+        foreach ($models as $t) {
+            $checkIn  = Carbon::parse($t->check_in);
+            $checkOut = Carbon::parse($t->check_out);
+            $duration = $checkIn->diffInDays($checkOut) ?: 1;
+            $rawBreakfast = $t->breakfast ?? 'No';
+            $breakfast = (strtolower($rawBreakfast) === 'yes' || $rawBreakfast == '1') ? 1 : 0;
+            $totalPrice = $duration * $t->room_price;
 
-        foreach ($data as $trx) {
-            $formattedData[] = [
-                'id' => $trx->id,
-                'customer' => $trx->customer->name,
-                'room' => $trx->room->number . ' <span class="text-muted">(' . $trx->room->type->name . ')</span>',
-                'check_in' => Helper::dateFormat($trx->check_in),
-                'check_out' => Helper::dateFormat($trx->check_out),
-                'breakfast' => $trx->breakfast ? $trx->breakfast : 'No',
-                'total_price' => Helper::convertToRupiah($trx->total_price),
-                'status' => $trx->status,
-                'action' => $trx->id
+            $data[] = [
+                'id'            => $t->id,
+                'customer_name' => $t->customer_name,
+                'room_info'     => [
+                    'number' => $t->room_number,
+                    'type'   => $t->type_name
+                ],
+                'check_in'      => $checkIn->format('d/m/Y'),
+                'check_out'     => $checkOut->format('d/m/Y'),
+                'breakfast'     => $breakfast,
+                'total_price'   => $totalPrice,
+                'status'        => $t->status,
+                'raw_id'        => $t->id
             ];
         }
 
         return [
-            'draw' => $request->draw,
-            'recordsTotal' => Transaction::where('status', 'Paid')->count(),
-            'recordsFiltered' => $totalData,
-            'data' => $formattedData
+            'draw'            => intval($request->input('draw')),
+            'recordsTotal'    => Transaction::where('status', 'Check In')->count(),
+            'recordsFiltered' => $totalFiltered,
+            'data'            => $data,
         ];
     }
 
+    // === 2. IMPLEMENTASIKAN METHOD YANG HILANG ===
+    
     public function getTransaction($id)
     {
         return Transaction::findOrFail($id);
@@ -67,6 +102,6 @@ class CheckoutRepository implements CheckoutRepositoryInterface
     public function checkoutDelete($id)
     {
         $transaction = Transaction::findOrFail($id);
-        return $transaction->delete();
+        $transaction->delete();
     }
 }

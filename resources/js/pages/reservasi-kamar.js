@@ -1,153 +1,148 @@
-$(document).ready(function () {
-    // Definisi Table
-    const table = $('#reservation-table').DataTable({
-        processing: true,
-        serverSide: true,
-        searchDelay: 500,
-        ajax: {
-            url: "/room-info/reservation",
-            type: "GET"
-        },
-        columns: [
-            { 
-                data: null, 
-                sortable: false,
-                render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
-            { 
-                data: 'customer_name', 
-                name: 'customers.name',
-                class: 'fw-bold'
-            },
-            { 
-                data: 'room_info', 
-                name: 'rooms.number',
-                render: function(data) {
-                    return `
-                        <div class="d-flex flex-column">
-                            <span class="fw-bold text-primary">Kamar ${data.number}</span>
-                            <small class="text-muted">${data.type}</small>
-                        </div>
-                    `;
-                }
-            },
-            { data: 'check_in', name: 'transactions.check_in' },
-            { data: 'check_out', name: 'transactions.check_out' },
-            { 
-                data: 'breakfast', 
-                name: 'transactions.id',
-                class: 'text-center',
-                orderable: false,
-                render: function(data) {
-                    return data == 1 
-                        ? '<span class="badge bg-success"><i class="fas fa-utensils me-1"></i>Yes</span>' 
-                        : '<span class="badge bg-secondary">No</span>';
-                }
-            },
-            { 
-                data: 'total_price', 
-                name: 'rooms.price',
-                class: 'text-end fw-bold',
-                render: function(data) {
-                    return new Intl.NumberFormat('id-ID', { 
-                        style: 'currency', 
-                        currency: 'IDR',
-                        minimumFractionDigits: 0 
-                    }).format(data);
-                }
-            },
-            { 
-                data: 'status', 
-                name: 'transactions.status',
-                class: 'text-center',
-                render: function(data) {
-                    let badgeClass = 'bg-secondary';
-                    if(data === 'Reservation') badgeClass = 'bg-warning text-dark';
-                    if(data === 'Paid') badgeClass = 'bg-success';
-                    if(data === 'Cancel') badgeClass = 'bg-danger';
+$(function () {
+    const currentRoute = window.location.pathname;
+    if (!currentRoute.includes("room-info/reservation")) return;
 
-                    return `<span class="badge ${badgeClass} px-3 py-2 rounded-pill">${data}</span>`;
-                }
+    const tableElement = $("#reservation-table");
+
+    if (tableElement.length > 0) {
+        const table = tableElement.DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "/room-info/reservation",
+                type: "GET",
+                error: function (xhr, status, error) {
+                    console.error("Datatable Error:", error);
+                },
             },
-            // === BAGIAN TOMBOL AKSI ===
-            {
-                data: 'raw_id',
-                orderable: false,
-                searchable: false,
-                class: 'text-center',
-                render: function(id) {
-                    return `
-                        <button class="btn btn-sm btn-danger btn-cancel" data-id="${id}" title="Batalkan Reservasi">
-                            <i class="fas fa-times-circle"></i> Batal
-                        </button>
-                    `;
-                }
-            }
-        ],
-        order: [[3, 'asc']], 
-        language: {
-            search: "",
-            searchPlaceholder: "Cari tamu, kamar...",
-            paginate: {
-                next: '<i class="fas fa-chevron-right"></i>',
-                previous: '<i class="fas fa-chevron-left"></i>'
-            }
-        }
-    });
-
-    // === LOGIC TOMBOL BATAL (SWEETALERT + AJAX) ===
-    $(document).on('click', '.btn-cancel', function() {
-        let transactionId = $(this).data('id');
-        let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-        // Tampilkan Konfirmasi Cantik
-        Swal.fire({
-            title: 'Batalkan Reservasi?',
-            text: "Status akan berubah menjadi 'Cancel' dan kamar akan tersedia kembali.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, Batalkan!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Tampilkan Loading
-                Swal.fire({
-                    title: 'Memproses...',
-                    allowOutsideClick: false,
-                    didOpen: () => { Swal.showLoading(); }
-                });
-
-                // Kirim Request ke Server
-                $.ajax({
-                    url: `/room-info/reservation/${transactionId}/cancel`, // Route yang akan kita buat
-                    type: 'POST',
-                    data: {
-                        _token: csrfToken
-                    },
-                    success: function(response) {
-                        Swal.fire(
-                            'Berhasil!',
-                            'Reservasi telah dibatalkan.',
-                            'success'
-                        );
-                        // Reload tabel otomatis tanpa refresh halaman
-                        table.ajax.reload(null, false); 
-                    },
-                    error: function(xhr) {
-                        Swal.fire(
-                            'Gagal!',
-                            'Terjadi kesalahan saat membatalkan reservasi.',
-                            'error'
-                        );
+            columns: [
+                // 1. No
+                { 
+                    data: null, 
+                    sortable: false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
                     }
-                });
+                },
+                // 2. Tamu
+                { 
+                    name: "customers.name", 
+                    data: "customer_name",
+                    className: "fw-bold text-primary"
+                },
+                // 3. Kamar
+                { 
+                    name: "rooms.number", 
+                    data: "room_info",
+                    render: function(data) {
+                        return `
+                            <div class="d-flex flex-column">
+                                <span class="fw-bold text-dark">${data.number}</span>
+                                <span class="text-muted small">${data.type}</span>
+                            </div>
+                        `;
+                    }
+                },
+                // 4. Check In
+                { name: "transactions.check_in", data: "check_in" },
+                // 5. Check Out
+                { name: "transactions.check_out", data: "check_out" },
+                // 6. Sarapan
+                { 
+                    name: "transactions.id", // Dummy
+                    data: "breakfast",
+                    className: "text-center",
+                    orderable: false,
+                    render: function(data) {
+                        return data == 1 
+                            ? '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Yes</span>' 
+                            : '<span class="badge bg-secondary">No</span>';
+                    }
+                },
+                // 7. Total Harga
+                { 
+                    name: "rooms.price", 
+                    data: "total_price",
+                    className: "text-end fw-bold",
+                    render: function(data) {
+                        return new Intl.NumberFormat('id-ID', { 
+                            style: 'currency', 
+                            currency: 'IDR',
+                            minimumFractionDigits: 0 
+                        }).format(data);
+                    }
+                },
+                // 8. Status
+                { 
+                    name: "transactions.status", 
+                    data: "status",
+                    className: "text-center",
+                    render: function(data) {
+                        let badgeClass = 'bg-secondary';
+                        if(data === 'Reservation') badgeClass = 'bg-warning text-dark';
+                        if(data === 'Paid') badgeClass = 'bg-success';
+                        
+                        return `<span class="badge ${badgeClass} px-3 py-1 rounded-pill">${data}</span>`;
+                    }
+                },
+                // 9. Aksi (Cancel)
+                {
+                    data: 'raw_id',
+                    orderable: false,
+                    searchable: false,
+                    className: "text-center",
+                    render: function(id) {
+                        return `
+                            <button class="btn btn-sm btn-danger btn-cancel rounded-circle shadow-sm" 
+                                    data-id="${id}" 
+                                    data-bs-toggle="tooltip" 
+                                    title="Batalkan Reservasi">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                    }
+                }
+            ],
+            order: [[3, 'asc']], // Urutkan berdasarkan Check-in terdekat
+            drawCallback: function() {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl)
+                })
             }
         });
-    });
 
-    $('.dataTables_filter input').addClass('form-control').css('width', '250px');
+        // Event Cancel
+        $(document).on('click', '.btn-cancel', function() {
+            let transactionId = $(this).data('id');
+            let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            Swal.fire({
+                title: 'Batalkan Reservasi?',
+                text: "Status akan berubah menjadi 'Cancel'.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Batalkan!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'Memproses...', didOpen: () => { Swal.showLoading(); } });
+
+                    $.ajax({
+                        url: `/room-info/reservation/${transactionId}/cancel`,
+                        type: 'POST',
+                        data: { _token: csrfToken },
+                        success: function(response) {
+                            Swal.fire('Berhasil!', 'Reservasi dibatalkan.', 'success');
+                            table.ajax.reload(null, false); 
+                        },
+                        error: function(xhr) {
+                            Swal.fire('Gagal!', 'Terjadi kesalahan.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    }
 });

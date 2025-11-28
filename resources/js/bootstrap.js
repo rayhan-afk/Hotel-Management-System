@@ -92,5 +92,6 @@ import axios from "axios";
         import("./pages/checkout"),
         import("./pages/reservasi-kamar"),
         import("./pages/kamar-tersedia"),
+        import("./pages/kamar-dibersihkan"),
     ]);
 })();
